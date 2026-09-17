@@ -178,6 +178,56 @@
       
       <!-- Upper Section: Question Meta & Flagging -->
       <div>
+        <!-- Inline Question Review List Card -->
+        <div id="inline-review-card" class="mb-5 bg-white rounded-xl border border-slate-200/90 shadow-sm p-4 transition-all">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 tracking-tight">Question Review List</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Jump directly to any question or mark review</p>
+            </div>
+            <button id="inline-toggle-btn" class="text-slate-400 hover:text-slate-600 p-1 rounded-md transition" title="Toggle question list">
+              <svg id="inline-toggle-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Dynamic 6 Question Nav Boxes -->
+          <div id="inline-nav-boxes" class="grid grid-cols-6 gap-2 sm:gap-2.5 mb-3.5">
+            <!-- Rendered by buildInlineNavGrid() -->
+          </div>
+
+          <!-- Legend and Done Button Row -->
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
+            <div class="flex items-center space-x-3 sm:space-x-4">
+              <div class="flex items-center space-x-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
+                <span class="text-[11px] sm:text-xs">Answered</span>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <span class="w-2.5 h-2.5 rounded-full border-2 border-slate-300 inline-block"></span>
+                <span class="text-[11px] sm:text-xs">Unanswered</span>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                <span class="text-[11px] sm:text-xs">Review</span>
+              </div>
+            </div>
+            <button id="inline-done-btn" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-medium rounded-md text-xs transition">
+              Done
+            </button>
+          </div>
+        </div>
+
+        <!-- Collapsed Bar Trigger (Shown if user clicks Done or X) -->
+        <button id="inline-expand-bar" class="hidden mb-4 w-full py-2 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 flex items-center justify-between hover:bg-slate-50 transition shadow-xs">
+          <span class="flex items-center space-x-2">
+            <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <span>Show Question Review List (1–6)</span>
+          </span>
+          <span class="text-blue-600 text-[11px]">Expand</span>
+        </button>
+
         <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
           <div class="flex items-center space-x-2">
             <span id="question-badge" class="bg-blue-600 text-white font-bold px-2.5 py-0.5 rounded text-xs">
@@ -401,6 +451,12 @@
     const copySummaryBtn = document.getElementById('copy-summary-btn');
     const highlightToggleBtn = document.getElementById('highlight-toggle-btn');
     let highlighterMode = false;
+
+    const inlineReviewCard = document.getElementById('inline-review-card');
+    const inlineNavBoxes = document.getElementById('inline-nav-boxes');
+    const inlineToggleBtn = document.getElementById('inline-toggle-btn');
+    const inlineDoneBtn = document.getElementById('inline-done-btn');
+    const inlineExpandBar = document.getElementById('inline-expand-bar');
 
     function showToast(message, isSuccess = true) {
       const toast = document.getElementById('toast');
@@ -639,6 +695,7 @@
           studentResponses[q.id] = e.target.value;
           updateHeaderStats();
           buildNavigatorGrid();
+          buildInlineNavBoxes();
         });
 
         inputWrapper.appendChild(label);
@@ -674,6 +731,7 @@
             studentResponses[q.id][i] = e.target.value;
             updateHeaderStats();
             buildNavigatorGrid();
+            buildInlineNavBoxes();
           });
 
           row.appendChild(subLabel);
@@ -711,6 +769,64 @@
       nextBtn.disabled = (currentIndex === EXAM_QUESTIONS.length - 1);
       
       updateHeaderStats();
+      buildInlineNavBoxes();
+    }
+
+    function buildInlineNavBoxes() {
+      if (!inlineNavBoxes) return;
+      inlineNavBoxes.innerHTML = '';
+
+      EXAM_QUESTIONS.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        const isCurrent = (idx === currentIndex);
+        const isFlagged = !!reviewFlags[q.id];
+
+        let hasAnswer = false;
+        if (q.type === 'single') {
+          hasAnswer = !!(studentResponses[q.id] && studentResponses[q.id].trim() !== "");
+        } else {
+          hasAnswer = (studentResponses[q.id] || []).some(x => x && x.trim() !== "");
+        }
+
+        // Base styles matching the provided card screenshot
+        let classes = "relative h-12 rounded-xl text-base font-bold flex flex-col items-center justify-center transition-all bg-white ";
+
+        if (isCurrent) {
+          // Selected box has distinctive blue border ring as shown on box 5
+          classes += "border-2 border-blue-600 text-slate-900 shadow-sm ";
+        } else {
+          classes += "border border-slate-300 text-slate-800 hover:border-slate-400 hover:bg-slate-50 ";
+        }
+
+        btn.className = classes;
+
+        // Dot indicators: Amber if flagged, Blue if answered, hollow/none if unanswered
+        let indicatorHtml = '';
+        if (isFlagged) {
+          indicatorHtml = `<span class="absolute top-1 right-1.5 w-2 h-2 rounded-full bg-amber-500"></span>`;
+        } else if (hasAnswer) {
+          indicatorHtml = `<span class="absolute top-1 right-1.5 w-2 h-2 rounded-full bg-blue-600"></span>`;
+        }
+
+        let scoreHtml = '';
+        if (isGraded && gradingResults) {
+          const res = gradingResults.breakdown[idx];
+          scoreHtml = `<span class="text-[9px] font-medium text-slate-500 -mt-0.5">${res.score}/${q.marks}</span>`;
+        }
+
+        btn.innerHTML = `
+          ${indicatorHtml}
+          <span>${q.id}</span>
+          ${scoreHtml}
+        `;
+
+        btn.addEventListener('click', () => {
+          currentIndex = idx;
+          renderCurrentQuestion();
+        });
+
+        inlineNavBoxes.appendChild(btn);
+      });
     }
 
     function buildNavigatorGrid() {
@@ -833,6 +949,7 @@
       resultsModal.classList.remove('hidden');
       renderCurrentQuestion();
       buildNavigatorGrid();
+      buildInlineNavBoxes();
     }
 
     // Previous & Next navigation
@@ -855,8 +972,24 @@
       const q = EXAM_QUESTIONS[currentIndex];
       reviewFlags[q.id] = e.target.checked;
       buildNavigatorGrid();
+      buildInlineNavBoxes();
       showToast(reviewFlags[q.id] ? `Question ${q.id} flagged for review` : `Question ${q.id} unflagged`);
     });
+
+    function collapseInlineCard() {
+      inlineReviewCard.classList.add('hidden');
+      inlineExpandBar.classList.remove('hidden');
+    }
+
+    function expandInlineCard() {
+      inlineReviewCard.classList.remove('hidden');
+      inlineExpandBar.classList.add('hidden');
+      buildInlineNavBoxes();
+    }
+
+    inlineToggleBtn.addEventListener('click', collapseInlineCard);
+    inlineDoneBtn.addEventListener('click', collapseInlineCard);
+    inlineExpandBar.addEventListener('click', expandInlineCard);
 
     // Question navigator drawer open/close
     navDropdownBtn.addEventListener('click', () => {
@@ -943,6 +1076,7 @@
       reviewFlags = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
       renderCurrentQuestion();
       buildNavigatorGrid();
+      buildInlineNavBoxes();
       showToast("Practice session reset. Good luck!");
     });
 
@@ -973,6 +1107,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderCurrentQuestion();
       buildNavigatorGrid();
+      buildInlineNavBoxes();
     });
   </script>
 </body>
