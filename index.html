@@ -53,6 +53,15 @@
         <span>Created by: <span class="text-blue-800 font-bold tracking-tight">Amanullah Khan</span></span>
       </div>
 
+      <!-- Student Only My Grades Button -->
+      <button id="student-grades-btn" class="hidden px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-md border border-blue-200 transition flex items-center space-x-1.5 shadow-2xs" title="View Submitted Tasks & Feedback">
+        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+        </svg>
+        <span>My Grades</span>
+        <span id="student-grades-count-badge" class="hidden px-1.5 py-0.2 bg-blue-600 text-white rounded-full text-[10px] font-bold">0</span>
+      </button>
+
       <!-- Admin Only Sheet Settings Button -->
       <button id="gas-settings-btn" class="hidden px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-md border border-slate-300 transition flex items-center space-x-1.5" title="Google Sheet Webhook Settings">
         <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -371,7 +380,7 @@
   </main>
 
   <!-- 4. SUBMISSION & SAVING PROGRESS LOADING MODAL -->
-  <div id="submission-loading-modal" class="hidden fixed inset-0 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+  <div id="submission-loading-modal" class="hidden fixed inset-0 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-4 z-[100]">
     <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-slate-200 p-6 text-center space-y-4">
       <div class="w-14 h-14 mx-auto border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
       <div class="space-y-1">
@@ -511,6 +520,30 @@
       <button id="btn-close-receipt" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition">
         Return to Dashboard / Log Out
       </button>
+    </div>
+  </div>
+
+  <!-- 9. STUDENT GRADES & FEEDBACK MODAL -->
+  <div id="student-grades-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-2xl w-full max-h-[85vh] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="text-sm font-bold text-slate-800">My Submissions & Graded Tasks</h3>
+          <p class="text-xs text-slate-500" id="student-grades-meta">Student Details</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="refresh-student-grades-btn" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded text-xs font-semibold transition flex items-center space-x-1">
+            <svg class="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            <span>Refresh</span>
+          </button>
+          <button id="close-student-grades-modal" class="text-slate-400 hover:text-slate-700 font-bold p-1">✕</button>
+        </div>
+      </div>
+      <!-- Modal Content List -->
+      <div class="p-6 overflow-y-auto space-y-4 flex-1" id="student-grades-list">
+        <!-- Submissions cards injected dynamically -->
+      </div>
     </div>
   </div>
 
@@ -893,11 +926,14 @@
       document.getElementById('admin-workspace').classList.add('hidden');
       document.getElementById('exam-workspace').classList.remove('hidden');
       document.getElementById('gas-settings-btn').classList.add('hidden');
+      document.getElementById('student-grades-btn').classList.remove('hidden');
 
       const userBadge = document.getElementById('user-header-status');
       userBadge.classList.remove('hidden');
       document.getElementById('header-user-display').textContent = `${currentUser.data.name} (${currentUser.data.class})`;
 
+      // Fetch student's prior submissions from sheet
+      fetchStudentSubmissions();
       loadExercise(0);
     }
 
@@ -906,6 +942,7 @@
       document.getElementById('exam-workspace').classList.add('hidden');
       document.getElementById('admin-workspace').classList.remove('hidden');
       document.getElementById('gas-settings-btn').classList.remove('hidden');
+      document.getElementById('student-grades-btn').classList.add('hidden');
 
       const userBadge = document.getElementById('user-header-status');
       userBadge.classList.remove('hidden');
@@ -1252,6 +1289,121 @@
     }
 
     /* ==========================================================================
+       STUDENT SUBMISSIONS & GRADES FUNCTIONS (GLOBAL SCOPE)
+       ========================================================================== */
+    async function fetchStudentSubmissions() {
+      if (!currentUser || currentUser.role !== 'student') return;
+      try {
+        if (gasWebhookUrl) {
+          const resp = await fetch(`${gasWebhookUrl}?action=getAllUsers`);
+          const json = await resp.json();
+          if (json && json.status === "success" && Array.isArray(json.submissions) && json.submissions.length > 1) {
+            submissionRecords = [];
+            for (let i = 1; i < json.submissions.length; i++) {
+              const r = json.submissions[i];
+              let answers = {};
+              try { answers = JSON.parse(r[11]); } catch(e) { answers = {}; }
+              submissionRecords.push({
+                submissionId: r[0],
+                studentId: String(r[1]).trim(),
+                studentName: r[2],
+                class: r[3],
+                exerciseId: r[4],
+                exerciseTitle: r[5],
+                autoScore: r[6],
+                maxScore: r[7],
+                finalScore: r[8],
+                status: r[9],
+                feedback: r[10],
+                answers: answers,
+                timestamp: r[12]
+              });
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Could not refresh student submissions from sheet:", err);
+      }
+      updateStudentSubmissionsBadge();
+    }
+
+    function updateStudentSubmissionsBadge() {
+      if (!currentUser || currentUser.role !== 'student') return;
+      const mySubs = submissionRecords.filter(s => String(s.studentId).toLowerCase() === String(currentUser.data.id).toLowerCase());
+      const badge = document.getElementById('student-grades-count-badge');
+      if (badge) {
+        if (mySubs.length > 0) {
+          badge.textContent = mySubs.length;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+    }
+
+    function renderStudentGradesModal() {
+      if (!currentUser || currentUser.role !== 'student') return;
+      const container = document.getElementById('student-grades-list');
+      container.innerHTML = '';
+      document.getElementById('student-grades-meta').textContent = `${currentUser.data.name} (${currentUser.data.class}) • ID: ${currentUser.data.id}`;
+
+      const mySubs = submissionRecords.filter(s => String(s.studentId).toLowerCase() === String(currentUser.data.id).toLowerCase());
+
+      if (mySubs.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-slate-400 space-y-2">
+            <div class="text-3xl">📝</div>
+            <p class="text-xs font-semibold">No homework submissions found yet.</p>
+            <p class="text-[11px] text-slate-400">Complete an exercise and click "Finish & Submit Task" to submit your work.</p>
+          </div>
+        `;
+        return;
+      }
+
+      mySubs.forEach(sub => {
+        const card = document.createElement('div');
+        card.className = "bg-slate-50 border border-slate-200 rounded-xl p-4.5 space-y-3 shadow-2xs";
+
+        const isGraded = sub.status === "Graded";
+        const statusBadge = isGraded
+          ? '<span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold text-xs">Graded by Teacher</span>'
+          : '<span class="px-2.5 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold text-xs">Pending Teacher Review</span>';
+
+        const finalScoreDisplay = isGraded
+          ? `<span class="text-base font-extrabold text-blue-700 font-mono">${sub.finalScore}</span> <span class="text-slate-500 font-semibold text-xs">/ ${sub.maxScore} marks</span>`
+          : `<span class="text-slate-500 text-xs italic">Review in progress (Auto: ${sub.autoScore}/${sub.maxScore})</span>`;
+
+        const feedbackSection = sub.feedback ? `
+          <div class="p-3 bg-blue-50/80 border border-blue-200/70 rounded-lg text-xs space-y-1">
+            <div class="font-bold text-blue-900 flex items-center space-x-1.5">
+              <svg class="w-3.5 h-3.5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+              <span>Teacher Feedback:</span>
+            </div>
+            <p class="text-slate-700 pl-5 leading-relaxed">${sub.feedback}</p>
+          </div>
+        ` : '';
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
+            <div>
+              <h4 class="font-bold text-slate-800 text-sm">${sub.exerciseTitle}</h4>
+              <p class="text-[11px] text-slate-500">Submitted: ${sub.timestamp || 'Recent'}</p>
+            </div>
+            <div>${statusBadge}</div>
+          </div>
+
+          <div class="flex items-center justify-between py-1 text-xs">
+            <span class="text-slate-600 font-medium">Final Grade:</span>
+            <div>${finalScoreDisplay}</div>
+          </div>
+
+          ${feedbackSection}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* ==========================================================================
        USER EVENT LISTENERS & SETUP
        ========================================================================== */
     document.addEventListener('DOMContentLoaded', () => {
@@ -1360,6 +1512,7 @@
         document.getElementById('admin-workspace').classList.add('hidden');
         document.getElementById('user-header-status').classList.add('hidden');
         document.getElementById('gas-settings-btn').classList.add('hidden');
+        document.getElementById('student-grades-btn').classList.add('hidden');
         document.getElementById('login-modal').classList.remove('hidden');
         document.getElementById('login-student-pass').value = '';
         document.getElementById('login-admin-pass').value = '';
@@ -1481,7 +1634,7 @@
 
       document.getElementById('btn-close-receipt').addEventListener('click', () => {
         document.getElementById('student-result-modal').classList.add('hidden');
-        document.getElementById('btn-logout').click();
+        fetchStudentSubmissions();
       });
 
       // Admin Tab Switching
@@ -1514,6 +1667,10 @@
         saveBtn.disabled = true;
         saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
+        // IMMEDIATELY CLOSE THE GRADING MODAL so it never covers the progress indicator
+        document.getElementById('grading-modal').classList.add('hidden');
+
+        // SHOW THE PROGRESS LOADING OVERLAY (z-[100])
         const loadingModal = document.getElementById('submission-loading-modal');
         document.getElementById('loading-modal-title').textContent = "Saving Grades & Feedback...";
         document.getElementById('loading-modal-desc').textContent = "Syncing final marks and teacher comments with the Google Sheet. Please wait...";
@@ -1527,8 +1684,22 @@
           saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         }
 
-        document.getElementById('grading-modal').classList.add('hidden');
         renderAdminDashboard();
+      });
+
+      // Student Grades & Submissions Modal Event Bindings
+      document.getElementById('student-grades-btn').addEventListener('click', () => {
+        renderStudentGradesModal();
+        document.getElementById('student-grades-modal').classList.remove('hidden');
+      });
+
+      document.getElementById('close-student-grades-modal').addEventListener('click', () => {
+        document.getElementById('student-grades-modal').classList.add('hidden');
+      });
+
+      document.getElementById('refresh-student-grades-btn').addEventListener('click', async () => {
+        await fetchStudentSubmissions();
+        renderStudentGradesModal();
       });
 
       // Admin Add User Modal
