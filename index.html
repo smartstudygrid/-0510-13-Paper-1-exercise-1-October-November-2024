@@ -6,7 +6,7 @@
   <title>Cambridge Reading Practice & Grading Portal</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter -->
+  <!-- Google Fonts: Inter & Merriweather -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
@@ -17,47 +17,20 @@
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
             serif: ['Merriweather', 'serif']
-          },
-          colors: {
-            brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              800: '#1e40af',
-              900: '#1e3a8a'
-            }
           }
         }
       }
     };
   </script>
   <style>
-    /* Custom scrollbars */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 3px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
-    /* Passage highlight class */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     .user-highlight {
       background-color: #fef08a;
       border-radius: 2px;
       padding: 1px 2px;
-    }
-    .custom-ring:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
     }
   </style>
 </head>
@@ -71,7 +44,7 @@
       </div>
       <div>
         <h1 class="text-sm font-bold text-slate-800 leading-tight">Cambridge IGCSE™ Reading Practice</h1>
-        <p class="text-[11px] text-slate-500" id="header-subtitle">English as a Second Language • Digital Portal</p>
+        <p class="text-[11px] text-slate-500" id="header-subtitle">English as a Second Language • Teacher: Amanullah Khan</p>
       </div>
     </div>
 
@@ -140,11 +113,12 @@
             </div>
 
             <div id="student-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
-              Incorrect password. Please verify with your teacher.
+              Incorrect password. Verified through Google Sheet.
             </div>
 
-            <button id="student-login-submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-sm hover:shadow">
-              Launch Reading Practice
+            <button id="student-login-submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-sm hover:shadow flex items-center justify-center space-x-2">
+              <span id="student-login-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+              <span id="student-login-btn-text">Launch Reading Practice</span>
             </button>
           </div>
         </div>
@@ -152,23 +126,28 @@
         <!-- Admin Login Tab Content -->
         <div id="tab-content-admin" class="hidden p-6 space-y-4">
           <div class="text-center space-y-1">
-            <h2 class="text-lg font-bold text-slate-900">Teacher Dashboard</h2>
-            <p class="text-xs text-slate-500">Manage student roster, review homework submissions, and finalize grades.</p>
+            <h2 class="text-lg font-bold text-slate-900">Teacher / Admin Sign In</h2>
+            <p class="text-xs text-slate-500">Access verified via your account and role in the Google Sheet.</p>
           </div>
 
           <div class="space-y-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Admin Master Passcode</label>
-              <input type="password" id="login-admin-pass" placeholder="Enter teacher passcode" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Admin Username or User ID</label>
+              <input type="text" id="login-admin-user" placeholder="e.g. ADM-001 or Teacher Admin" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Admin Password</label>
+              <input type="password" id="login-admin-pass" placeholder="Enter password" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
             </div>
 
             <div id="admin-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
-              Invalid master passcode.
+              Invalid credentials or unauthorized role.
             </div>
 
             <button id="admin-login-submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center space-x-2">
               <span id="admin-login-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-              <span id="admin-login-btn-text">Open Teacher Portal</span>
+              <span id="admin-login-btn-text">Verify & Open Portal</span>
             </button>
           </div>
         </div>
@@ -202,7 +181,7 @@
           </button>
           <button id="admin-add-stu-btn" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            <span>Add New Student</span>
+            <span>Add New User</span>
           </button>
         </div>
       </div>
@@ -240,23 +219,24 @@
           </div>
         </div>
 
-        <!-- Student Roster Section -->
+        <!-- User Accounts & Roster Section -->
         <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
           <div class="px-5 py-3.5 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
             <div class="flex items-center space-x-2">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
-              <h3 class="text-sm font-bold text-slate-800">Enrolled Student Roster</h3>
+              <h3 class="text-sm font-bold text-slate-800">User Accounts & Roster (Google Sheet)</h3>
             </div>
-            <span id="admin-roster-count" class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-semibold">0 students</span>
+            <span id="admin-roster-count" class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-semibold">0 users</span>
           </div>
 
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[10px]">
-                  <th class="py-3 px-4">ID</th>
+                  <th class="py-3 px-4">User ID</th>
                   <th class="py-3 px-4">Full Name</th>
-                  <th class="py-3 px-4">Class</th>
+                  <th class="py-3 px-4">Role</th>
+                  <th class="py-3 px-4">Class / Department</th>
                   <th class="py-3 px-4">Password</th>
                   <th class="py-3 px-4 text-right">Status</th>
                 </tr>
@@ -320,7 +300,7 @@
           <!-- Question Header & Review Bar Container -->
           <div class="p-4 border-b border-slate-200 bg-white shrink-0 space-y-3 shadow-xs">
             
-            <!-- Exact Question Review List Banner as Requested -->
+            <!-- Question Review List Banner -->
             <div id="review-list-banner" class="bg-white rounded-xl border border-slate-200 p-3 shadow-xs">
               <div class="flex items-center justify-between mb-2">
                 <div>
@@ -384,7 +364,7 @@
 
             <!-- Dynamic Input Workspace Area -->
             <div id="q-input-container" class="space-y-3">
-              <!-- Dynamically populated with Single Free-Text, Multiple Sub-details (Q6), or Multiple Choice (A-D) -->
+              <!-- Dynamically populated with Single Free-Text, Multiple Sub-details, or Choice buttons -->
             </div>
           </div>
 
@@ -408,7 +388,7 @@
     </div>
   </main>
 
-  <!-- 4. MODALS & OVERLAYS -->
+    <!-- 4. MODALS & OVERLAYS -->
 
   <!-- A. Teacher Submission Grading & Review Modal -->
   <div id="grading-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
@@ -438,21 +418,24 @@
             <span class="text-xs text-slate-500 font-semibold" id="grade-modal-max-label">/ 8 marks</span>
           </div>
         </div>
-        <div class="flex items-center space-x-2">
-          <input type="text" id="grade-modal-feedback" placeholder="Teacher feedback notes..." class="flex-1 md:w-64 px-3 py-1.5 text-xs border border-slate-300 rounded-lg">
-          <button id="save-final-grade-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition">
-            Save & Finalize
-          </button>
+        <div class="flex-1">
+          <input type="text" id="grade-modal-feedback" placeholder="Teacher comments / feedback..." class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg">
         </div>
+        <button id="save-final-grade-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow-sm">
+          Save & Finalize Marks
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- B. Add Student Modal -->
+  <!-- B. Add User Modal (Student or Admin) -->
   <div id="add-student-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
     <div class="bg-white max-w-md w-full rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4">
       <div class="flex justify-between items-center">
-        <h3 class="text-base font-bold text-slate-900">Enroll New Student</h3>
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Add New User</h3>
+          <p class="text-xs text-slate-500">Creates user in your Google Sheet with specified role.</p>
+        </div>
         <button id="close-add-stu-modal" class="text-slate-400 hover:text-slate-600">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
@@ -460,21 +443,28 @@
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Full Student Name</label>
-          <input type="text" id="new-stu-name" placeholder="e.g. Maria Gonzalez" class="w-full py-2 px-3 border border-slate-300 rounded-lg">
+          <label class="block font-semibold text-slate-700 mb-1">Account Role</label>
+          <select id="new-user-role" class="w-full py-2 px-3 border border-slate-300 rounded-lg bg-slate-50 focus:bg-white font-semibold">
+            <option value="student">Student (Taking practice exam)</option>
+            <option value="admin">Teacher / Admin (Grading & roster access)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Full Name</label>
+          <input type="text" id="new-stu-name" placeholder="e.g. Maria Gonzalez or Mr. Davis" class="w-full py-2 px-3 border border-slate-300 rounded-lg">
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Student ID</label>
-            <input type="text" id="new-stu-id" placeholder="e.g. CIE-105" class="w-full py-2 px-3 border border-slate-300 rounded-lg">
+            <label class="block font-semibold text-slate-700 mb-1">User ID</label>
+            <input type="text" id="new-stu-id" placeholder="e.g. STU-105 or ADM-002" class="w-full py-2 px-3 border border-slate-300 rounded-lg font-mono">
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Class / Group</label>
-            <input type="text" id="new-stu-class" placeholder="e.g. Year 10-A" class="w-full py-2 px-3 border border-slate-300 rounded-lg">
+            <label class="block font-semibold text-slate-700 mb-1">Class / Department</label>
+            <input type="text" id="new-stu-class" placeholder="e.g. Year 10-A or English Dept" class="w-full py-2 px-3 border border-slate-300 rounded-lg">
           </div>
         </div>
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Assigned Login Password</label>
+          <label class="block font-semibold text-slate-700 mb-1">Assigned Password</label>
           <input type="text" id="new-stu-pass" placeholder="e.g. reading2026" class="w-full py-2 px-3 border border-slate-300 rounded-lg font-mono">
         </div>
       </div>
@@ -502,7 +492,7 @@
       <div class="space-y-2 text-xs">
         <label class="block font-semibold text-slate-700">Apps Script Web App URL</label>
         <input type="text" id="gas-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full py-2 px-3 border border-slate-300 rounded-lg text-xs font-mono">
-        <p class="text-[11px] text-slate-500">Submissions, student rosters, and finalized teacher marks sync directly with your Google Sheet.</p>
+        <p class="text-[11px] text-slate-500">Submissions, user roster, and finalized teacher marks sync directly with your Google Sheet.</p>
       </div>
 
       <div class="pt-2 flex justify-between items-center">
@@ -516,7 +506,7 @@
     </div>
   </div>
 
-  <!-- D. SUBMISSION PROGRESS LOADING MODAL (Prevents duplicate clicks) -->
+  <!-- D. SUBMISSION PROGRESS LOADING MODAL -->
   <div id="submission-loading-modal" class="hidden fixed inset-0 bg-slate-900/75 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-slate-200 p-6 text-center space-y-4">
       <div class="w-14 h-14 mx-auto border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
@@ -532,7 +522,7 @@
     </div>
   </div>
 
-  <!-- E. Student Submission Success & Score Receipt Modal -->
+  <!-- E. Student Submission Success Receipt Modal -->
   <div id="student-result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
     <div class="bg-white max-w-lg w-full rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4 my-auto">
       <div class="text-center space-y-2">
@@ -577,7 +567,7 @@
 
   <script>
     /* =========================================================
-       EXERCISE DATA & CAMBRIDGE MARK SCHEMES (Extensible Array)
+       EXERCISE DATA & CAMBRIDGE MARK SCHEMES
     ========================================================= */
     const EXERCISES = [
       {
@@ -605,7 +595,6 @@
             evaluator: (ans) => {
               const text = (ans || "").toLowerCase().trim();
               if (!text) return { score: 0, reason: "No response entered." };
-              // Reject contradictory or irrelevant locations
               if (text.includes("asia") || text.includes("america") || text.includes("central") || text.includes("southeast")) {
                 return { score: 0, reason: "Incorrect: Included contradictory geographical information." };
               }
@@ -765,19 +754,18 @@
       }
     ];
 
-    /* App Current Session State */
-    let currentUser = null; // { role: 'student' | 'admin', data: {...} }
+    let currentUser = null;
     let activeExerciseIndex = 0;
     let currentQuestionIndex = 0;
-    let exerciseResponses = {}; // { [exerciseId]: { [qId]: value } }
-    let exerciseReviews = {};   // { [exerciseId]: { [qId]: boolean } }
+    let exerciseResponses = {};
+    let exerciseReviews = {};
     let isHighlighterActive = false;
     let passageFontSize = 18;
+    let currentInspectedSubmissionId = null;
 
     /* Embedded Google Apps Script Web App URL */
     const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzK1Lqp5zvdBh3KOtSMuTHjGmcCC348Am_92R-L4MPxQa2-KBAYDSLEbslguQhHv2n03g/exec";
 
-    // URL parameter support for instant zero-config sharing: ?gas=YOUR_URL
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('gas')) {
       const paramUrl = urlParams.get('gas').trim();
@@ -786,7 +774,6 @@
       }
     }
 
-    /* Active Webhook URL (checks URL param, then localStorage, then DEFAULT_GAS_URL) */
     let gasWebhookUrl = localStorage.getItem('cambridge_gas_url') || DEFAULT_GAS_URL;
 
     function sanitize(str) {
@@ -796,20 +783,26 @@
       });
     }
 
-    /* Local Data Fallback State (Synchronizes with Sheet if Webhook is available) */
-    let studentRoster = [
-      { id: "STU-101", name: "Ahmed Al-Mansoor", class: "Year 10-A", password: "123" },
-      { id: "STU-102", name: "Fatima Al-Zahra", class: "Year 10-A", password: "123" },
-      { id: "STU-103", name: "David Chen", class: "Year 10-B", password: "123" },
-      { id: "STU-104", name: "Layla Hassan", class: "Year 10-B", password: "123" }
+    let studentDropdownList = [
+      { id: "STU-101", name: "Ahmed Al-Mansoor", class: "Year 10-A" },
+      { id: "STU-102", name: "Fatima Al-Zahra", class: "Year 10-A" },
+      { id: "STU-103", name: "David Chen", class: "Year 10-B" },
+      { id: "STU-104", name: "Layla Hassan", class: "Year 10-B" }
+    ];
+
+    let allUsersList = [
+      { id: "ADM-001", name: "Teacher Admin", role: "admin", class: "Staff", password: "••••••" },
+      { id: "STU-101", name: "Ahmed Al-Mansoor", role: "student", class: "Year 10-A", password: "123" },
+      { id: "STU-102", name: "Fatima Al-Zahra", role: "student", class: "Year 10-A", password: "123" }
     ];
 
     let submissionRecords = [];
 
-    // Load local cache if available
     try {
       const cachedRoster = localStorage.getItem('cambridge_roster_cache');
-      if (cachedRoster) studentRoster = JSON.parse(cachedRoster);
+      if (cachedRoster) studentDropdownList = JSON.parse(cachedRoster);
+      const cachedUsers = localStorage.getItem('cambridge_users_cache');
+      if (cachedUsers) allUsersList = JSON.parse(cachedUsers);
       const cachedSubs = localStorage.getItem('cambridge_subs_cache');
       if (cachedSubs) submissionRecords = JSON.parse(cachedSubs);
     } catch(e) {}
@@ -826,28 +819,39 @@
       }, 3200);
     }
 
-    /* Google Apps Script Network Sync Functions */
-    async function syncDataWithGoogleSheet() {
+    /* Google Apps Script Network Sync */
+    async function syncPublicStudents() {
       if (!gasWebhookUrl) return false;
       try {
-        const response = await fetch(`${gasWebhookUrl}?action=getData`, {
+        const response = await fetch(`${gasWebhookUrl}?action=getPublicStudents`, {
+          method: 'GET',
+          mode: 'cors'
+        });
+        const json = await response.json();
+        if (json.status === "success" && json.students) {
+          studentDropdownList = json.students;
+          localStorage.setItem('cambridge_roster_cache', JSON.stringify(studentDropdownList));
+          return true;
+        }
+      } catch (err) {
+        console.warn("GAS fetch error:", err);
+      }
+      return false;
+    }
+
+    async function syncAdminData() {
+      if (!gasWebhookUrl) return false;
+      try {
+        const response = await fetch(`${gasWebhookUrl}?action=getAllUsers`, {
           method: 'GET',
           mode: 'cors'
         });
         const json = await response.json();
         if (json.status === "success") {
-          // Parse students
-          if (json.students && json.students.length > 1) {
-            const rows = json.students.slice(1);
-            studentRoster = rows.map(r => ({
-              id: String(r[0] || '').trim(),
-              name: String(r[1] || '').trim(),
-              class: String(r[2] || '').trim(),
-              password: String(r[3] || '').trim()
-            })).filter(s => s.name && s.id);
-            localStorage.setItem('cambridge_roster_cache', JSON.stringify(studentRoster));
+          if (json.users) {
+            allUsersList = json.users;
+            localStorage.setItem('cambridge_users_cache', JSON.stringify(allUsersList));
           }
-          // Parse submissions
           if (json.submissions && json.submissions.length > 1) {
             const sRows = json.submissions.slice(1);
             submissionRecords = sRows.map(r => ({
@@ -870,24 +874,56 @@
           return true;
         }
       } catch (err) {
-        console.warn("GAS fetch error:", err);
+        console.warn("GAS admin sync error:", err);
       }
       return false;
     }
 
-    async function sendNewStudentToSheet(stu) {
-      studentRoster.push(stu);
-      localStorage.setItem('cambridge_roster_cache', JSON.stringify(studentRoster));
+    /* Universal Login Check via Google Sheet */
+    async function verifyLoginWithSheet(identifier, password, expectedRole) {
+      if (!gasWebhookUrl) {
+        if (expectedRole === 'admin' && (identifier.toLowerCase() === 'admin' || identifier === 'ADM-001') && password === 'admin123') {
+          return { authorized: true, role: 'admin', user: { id: "ADM-001", name: "Teacher Admin", role: "admin", class: "Staff" } };
+        }
+        return { authorized: false, message: "Offline / Sheet unavailable" };
+      }
+
+      try {
+        const url = `${gasWebhookUrl}?action=loginUser&identifier=${encodeURIComponent(identifier)}&password=${encodeURIComponent(password)}`;
+        const res = await fetch(url, { method: 'GET', mode: 'cors' });
+        const json = await res.json();
+        if (json.status === "success" && json.authorized === true) {
+          if (expectedRole && json.user.role.toLowerCase() !== expectedRole.toLowerCase()) {
+            return { authorized: false, message: `Access denied. Role is not '${expectedRole}'.` };
+          }
+          return { authorized: true, role: json.user.role, user: json.user };
+        } else {
+          return { authorized: false, message: json.message || "Invalid credentials" };
+        }
+      } catch (e) {
+        console.error("Login verification failed:", e);
+        return { authorized: false, message: "Network connection error. Check Sheet Webhook." };
+      }
+    }
+
+    async function sendNewUserToSheet(userObj) {
+      allUsersList.push(userObj);
+      if (userObj.role === 'student') {
+        studentDropdownList.push({ id: userObj.id, name: userObj.name, class: userObj.class });
+      }
+      localStorage.setItem('cambridge_users_cache', JSON.stringify(allUsersList));
+      localStorage.setItem('cambridge_roster_cache', JSON.stringify(studentDropdownList));
+
       if (!gasWebhookUrl) return;
       try {
         await fetch(gasWebhookUrl, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: "addStudent", ...stu })
+          body: JSON.stringify({ action: "addUser", ...userObj })
         });
       } catch (e) {
-        console.error("Failed to append student to sheet", e);
+        console.error("Failed to append user to sheet", e);
       }
     }
 
@@ -928,11 +964,10 @@
       }
     }
 
-    /* Initialize Login Dropdown */
     function populateStudentSelect() {
       const sel = document.getElementById('login-student-select');
       sel.innerHTML = '<option value="">-- Choose your name --</option>';
-      studentRoster.forEach(s => {
+      studentDropdownList.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.id;
         opt.textContent = `${s.name} (${s.class})`;
@@ -940,7 +975,6 @@
       });
     }
 
-    // Switch between Student and Admin tabs on Gateway
     document.getElementById('tab-btn-student').addEventListener('click', () => {
       document.getElementById('tab-btn-student').className = "flex-1 py-3 text-sm font-semibold text-blue-700 border-b-2 border-blue-700 bg-blue-50/50 transition";
       document.getElementById('tab-btn-admin').className = "flex-1 py-3 text-sm font-semibold text-slate-500 hover:text-slate-700 transition";
@@ -962,7 +996,7 @@
         preview.classList.add('hidden');
         return;
       }
-      const stu = studentRoster.find(s => s.id === stuId);
+      const stu = studentDropdownList.find(s => s.id === stuId);
       if (stu) {
         document.getElementById('stu-preview-class').textContent = stu.class;
         document.getElementById('stu-preview-id').textContent = stu.id;
@@ -970,37 +1004,53 @@
       }
     });
 
-    // Student Login Submit Handler
-    document.getElementById('student-login-submit').addEventListener('click', () => {
+    document.getElementById('student-login-submit').addEventListener('click', async () => {
       const stuId = document.getElementById('login-student-select').value;
       const pass = document.getElementById('login-student-pass').value.trim();
       const errBox = document.getElementById('student-login-error');
+      const submitBtn = document.getElementById('student-login-submit');
+      const spinner = document.getElementById('student-login-spinner');
+      const btnText = document.getElementById('student-login-btn-text');
 
       if (!stuId) {
         showToast("Please select your name from the list.", false);
         return;
       }
+      if (!pass) {
+        showToast("Please enter your password.", false);
+        return;
+      }
 
-      const stu = studentRoster.find(s => s.id === stuId);
-      if (stu && stu.password === pass) {
-        errBox.classList.add('hidden');
-        currentUser = { role: 'student', data: stu };
+      errBox.classList.add('hidden');
+      submitBtn.disabled = true;
+      spinner.classList.remove('hidden');
+      btnText.textContent = "Verifying with Google Sheet...";
+
+      const result = await verifyLoginWithSheet(stuId, pass, 'student');
+
+      submitBtn.disabled = false;
+      spinner.classList.add('hidden');
+      btnText.textContent = "Launch Reading Practice";
+
+      if (result.authorized) {
+        currentUser = { role: 'student', data: result.user };
         initStudentExamView();
       } else {
+        errBox.textContent = result.message || "Incorrect password. Please verify with your teacher.";
         errBox.classList.remove('hidden');
       }
     });
 
-    // Admin Login (Validated securely against Google Apps Script backend)
     document.getElementById('admin-login-submit').addEventListener('click', async () => {
+      const username = document.getElementById('login-admin-user').value.trim();
       const pass = document.getElementById('login-admin-pass').value.trim();
       const errBox = document.getElementById('admin-login-error');
       const submitBtn = document.getElementById('admin-login-submit');
       const spinner = document.getElementById('admin-login-spinner');
       const btnText = document.getElementById('admin-login-btn-text');
 
-      if (!pass) {
-        errBox.textContent = "Please enter your teacher passcode.";
+      if (!username || !pass) {
+        errBox.textContent = "Please enter both admin identifier and password.";
         errBox.classList.remove('hidden');
         return;
       }
@@ -1008,37 +1058,23 @@
       errBox.classList.add('hidden');
       submitBtn.disabled = true;
       spinner.classList.remove('hidden');
-      btnText.textContent = "Verifying...";
+      btnText.textContent = "Checking credentials on Sheet...";
 
-      try {
-        if (gasWebhookUrl) {
-          const res = await fetch(`${gasWebhookUrl}?action=verifyAdmin&passcode=${encodeURIComponent(pass)}`, {
-            method: 'GET',
-            mode: 'cors'
-          });
-          const data = await res.json();
-          if (data && data.status === "success" && data.authorized === true) {
-            currentUser = { role: 'admin', data: { name: "Teacher Admin" } };
-            initAdminView();
-            return;
-          }
-        }
-        
-        // Fallback or failed match
-        errBox.textContent = "Invalid passcode. Please check your Google Apps Script password.";
+      const result = await verifyLoginWithSheet(username, pass, 'admin');
+
+      submitBtn.disabled = false;
+      spinner.classList.add('hidden');
+      btnText.textContent = "Verify & Open Portal";
+
+      if (result.authorized) {
+        currentUser = { role: 'admin', data: result.user };
+        initAdminView();
+      } else {
+        errBox.textContent = result.message || "Invalid credentials or unauthorized role in Google Sheet.";
         errBox.classList.remove('hidden');
-      } catch (err) {
-        console.warn("Backend verification error:", err);
-        errBox.textContent = "Could not reach Google Apps Script to verify password. Check your connection.";
-        errBox.classList.remove('hidden');
-      } finally {
-        submitBtn.disabled = false;
-        spinner.classList.add('hidden');
-        btnText.textContent = "Open Teacher Portal";
       }
     });
 
-    // Logout
     document.getElementById('logout-btn').addEventListener('click', () => {
       currentUser = null;
       document.getElementById('view-login').classList.remove('hidden');
@@ -1051,20 +1087,16 @@
       document.getElementById('login-admin-pass').value = '';
     });
 
-    /* Initialize Student Exam View */
     function initStudentExamView() {
       document.getElementById('view-login').classList.add('hidden');
       document.getElementById('view-admin').classList.add('hidden');
       document.getElementById('view-exam').classList.remove('hidden');
 
-      // Update header
       document.getElementById('user-badge').classList.remove('hidden');
       document.getElementById('user-display-name').textContent = currentUser.data.name;
       document.getElementById('logout-btn').classList.remove('hidden');
-      // STRICT REQUIREMENT: Google Sheet sync is NEVER visible to students
       document.getElementById('gas-settings-btn').classList.add('hidden');
 
-      // Populate exercise selector
       const exSel = document.getElementById('exam-exercise-select');
       exSel.innerHTML = '';
       EXERCISES.forEach((ex, idx) => {
@@ -1089,12 +1121,10 @@
       document.getElementById('exercise-badge-marks').textContent = `${ex.totalMarks} marks`;
       document.getElementById('passage-label').textContent = `${ex.number}: ${ex.title}`;
       
-      // Inject passage
       const passageCont = document.getElementById('passage-container');
       passageCont.innerHTML = ex.passage;
       passageCont.style.fontSize = `${passageFontSize}px`;
 
-      // Reset response map for exercise if not defined
       if (!exerciseResponses[ex.id]) {
         exerciseResponses[ex.id] = {};
       }
@@ -1107,7 +1137,6 @@
       renderCurrentQuestion();
     }
 
-    // Font Sizing
     document.getElementById('btn-font-smaller').addEventListener('click', () => {
       if (passageFontSize > 14) {
         passageFontSize -= 2;
@@ -1122,7 +1151,6 @@
       }
     });
 
-    // Highlighter
     const hlBtn = document.getElementById('btn-highlighter');
     hlBtn.addEventListener('click', () => {
       isHighlighterActive = !isHighlighterActive;
@@ -1145,12 +1173,9 @@
       try {
         range.surroundContents(span);
         selection.removeAllRanges();
-      } catch (err) {
-        // Selection crosses multiple blocks
-      }
+      } catch (err) {}
     });
 
-    /* Render Inline Review List Grid (Matching Exact Requested Screenshot) */
     function renderReviewButtons() {
       const ex = EXERCISES[activeExerciseIndex];
       const grid = document.getElementById('review-grid-buttons');
@@ -1161,7 +1186,6 @@
         const isCurrent = idx === currentQuestionIndex;
         const isReviewed = !!exerciseReviews[ex.id][q.id];
         
-        // Determine answered status
         let isAnswered = false;
         const resp = exerciseResponses[ex.id][q.id];
         if (q.type === 'multitext') {
@@ -1172,11 +1196,9 @@
           isAnswered = true;
         }
 
-        // Base styling for rounded box matching the prompt screenshot
         let baseClass = "relative w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm transition-all duration-150 border ";
 
         if (isCurrent) {
-          // Blue outline matching screenshot item 5
           baseClass += "border-blue-600 ring-2 ring-blue-500/20 text-blue-700 bg-white shadow-xs ";
         } else {
           baseClass += "border-slate-200 bg-white hover:bg-slate-50 text-slate-800 ";
@@ -1185,7 +1207,6 @@
         btn.className = baseClass;
         btn.innerHTML = `<span>${idx + 1}</span>`;
 
-        // Indicator dot for answered / review
         if (isReviewed) {
           const dot = document.createElement('span');
           dot.className = "absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-500 border-2 border-white";
@@ -1207,7 +1228,6 @@
       });
     }
 
-    // Collapse / Expand Review List Banner
     document.getElementById('close-review-banner-btn').addEventListener('click', () => {
       document.getElementById('review-list-banner').classList.toggle('hidden');
     });
@@ -1215,7 +1235,6 @@
       document.getElementById('review-list-banner').classList.add('hidden');
     });
 
-    /* Render Current Active Question */
     function renderCurrentQuestion() {
       const ex = EXERCISES[activeExerciseIndex];
       const q = ex.questions[currentQuestionIndex];
@@ -1224,7 +1243,6 @@
       document.getElementById('q-mark-value').textContent = `[${q.marks} mark${q.marks > 1 ? 's' : ''}]`;
       document.getElementById('q-prompt-text').textContent = q.prompt;
 
-      // Update Mark for Review Flag state
       const isReviewed = !!exerciseReviews[ex.id][q.id];
       const flagSvg = document.getElementById('mark-review-flag');
       const flagText = document.getElementById('mark-review-text');
@@ -1236,7 +1254,6 @@
         flagText.textContent = "Mark for Review";
       }
 
-      // Render Dynamic Response Input Fields
       const inputCont = document.getElementById('q-input-container');
       inputCont.innerHTML = '';
 
@@ -1296,7 +1313,6 @@
         });
       }
 
-      // Update Nav Buttons
       document.getElementById('btn-prev-q').disabled = currentQuestionIndex === 0;
       if (currentQuestionIndex === ex.questions.length - 1) {
         document.getElementById('btn-next-q').classList.add('hidden');
@@ -1314,7 +1330,6 @@
       }
     }
 
-    // Toggle Review Flag
     document.getElementById('btn-mark-review').addEventListener('click', () => {
       const ex = EXERCISES[activeExerciseIndex];
       const q = ex.questions[currentQuestionIndex];
@@ -1342,7 +1357,6 @@
       }
     });
 
-    /* Automated Cambridge Scoring Engine */
     function evaluateExerciseAnswers(ex, responses) {
       let earned = 0;
       const details = [];
@@ -1380,23 +1394,18 @@
       return { earned, totalMarks: ex.totalMarks, details };
     }
 
-    /* Submit Task Handler (With Loading Progress Spinner & Double-Click Guard) */
     document.getElementById('btn-submit-task').addEventListener('click', async () => {
       saveCurrentQuestionInput();
       const ex = EXERCISES[activeExerciseIndex];
       const subBtn = document.getElementById('btn-submit-task');
 
-      // Lock button immediately to prevent spamming
       subBtn.disabled = true;
       subBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
-      // Show Submission Loading Progress Modal
       const loadingModal = document.getElementById('submission-loading-modal');
       loadingModal.classList.remove('hidden');
 
-      // Calculate auto score
       const result = evaluateExerciseAnswers(ex, exerciseResponses[ex.id]);
-
       const subId = "SUB-" + Math.floor(100000 + Math.random() * 900000);
       const submissionObj = {
         submissionId: subId,
@@ -1414,15 +1423,12 @@
         timestamp: new Date().toLocaleString()
       };
 
-      // Send to Google Sheet
       await sendSubmissionToSheet(submissionObj);
 
-      // Dismiss loading progress modal
       loadingModal.classList.add('hidden');
       subBtn.disabled = false;
       subBtn.classList.remove('opacity-50', 'cursor-not-allowed');
 
-      // Show receipt modal
       document.getElementById('receipt-student-name').textContent = currentUser.data.name;
       document.getElementById('receipt-exercise-title').textContent = `${ex.number}: ${ex.title}`;
       document.getElementById('receipt-auto-score').textContent = `${result.earned} / ${ex.totalMarks}`;
@@ -1434,24 +1440,20 @@
       document.getElementById('logout-btn').click();
     });
 
-    /* Initialize Admin View & Dashboard */
     function initAdminView() {
       document.getElementById('view-login').classList.add('hidden');
       document.getElementById('view-exam').classList.add('hidden');
       document.getElementById('view-admin').classList.remove('hidden');
 
-      // Header controls
       document.getElementById('user-badge').classList.remove('hidden');
       document.getElementById('user-display-name').textContent = "Teacher Admin";
       document.getElementById('logout-btn').classList.remove('hidden');
-      // Google Sheet sync is strictly for admin
       document.getElementById('gas-settings-btn').classList.remove('hidden');
 
       renderAdminDashboard();
     }
 
     function renderAdminDashboard() {
-      // Submissions table
       const subTbody = document.getElementById('admin-submissions-tbody');
       subTbody.innerHTML = '';
       document.getElementById('admin-submission-count').textContent = `${submissionRecords.length} submissions`;
@@ -1483,7 +1485,6 @@
         });
       }
 
-      // Add click listeners to review buttons
       document.querySelectorAll('.review-sub-btn').forEach(b => {
         b.addEventListener('click', () => {
           const id = b.getAttribute('data-subid');
@@ -1491,71 +1492,69 @@
         });
       });
 
-      // Roster Table
       const rosTbody = document.getElementById('admin-roster-tbody');
       rosTbody.innerHTML = '';
-      document.getElementById('admin-roster-count').textContent = `${studentRoster.length} students`;
+      document.getElementById('admin-roster-count').textContent = `${allUsersList.length} users`;
 
-      studentRoster.forEach(stu => {
+      allUsersList.forEach(u => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition";
+        const isAdmin = (u.role || '').toLowerCase() === 'admin';
         tr.innerHTML = `
-          <td class="py-2.5 px-4 font-mono font-semibold text-slate-700">${sanitize(stu.id)}</td>
-          <td class="py-2.5 px-4 font-semibold text-slate-900">${sanitize(stu.name)}</td>
-          <td class="py-2.5 px-4 text-slate-600">${sanitize(stu.class)}</td>
-          <td class="py-2.5 px-4 font-mono text-slate-500">${sanitize(stu.password)}</td>
+          <td class="py-2.5 px-4 font-mono font-semibold text-slate-700">${sanitize(u.id)}</td>
+          <td class="py-2.5 px-4 font-semibold text-slate-900">${sanitize(u.name)}</td>
+          <td class="py-2.5 px-4">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">${isAdmin ? 'Admin / Teacher' : 'Student'}</span>
+          </td>
+          <td class="py-2.5 px-4 text-slate-600">${sanitize(u.class)}</td>
+          <td class="py-2.5 px-4 font-mono text-slate-500">${sanitize(u.password)}</td>
           <td class="py-2.5 px-4 text-right"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Active</td>
         `;
         rosTbody.appendChild(tr);
       });
     }
 
-    /* Side-by-Side Review Inspector Modal */
-    let currentInspectedSubmissionId = null;
-
-    function openGradingModal(subId) {
-      const sub = submissionRecords.find(s => s.submissionId === subId);
+    function openGradingModal(submissionId) {
+      currentInspectedSubmissionId = submissionId;
+      const sub = submissionRecords.find(s => s.submissionId === submissionId);
       if (!sub) return;
-      currentInspectedSubmissionId = subId;
 
       const ex = EXERCISES.find(e => e.id === sub.exerciseId) || EXERCISES[0];
-      const evalResult = evaluateExerciseAnswers(ex, sub.answers || {});
-
-      document.getElementById('grade-modal-title').textContent = `Submission Review: ${sub.studentName}`;
-      document.getElementById('grade-modal-meta').textContent = `${sub.class} • ${sub.exerciseTitle} • Submitted: ${sub.timestamp}`;
+      document.getElementById('grade-modal-title').textContent = `Review: ${sub.studentName} (${sub.class})`;
+      document.getElementById('grade-modal-meta').textContent = `${sub.exerciseTitle} • Submitted: ${sub.timestamp || 'N/A'}`;
       document.getElementById('grade-modal-final-input').value = sub.finalScore !== undefined ? sub.finalScore : sub.autoScore;
-      document.getElementById('grade-modal-max-label').textContent = `/ ${ex.totalMarks} marks`;
+      document.getElementById('grade-modal-final-input').max = sub.maxScore;
+      document.getElementById('grade-modal-max-label').textContent = `/ ${sub.maxScore} marks`;
       document.getElementById('grade-modal-feedback').value = sub.feedback || "";
 
       const answersCont = document.getElementById('grade-modal-answers');
       answersCont.innerHTML = '';
 
-      evalResult.details.forEach((d, idx) => {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = "p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2";
+      const evalResult = evaluateExerciseAnswers(ex, sub.answers || {});
 
-        let studentResponseHtml = '';
-        if (Array.isArray(d.studentAns)) {
-          studentResponseHtml = `<ol class="list-decimal pl-4 font-medium text-slate-800">${d.studentAns.map(a => `<li>${sanitize(a) || '<span class="italic text-slate-400">Empty</span>'}</li>`).join('')}</ol>`;
-        } else {
-          studentResponseHtml = `<p class="font-medium text-slate-900 bg-white p-2 rounded border border-slate-200">${sanitize(d.studentAns) || '<span class="italic text-slate-400">No response</span>'}</p>`;
+      evalResult.details.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = "p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5 text-xs";
+        
+        let ansDisplay = item.studentAns;
+        if (Array.isArray(ansDisplay)) {
+          ansDisplay = ansDisplay.map((a, i) => `${i+1}. ${a || '(blank)'}`).join(' | ');
+        } else if (!ansDisplay) {
+          ansDisplay = "(No answer provided)";
         }
 
         itemDiv.innerHTML = `
-          <div class="flex justify-between items-start">
-            <span class="font-bold text-slate-900">Question ${idx + 1}: ${sanitize(d.prompt)}</span>
-            <span class="px-2 py-0.5 rounded font-bold ${d.score > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
-              ${d.score} / ${d.maxMarks} mark${d.maxMarks > 1 ? 's' : ''}
-            </span>
+          <div class="flex justify-between font-bold text-slate-800">
+            <span>${sanitize(item.prompt)}</span>
+            <span class="text-blue-600">[${item.score}/${item.maxMarks} marks]</span>
           </div>
-          <div>
-            <span class="text-[11px] font-semibold text-slate-500 uppercase">Student Answer:</span>
-            ${studentResponseHtml}
+          <div class="bg-white p-2.5 rounded-lg border border-slate-200 font-mono text-slate-800">
+            <span class="text-slate-400 font-sans block text-[10px] font-semibold uppercase">Student Answer:</span>
+            ${sanitize(String(ansDisplay))}
           </div>
-          <div class="p-2 bg-blue-50/70 border border-blue-200 rounded-lg text-blue-900">
-            <span class="font-bold">Official Mark Scheme:</span>
-            <div class="whitespace-pre-line font-mono text-[11px] mt-0.5">${sanitize(d.officialAnswer)}</div>
-            <div class="text-[11px] text-blue-700 italic mt-1">${sanitize(d.notes)}</div>
+          <div class="text-[11px] text-slate-600 bg-emerald-50 border border-emerald-200 p-2 rounded-lg">
+            <span class="font-bold text-emerald-800">Mark Scheme:</span> ${sanitize(item.officialAnswer)}
+            <span class="block text-slate-500 mt-0.5 italic">${sanitize(item.notes || "")}</span>
           </div>
         `;
         answersCont.appendChild(itemDiv);
@@ -1580,7 +1579,6 @@
       showToast("Final grade and feedback saved & synced to Google Sheet!");
     });
 
-    // Add Student
     document.getElementById('admin-add-stu-btn').addEventListener('click', () => {
       document.getElementById('add-student-modal').classList.remove('hidden');
     });
@@ -1592,20 +1590,22 @@
     });
 
     document.getElementById('confirm-add-student-btn').addEventListener('click', async () => {
+      const role = document.getElementById('new-user-role').value;
       const name = document.getElementById('new-stu-name').value.trim();
       const id = document.getElementById('new-stu-id').value.trim();
       const cls = document.getElementById('new-stu-class').value.trim();
       const pass = document.getElementById('new-stu-pass').value.trim();
 
       if (!name || !id || !pass) {
-        showToast("Please fill in all student fields", false);
+        showToast("Please fill in all user fields", false);
         return;
       }
 
-      await sendNewStudentToSheet({
+      await sendNewUserToSheet({
         id: id,
         name: name,
-        class: cls || "Class 1",
+        role: role,
+        class: cls || (role === 'admin' ? 'Staff' : 'Year 10'),
         password: pass
       });
 
@@ -1616,20 +1616,19 @@
       document.getElementById('new-stu-pass').value = "";
       populateStudentSelect();
       renderAdminDashboard();
-      showToast("Student added & synced to sheet!");
+      showToast(`${role === 'admin' ? 'Admin' : 'Student'} added & synced to sheet!`);
     });
 
-    // Admin Sync Button
     document.getElementById('admin-refresh-btn').addEventListener('click', async () => {
       showToast("Syncing with Google Sheet...");
-      const success = await syncDataWithGoogleSheet();
+      await syncPublicStudents();
+      const success = await syncAdminData();
       populateStudentSelect();
       renderAdminDashboard();
       if (success) showToast("Synced successfully with Google Sheet!");
-      else showToast("Sync finished (using current roster)");
+      else showToast("Sync finished");
     });
 
-    // Google Apps Script Settings Modal
     document.getElementById('gas-settings-btn').addEventListener('click', openGasSettingsModal);
     document.getElementById('admin-gas-settings-btn').addEventListener('click', openGasSettingsModal);
     document.getElementById('close-gas-modal').addEventListener('click', () => {
@@ -1647,15 +1646,16 @@
       localStorage.setItem('cambridge_gas_url', newUrl);
       document.getElementById('gas-settings-modal').classList.add('hidden');
       showToast("Webhook URL saved!");
-      await syncDataWithGoogleSheet();
+      await syncPublicStudents();
+      await syncAdminData();
       populateStudentSelect();
       renderAdminDashboard();
     });
 
-    // Copy Apps Script Template
     document.getElementById('copy-gas-code-btn').addEventListener('click', () => {
       const scriptCode = `function doGet(e) { return handleRequest(e); }
 function doPost(e) { return handleRequest(e); }
+
 function handleRequest(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var params = (e && e.parameter) ? e.parameter : {};
@@ -1664,29 +1664,101 @@ function handleRequest(e) {
     try { postData = JSON.parse(e.postData.contents); } catch(err) { postData = {}; }
   }
   var action = params.action || postData.action;
-  
-  var stuSheet = ss.getSheetByName("Students");
-  if (!stuSheet) {
-    stuSheet = ss.insertSheet("Students");
-    stuSheet.appendRow(["Student ID", "Full Name", "Class", "Password", "Date Added"]);
+
+  // 1. Ensure 'Users' and 'Submissions' sheets exist
+  var usersSheet = ss.getSheetByName("Users") || ss.getSheetByName("Students");
+  if (!usersSheet) {
+    usersSheet = ss.insertSheet("Users");
+    usersSheet.appendRow(["User ID", "Full Name", "Role", "Class", "Password", "Date Added"]);
+    usersSheet.appendRow(["ADM-001", "Teacher Admin", "admin", "Staff", "admin123", new Date()]);
+    usersSheet.appendRow(["STU-101", "Ahmed Al-Mansoor", "student", "Year 10-A", "123", new Date()]);
+    usersSheet.appendRow(["STU-102", "Fatima Al-Zahra", "student", "Year 10-A", "123", new Date()]);
+  } else if (usersSheet.getName() === "Students") {
+    usersSheet.setName("Users");
   }
+
   var subSheet = ss.getSheetByName("Submissions");
   if (!subSheet) {
     subSheet = ss.insertSheet("Submissions");
     subSheet.appendRow(["Submission ID", "Student ID", "Student Name", "Class", "Exercise ID", "Exercise Title", "Auto Score", "Max Score", "Final Score", "Status", "Teacher Feedback", "Answers JSON", "Timestamp"]);
   }
-  
-  if (action === "getData") {
+
+  // 2. Action: getPublicStudents (Returns ONLY name, id, class for student dropdown - NO passwords exposed!)
+  if (action === "getPublicStudents") {
+    var uData = usersSheet.getDataRange().getValues();
+    var list = [];
+    for (var i = 1; i < uData.length; i++) {
+      var r = uData[i];
+      var role = String(r[2] || "").toLowerCase().trim();
+      if (role === "student" && (r[0] || r[1])) {
+        list.push({ id: String(r[0]).trim(), name: String(r[1]).trim(), class: String(r[3] || "").trim() });
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", students: list }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // 3. Action: loginUser (Verifies password and confirms role against Sheet)
+  if (action === "loginUser") {
+    var idOrName = String(postData.identifier || params.identifier || "").trim().toLowerCase();
+    var pass = String(postData.password || params.password || "").trim();
+    var uData = usersSheet.getDataRange().getValues();
+
+    for (var i = 1; i < uData.length; i++) {
+      var row = uData[i];
+      var uId = String(row[0] || "").trim().toLowerCase();
+      var uName = String(row[1] || "").trim().toLowerCase();
+      var uRole = String(row[2] || "student").trim().toLowerCase();
+      var uClass = String(row[3] || "").trim();
+      var uPass = String(row[4] || "").trim();
+
+      if ((uId === idOrName || uName === idOrName) && uPass === pass) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "success",
+          authorized: true,
+          user: { id: row[0], name: row[1], role: uRole, class: uClass }
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      authorized: false,
+      message: "Incorrect username/ID or password."
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // 4. Action: getAllUsers (Admin portal: lists all users & submissions)
+  if (action === "getAllUsers") {
+    var uData = usersSheet.getDataRange().getValues();
+    var users = [];
+    for (var i = 1; i < uData.length; i++) {
+      var r = uData[i];
+      if (r[0] || r[1]) {
+        users.push({
+          id: String(r[0]).trim(),
+          name: String(r[1]).trim(),
+          role: String(r[2] || "student").trim(),
+          class: String(r[3] || "").trim(),
+          password: String(r[4] || "").trim(),
+          dateAdded: r[5]
+        });
+      }
+    }
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
-      students: stuSheet.getDataRange().getValues(),
+      users: users,
       submissions: subSheet.getDataRange().getValues()
     })).setMimeType(ContentService.MimeType.JSON);
   }
-  if (action === "addStudent") {
-    stuSheet.appendRow([postData.id, postData.name, postData.class, String(postData.password), new Date()]);
-    return ContentService.createTextOutput(JSON.stringify({status: "success"})).setMimeType(ContentService.MimeType.JSON);
+
+  // 5. Action: addUser
+  if (action === "addUser") {
+    var role = postData.role || "student";
+    usersSheet.appendRow([postData.id, postData.name, role, postData.class, String(postData.password), new Date()]);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
   }
+
+  // 6. Action: submitHomework
   if (action === "submitHomework") {
     subSheet.appendRow([
       postData.submissionId, postData.studentId, postData.studentName, postData.class,
@@ -1695,8 +1767,10 @@ function handleRequest(e) {
       postData.status || "Pending Review", postData.feedback || "",
       JSON.stringify(postData.answers), new Date()
     ]);
-    return ContentService.createTextOutput(JSON.stringify({status: "success"})).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
   }
+
+  // 7. Action: finalizeGrade
   if (action === "finalizeGrade") {
     var data = subSheet.getDataRange().getValues();
     for (var i = 1; i < data.length; i++) {
@@ -1707,9 +1781,10 @@ function handleRequest(e) {
         break;
       }
     }
-    return ContentService.createTextOutput(JSON.stringify({status: "success"})).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
   }
-  return ContentService.createTextOutput(JSON.stringify({status: "ok"})).setMimeType(ContentService.MimeType.JSON);
+
+  return ContentService.createTextOutput(JSON.stringify({ status: "ok" })).setMimeType(ContentService.MimeType.JSON);
 }`;
       const textArea = document.createElement("textarea");
       textArea.value = scriptCode;
@@ -1720,7 +1795,6 @@ function handleRequest(e) {
       showToast("Google Apps Script code copied to clipboard!");
     });
 
-    // Export for GitHub Pages
     document.getElementById('admin-export-github-btn').addEventListener('click', () => {
       const targetUrl = gasWebhookUrl || DEFAULT_GAS_URL;
       let htmlContent = document.documentElement.outerHTML;
@@ -1739,11 +1813,10 @@ function handleRequest(e) {
       showToast("Exported index.html ready for GitHub!");
     });
 
-    // Initial page boot
     window.addEventListener('DOMContentLoaded', async () => {
       populateStudentSelect();
       if (gasWebhookUrl) {
-        await syncDataWithGoogleSheet();
+        await syncPublicStudents();
         populateStudentSelect();
       }
     });
