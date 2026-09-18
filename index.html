@@ -4,8 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cambridge IGCSE™ Reading Practice Portal</title>
+  <!-- Fonts: Instrument Serif (display/reading), Inter (UI), JetBrains Mono (ids/code) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+          },
+          colors: {
+            navy: {
+              50: '#eef1f7', 100: '#dce2ef', 200: '#b3c0da', 300: '#8a9ec4',
+              400: '#5b6f9c', 500: '#3a4f78', 600: '#273a5c', 700: '#1c2c47',
+              800: '#141f34', 900: '#0d1526', 950: '#080d18',
+            },
+            gold: {
+              50: '#fdf9ee', 100: '#faf0d0', 200: '#f2dd9c', 300: '#e8c569',
+              400: '#dcae42', 500: '#c9972b', 600: '#a97a21', 700: '#8a611d',
+              800: '#6f4e1d', 900: '#5c411c',
+            },
+            cream: {
+              50: '#fdfcf8', 100: '#faf7ef', 200: '#f4eedd', 300: '#ece0c3',
+            },
+          },
+        },
+      },
+    };
+  </script>
   <style>
     /* Custom scrollbars and transitions */
     ::-webkit-scrollbar {
@@ -13,57 +45,58 @@
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #f1f5f9;
+      background: #f4eedd;
     }
     ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
+      background: #c9972b;
       border-radius: 4px;
+      opacity: 0.6;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
+      background: #a97a21;
     }
     .user-highlight {
-      background-color: #fef08a;
+      background-color: #f2dd9c;
       border-radius: 2px;
       padding: 1px 2px;
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden">
+<body class="bg-cream-100 text-navy-800 font-sans antialiased h-screen flex flex-col overflow-hidden">
 
   <!-- Top Navigation Header -->
-  <header class="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center justify-between shadow-xs shrink-0 z-20">
+  <header class="bg-white border-b border-navy-200 px-4 py-2.5 flex items-center justify-between shadow-xs shrink-0 z-20">
     <div class="flex items-center space-x-3">
-      <div class="w-8 h-8 rounded-lg bg-blue-700 text-white flex items-center justify-center font-bold text-sm tracking-wider shadow-sm">
+      <div class="w-8 h-8 rounded-lg bg-navy-800 text-gold-300 flex items-center justify-center font-bold text-sm tracking-wider shadow-sm ring-1 ring-gold-500/40">
         CIE
       </div>
       <div>
-        <h1 class="text-sm font-bold text-slate-800 leading-tight">Cambridge IGCSE™ Reading Practice</h1>
-        <p class="text-[11px] text-slate-500" id="header-subtitle">English as a Second Language • Digital Portal</p>
+        <h1 class="text-sm font-bold text-navy-900 leading-tight font-serif text-base">Cambridge IGCSE™ Reading Practice</h1>
+        <p class="text-[11px] text-navy-500" id="header-subtitle">English as a Second Language • Digital Portal</p>
       </div>
     </div>
 
     <!-- Active User Status & Header Actions -->
     <div class="flex items-center space-x-2.5">
       <!-- Creator Credit Badge -->
-      <div class="flex items-center space-x-1.5 px-3 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-full text-xs font-semibold text-slate-700 shadow-xs">
-        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="flex items-center space-x-1.5 px-3 py-1 bg-gradient-to-r from-navy-50 to-gold-50 border border-navy-200 rounded-full text-xs font-semibold text-navy-700 shadow-xs">
+        <svg class="w-3.5 h-3.5 text-navy-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
         </svg>
-        <span>Created by: <span class="text-blue-800 font-bold tracking-tight">Amanullah Khan</span></span>
+        <span>Created by: <span class="text-navy-800 font-bold tracking-tight">Amanullah Khan</span></span>
       </div>
 
       <!-- Student Only My Grades Button -->
-      <button id="student-grades-btn" class="hidden px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-md border border-blue-200 transition flex items-center space-x-1.5 shadow-2xs" title="View Submitted Tasks & Feedback">
-        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button id="student-grades-btn" class="hidden px-2.5 py-1.5 bg-navy-50 hover:bg-navy-100 text-navy-700 text-xs font-semibold rounded-md border border-navy-200 transition flex items-center space-x-1.5 shadow-2xs" title="View Submitted Tasks & Feedback">
+        <svg class="w-3.5 h-3.5 text-navy-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
         </svg>
         <span>My Grades</span>
-        <span id="student-grades-count-badge" class="hidden px-1.5 py-0.2 bg-blue-600 text-white rounded-full text-[10px] font-bold">0</span>
+        <span id="student-grades-count-badge" class="hidden px-1.5 py-0.2 bg-navy-600 text-white rounded-full text-[10px] font-bold">0</span>
       </button>
 
       <!-- Admin Only Sheet Settings Button -->
-      <button id="gas-settings-btn" class="hidden px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-md border border-slate-300 transition flex items-center space-x-1.5" title="Google Sheet Webhook Settings">
+      <button id="gas-settings-btn" class="hidden px-2.5 py-1.5 bg-navy-100 hover:bg-navy-200 text-navy-700 text-xs font-medium rounded-md border border-navy-300 transition flex items-center space-x-1.5" title="Google Sheet Webhook Settings">
         <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
         </svg>
@@ -71,24 +104,24 @@
       </button>
 
       <!-- Active User Badge & Logout Button -->
-      <div id="user-header-status" class="hidden flex items-center space-x-2 bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1 text-xs">
+      <div id="user-header-status" class="hidden flex items-center space-x-2 bg-navy-100 border border-navy-200 rounded-lg px-2.5 py-1 text-xs">
         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-        <span id="header-user-display" class="font-medium text-slate-700">Student</span>
-        <button id="btn-logout" class="text-slate-400 hover:text-red-600 font-bold ml-1 transition" title="Log Out">✕</button>
+        <span id="header-user-display" class="font-medium text-navy-700">Student</span>
+        <button id="btn-logout" class="text-navy-400 hover:text-red-600 font-bold ml-1 transition" title="Log Out">✕</button>
       </div>
     </div>
   </header>
 
   <!-- 1. LOGIN GATEWAY MODAL -->
-  <div id="login-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
+  <div id="login-modal" class="fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-navy-200 overflow-hidden flex flex-col">
       <!-- Modal Tabs -->
-      <div class="flex border-b border-slate-200 bg-slate-50">
-        <button id="tab-btn-student" class="flex-1 py-3.5 text-xs font-bold text-blue-700 border-b-2 border-blue-600 bg-white transition flex items-center justify-center space-x-1.5">
+      <div class="flex border-b border-navy-200 bg-navy-50">
+        <button id="tab-btn-student" class="flex-1 py-3.5 text-xs font-bold text-navy-700 border-b-2 border-gold-500 bg-white transition flex items-center justify-center space-x-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
           <span>Student Sign In</span>
         </button>
-        <button id="tab-btn-admin" class="flex-1 py-3.5 text-xs font-bold text-slate-500 hover:text-slate-700 transition flex items-center justify-center space-x-1.5">
+        <button id="tab-btn-admin" class="flex-1 py-3.5 text-xs font-bold text-navy-500 hover:text-navy-700 transition flex items-center justify-center space-x-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           <span>Teacher / Admin</span>
         </button>
@@ -97,33 +130,33 @@
       <!-- Student Sign In Form -->
       <div id="tab-content-student" class="p-6 space-y-4">
         <div class="text-center space-y-1">
-          <h2 class="text-lg font-bold text-slate-900">Student Sign In</h2>
-          <p class="text-xs text-slate-500">Select your name from the class roster and enter your password.</p>
+          <h2 class="text-lg font-bold text-navy-900">Student Sign In</h2>
+          <p class="text-xs text-navy-500">Select your name from the class roster and enter your password.</p>
         </div>
 
         <div class="space-y-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Select Your Name</label>
-            <select id="login-student-select" class="w-full text-xs py-2.5 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+            <label class="block text-xs font-semibold text-navy-700 mb-1">Select Your Name</label>
+            <select id="login-student-select" class="w-full text-xs py-2.5 px-3 bg-navy-50 border border-navy-300 rounded-lg focus:bg-white focus:border-navy-600 focus:outline-none">
               <option value="">-- Choose your name --</option>
             </select>
           </div>
 
-          <div id="student-class-display-box" class="hidden p-2.5 bg-blue-50/70 border border-blue-100 rounded-lg text-xs flex justify-between items-center text-blue-900">
+          <div id="student-class-display-box" class="hidden p-2.5 bg-navy-50/70 border border-navy-100 rounded-lg text-xs flex justify-between items-center text-navy-900">
             <span class="font-medium">Class: <strong id="student-class-label"></strong></span>
-            <span class="text-slate-500 text-[11px]">ID: <span id="student-id-label" class="font-mono"></span></span>
+            <span class="text-navy-500 text-[11px]">ID: <span id="student-id-label" class="font-mono"></span></span>
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
-            <input type="password" id="login-student-pass" placeholder="Enter assigned password" class="w-full text-xs py-2.5 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+            <label class="block text-xs font-semibold text-navy-700 mb-1">Password</label>
+            <input type="password" id="login-student-pass" placeholder="Enter assigned password" class="w-full text-xs py-2.5 px-3 bg-navy-50 border border-navy-300 rounded-lg focus:bg-white focus:border-navy-600 focus:outline-none">
           </div>
 
           <div id="student-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
             Incorrect password or student ID not found.
           </div>
 
-          <button id="student-login-submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center space-x-2">
+          <button id="student-login-submit" class="w-full py-2.5 bg-navy-600 hover:bg-navy-700 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center space-x-2">
             <span id="student-login-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             <span id="student-login-btn-text">Begin Practice Task</span>
           </button>
@@ -133,34 +166,34 @@
       <!-- Admin Sign In Form -->
       <div id="tab-content-admin" class="hidden p-6 space-y-4">
         <div class="text-center space-y-1">
-          <h2 class="text-lg font-bold text-slate-900">Teacher / Admin Sign In</h2>
-          <p class="text-xs text-slate-500">Access verified via your account and role in the Google Sheet.</p>
+          <h2 class="text-lg font-bold text-navy-900">Teacher / Admin Sign In</h2>
+          <p class="text-xs text-navy-500">Access verified via your account and role in the Google Sheet.</p>
         </div>
 
         <div class="space-y-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Admin Username or User ID</label>
-            <input type="text" id="login-admin-user" placeholder="e.g. ADM-001 or Teacher Admin" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+            <label class="block text-xs font-semibold text-navy-700 mb-1">Admin Username or User ID</label>
+            <input type="text" id="login-admin-user" placeholder="e.g. ADM-001 or Teacher Admin" class="w-full text-xs py-2 px-3 bg-navy-50 border border-navy-300 rounded-lg focus:bg-white focus:border-navy-600 focus:outline-none">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Admin Password</label>
-            <input type="password" id="login-admin-pass" placeholder="Enter password" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+            <label class="block text-xs font-semibold text-navy-700 mb-1">Admin Password</label>
+            <input type="password" id="login-admin-pass" placeholder="Enter password" class="w-full text-xs py-2 px-3 bg-navy-50 border border-navy-300 rounded-lg focus:bg-white focus:border-navy-600 focus:outline-none">
           </div>
 
           <div id="admin-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
             Invalid credentials or unauthorized role.
           </div>
 
-          <button id="admin-login-submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center space-x-2">
+          <button id="admin-login-submit" class="w-full py-2.5 bg-navy-900 hover:bg-navy-800 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center space-x-2">
             <span id="admin-login-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             <span id="admin-login-btn-text">Verify & Open Portal</span>
           </button>
         </div>
       </div>
 
-      <div class="p-3 bg-slate-50 border-t border-slate-200 text-center text-[12px] text-slate-600">
-        Cambridge IGCSE English Portal • <span class="font-semibold text-slate-800">Created by Amanullah Khan</span>
+      <div class="p-3 bg-navy-50 border-t border-navy-200 text-center text-[12px] text-navy-600">
+        Cambridge IGCSE English Portal • <span class="font-semibold text-navy-800">Created by Amanullah Khan</span>
       </div>
     </div>
   </div>
@@ -168,10 +201,10 @@
   <!-- 2. STUDENT EXAM WORKSPACE (DUAL-PANE) -->
   <main id="exam-workspace" class="hidden flex-1 flex flex-col overflow-hidden">
     <!-- Sub-header Bar: Exercise selector & Tools -->
-    <div class="bg-white border-b border-slate-200 px-6 py-2 flex items-center justify-between shrink-0 text-xs">
+    <div class="bg-white border-b border-navy-200 px-6 py-2 flex items-center justify-between shrink-0 text-xs">
       <div class="flex items-center space-x-3">
-        <label class="font-semibold text-slate-600">Active Task:</label>
-        <select id="exercise-switcher" class="bg-slate-50 border border-slate-300 rounded px-2.5 py-1 text-xs font-medium text-slate-800 focus:outline-none focus:border-blue-500">
+        <label class="font-semibold text-navy-600">Active Task:</label>
+        <select id="exercise-switcher" class="bg-navy-50 border border-navy-300 rounded px-2.5 py-1 text-xs font-medium text-navy-800 focus:outline-none focus:border-navy-500">
           <option value="ex1">Exercise 1: Fruit bats (Reading Comprehension)</option>
           <option value="ex2">Exercise 2: Pocket Money (Multiple Matching)</option>
         </select>
@@ -179,10 +212,10 @@
 
       <!-- Passage Tools -->
       <div class="flex items-center space-x-2">
-        <button id="btn-font-dec" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded border border-slate-300 font-bold text-slate-700" title="Decrease Font">A-</button>
-        <button id="btn-font-inc" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded border border-slate-300 font-bold text-slate-700" title="Increase Font">A+</button>
-        <button id="btn-highlight-toggle" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 rounded font-medium transition flex items-center space-x-1">
-          <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+        <button id="btn-font-dec" class="px-2 py-1 bg-navy-100 hover:bg-navy-200 rounded border border-navy-300 font-bold text-navy-700" title="Decrease Font">A-</button>
+        <button id="btn-font-inc" class="px-2 py-1 bg-navy-100 hover:bg-navy-200 rounded border border-navy-300 font-bold text-navy-700" title="Increase Font">A+</button>
+        <button id="btn-highlight-toggle" class="px-2.5 py-1 bg-gold-50 hover:bg-gold-100 border border-gold-200 text-gold-900 rounded font-medium transition flex items-center space-x-1">
+          <span class="w-2.5 h-2.5 rounded-full bg-gold-400"></span>
           <span>Highlight Text</span>
         </button>
       </div>
@@ -191,30 +224,30 @@
     <!-- Dual Pane Content Area -->
     <div class="flex-1 flex overflow-hidden">
       <!-- LEFT PANE: Reading Passage -->
-      <div class="w-1/2 border-r border-slate-200 bg-white flex flex-col overflow-hidden">
-        <div class="px-6 py-2.5 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between shrink-0">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-600" id="passage-label">Reading Text</span>
-          <span class="text-[11px] text-slate-500 font-medium">Select and copy text freely to paste answers</span>
+      <div class="w-1/2 border-r border-navy-200 bg-white flex flex-col overflow-hidden">
+        <div class="px-6 py-2.5 border-b border-navy-100 bg-navy-50/70 flex items-center justify-between shrink-0">
+          <span class="text-xs font-bold uppercase tracking-wider text-navy-600" id="passage-label">Reading Text</span>
+          <span class="text-[11px] text-navy-500 font-medium">Select and copy text freely to paste answers</span>
         </div>
 
         <!-- Passage Text Content -->
-        <div id="passage-container" class="flex-1 p-6 md:p-8 overflow-y-auto font-serif text-slate-800 leading-relaxed space-y-4 text-justify select-text cursor-text" style="font-size: 18px;">
+        <div id="passage-container" class="flex-1 p-6 md:p-8 overflow-y-auto font-serif text-navy-800 leading-relaxed space-y-4 text-justify select-text cursor-text" style="font-size: 18px;">
           <!-- Injected dynamically based on active exercise -->
         </div>
       </div>
 
       <!-- RIGHT PANE: Question Area & Navigation -->
-      <div class="w-1/2 bg-slate-50 flex flex-col overflow-hidden">
+      <div class="w-1/2 bg-navy-50 flex flex-col overflow-hidden">
         
         <!-- Question Review List (Direct Navigation matching user design) -->
-        <div class="p-4 bg-white border-b border-slate-200 shrink-0">
-          <div class="bg-white border border-slate-200/90 rounded-xl p-3.5 shadow-2xs space-y-3">
+        <div class="p-4 bg-white border-b border-navy-200 shrink-0">
+          <div class="bg-white border border-navy-200/90 rounded-xl p-3.5 shadow-2xs space-y-3">
             <div class="flex items-center justify-between">
               <div>
-                <h3 class="text-xs font-bold text-slate-800 tracking-tight">Question Review List</h3>
-                <p class="text-[10px] text-slate-500">Jump directly to any question or mark review</p>
+                <h3 class="text-xs font-bold text-navy-800 tracking-tight">Question Review List</h3>
+                <p class="text-[10px] text-navy-500">Jump directly to any question or mark review</p>
               </div>
-              <button id="review-list-toggle" class="text-slate-400 hover:text-slate-700 text-xs p-1" title="Toggle Compact View">✕</button>
+              <button id="review-list-toggle" class="text-navy-400 hover:text-navy-700 text-xs p-1" title="Toggle Compact View">✕</button>
             </div>
 
             <!-- Numbered Button Bar -->
@@ -223,22 +256,22 @@
             </div>
 
             <!-- Legend & Done Button -->
-            <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px] text-slate-500">
+            <div class="flex items-center justify-between pt-1 border-t border-navy-100 text-[11px] text-navy-500">
               <div class="flex items-center space-x-3">
                 <span class="flex items-center space-x-1">
-                  <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-navy-600 inline-block"></span>
                   <span>Answered</span>
                 </span>
                 <span class="flex items-center space-x-1">
-                  <span class="w-2.5 h-2.5 rounded-full border border-slate-300 bg-white inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full border border-navy-300 bg-white inline-block"></span>
                   <span>Unanswered</span>
                 </span>
                 <span class="flex items-center space-x-1">
-                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-gold-500 inline-block"></span>
                   <span>Review</span>
                 </span>
               </div>
-              <button id="btn-review-done" class="px-2.5 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded text-[11px] transition">Done</button>
+              <button id="btn-review-done" class="px-2.5 py-0.5 bg-navy-100 hover:bg-navy-200 text-navy-700 font-semibold rounded text-[11px] transition">Done</button>
             </div>
           </div>
         </div>
@@ -248,18 +281,18 @@
           <div class="space-y-4">
             <!-- Question Meta Header -->
             <div class="flex items-center justify-between">
-              <span id="question-index-label" class="text-xs font-bold uppercase tracking-wider text-slate-500">Question 1 of 6</span>
+              <span id="question-index-label" class="text-xs font-bold uppercase tracking-wider text-navy-500">Question 1 of 6</span>
               <div class="flex items-center space-x-2">
-                <span id="question-marks-badge" class="px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-bold text-xs">[1 mark]</span>
-                <label class="flex items-center space-x-1.5 text-xs text-amber-700 font-medium cursor-pointer">
-                  <input type="checkbox" id="mark-review-checkbox" class="rounded border-amber-300 text-amber-600 focus:ring-amber-500">
+                <span id="question-marks-badge" class="px-2.5 py-0.5 bg-navy-50 text-navy-700 border border-navy-200 rounded-full font-bold text-xs">[1 mark]</span>
+                <label class="flex items-center space-x-1.5 text-xs text-gold-700 font-medium cursor-pointer">
+                  <input type="checkbox" id="mark-review-checkbox" class="rounded border-gold-300 text-gold-600 focus:ring-gold-500">
                   <span>Mark for review</span>
                 </label>
               </div>
             </div>
 
             <!-- Question Prompt Title -->
-            <div id="question-prompt" class="text-base font-bold text-slate-900 leading-snug">
+            <div id="question-prompt" class="text-base font-bold text-navy-900 leading-snug">
               <!-- Prompt inserted dynamically -->
             </div>
 
@@ -270,13 +303,13 @@
           </div>
 
           <!-- Question Footer Navigation Buttons -->
-          <div class="pt-6 border-t border-slate-200 flex items-center justify-between shrink-0">
-            <button id="btn-prev-question" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs">
+          <div class="pt-6 border-t border-navy-200 flex items-center justify-between shrink-0">
+            <button id="btn-prev-question" class="px-4 py-2 bg-white border border-navy-300 rounded-lg text-xs font-semibold text-navy-700 hover:bg-navy-50 transition shadow-2xs">
               ← Previous
             </button>
             
             <div class="flex items-center space-x-2">
-              <button id="btn-next-question" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-xs">
+              <button id="btn-next-question" class="px-5 py-2 bg-navy-600 hover:bg-navy-700 text-white rounded-lg text-xs font-bold transition shadow-xs">
                 Next →
               </button>
               <button id="btn-submit-task" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-xs">
@@ -290,48 +323,48 @@
   </main>
 
   <!-- 3. TEACHER / ADMIN DASHBOARD -->
-  <main id="admin-workspace" class="hidden flex-1 p-6 overflow-y-auto bg-slate-50">
+  <main id="admin-workspace" class="hidden flex-1 p-6 overflow-y-auto bg-navy-50">
     <div class="max-w-6xl mx-auto space-y-6">
       <!-- Admin Top Bar -->
-      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+      <div class="bg-white p-5 rounded-xl border border-navy-200 shadow-2xs flex items-center justify-between">
         <div>
-          <h2 class="text-base font-bold text-slate-800">Teacher Management Console</h2>
-          <p class="text-xs text-slate-500">Manage student roster, verify logins, and review graded homework submissions.</p>
+          <h2 class="text-base font-bold text-navy-800">Teacher Management Console</h2>
+          <p class="text-xs text-navy-500">Manage student roster, verify logins, and review graded homework submissions.</p>
         </div>
         <div class="flex items-center space-x-2">
           <button id="admin-sync-btn" class="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 text-xs font-semibold rounded-lg transition flex items-center space-x-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
             <span>Sync Sheet</span>
           </button>
-          <button id="admin-add-user-btn" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition shadow-2xs flex items-center space-x-1.5">
+          <button id="admin-add-user-btn" class="px-3 py-2 bg-navy-600 hover:bg-navy-700 text-white text-xs font-bold rounded-lg transition shadow-2xs flex items-center space-x-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
             <span>Add User</span>
           </button>
-          <button id="admin-gas-btn" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-semibold rounded-lg transition">
+          <button id="admin-gas-btn" class="px-3 py-2 bg-navy-100 hover:bg-navy-200 text-navy-700 border border-navy-300 text-xs font-semibold rounded-lg transition">
             Sheet Setup
           </button>
         </div>
       </div>
 
       <!-- Admin Tabs -->
-      <div class="border-b border-slate-200 flex space-x-4">
-        <button id="admin-tab-subs" class="py-2.5 px-3 text-xs font-bold text-blue-700 border-b-2 border-blue-600 transition">
+      <div class="border-b border-navy-200 flex space-x-4">
+        <button id="admin-tab-subs" class="py-2.5 px-3 text-xs font-bold text-navy-700 border-b-2 border-gold-500 transition">
           Submissions & Grading Review
         </button>
-        <button id="admin-tab-users" class="py-2.5 px-3 text-xs font-bold text-slate-500 hover:text-slate-700 transition">
+        <button id="admin-tab-users" class="py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition">
           User & Student Roster
         </button>
       </div>
 
       <!-- Submissions Review Panel -->
-      <div id="admin-panel-subs" class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Homework Submissions</span>
-          <span id="sub-count-badge" class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0 records</span>
+      <div id="admin-panel-subs" class="bg-white rounded-xl border border-navy-200 shadow-2xs overflow-hidden">
+        <div class="px-5 py-3 border-b border-navy-100 flex items-center justify-between">
+          <span class="text-xs font-bold text-navy-700 uppercase tracking-wider">Homework Submissions</span>
+          <span id="sub-count-badge" class="text-[11px] bg-navy-100 text-navy-600 px-2 py-0.5 rounded-full font-semibold">0 records</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+            <thead class="bg-navy-50 border-b border-navy-200 text-navy-600 font-semibold">
               <tr>
                 <th class="py-3 px-4">Student Name</th>
                 <th class="py-3 px-4">Class</th>
@@ -343,9 +376,9 @@
                 <th class="py-3 px-4 text-right">Action</th>
               </tr>
             </thead>
-            <tbody id="admin-subs-tbody" class="divide-y divide-slate-100">
+            <tbody id="admin-subs-tbody" class="divide-y divide-navy-100">
               <tr>
-                <td colspan="8" class="text-center py-6 text-slate-400">No submissions recorded yet.</td>
+                <td colspan="8" class="text-center py-6 text-navy-400">No submissions recorded yet.</td>
               </tr>
             </tbody>
           </table>
@@ -353,14 +386,14 @@
       </div>
 
       <!-- User Roster Panel -->
-      <div id="admin-panel-users" class="hidden bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Registered Accounts</span>
-          <span id="roster-count-badge" class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0 users</span>
+      <div id="admin-panel-users" class="hidden bg-white rounded-xl border border-navy-200 shadow-2xs overflow-hidden">
+        <div class="px-5 py-3 border-b border-navy-100 flex items-center justify-between">
+          <span class="text-xs font-bold text-navy-700 uppercase tracking-wider">Registered Accounts</span>
+          <span id="roster-count-badge" class="text-[11px] bg-navy-100 text-navy-600 px-2 py-0.5 rounded-full font-semibold">0 users</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+            <thead class="bg-navy-50 border-b border-navy-200 text-navy-600 font-semibold">
               <tr>
                 <th class="py-3 px-4">User ID</th>
                 <th class="py-3 px-4">Full Name</th>
@@ -370,7 +403,7 @@
                 <th class="py-3 px-4">Date Added</th>
               </tr>
             </thead>
-            <tbody id="admin-roster-tbody" class="divide-y divide-slate-100">
+            <tbody id="admin-roster-tbody" class="divide-y divide-navy-100">
               <!-- User rows injected dynamically -->
             </tbody>
           </table>
@@ -380,31 +413,31 @@
   </main>
 
   <!-- 4. SUBMISSION & SAVING PROGRESS LOADING MODAL -->
-  <div id="submission-loading-modal" class="hidden fixed inset-0 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-4 z-[100]">
-    <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-slate-200 p-6 text-center space-y-4">
-      <div class="w-14 h-14 mx-auto border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+  <div id="submission-loading-modal" class="hidden fixed inset-0 bg-navy-900/75 backdrop-blur-xs flex items-center justify-center p-4 z-[100]">
+    <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-navy-200 p-6 text-center space-y-4">
+      <div class="w-14 h-14 mx-auto border-4 border-navy-200 border-t-navy-600 rounded-full animate-spin"></div>
       <div class="space-y-1">
-        <h3 class="text-base font-bold text-slate-900" id="loading-modal-title">Submitting Homework...</h3>
-        <p class="text-xs text-slate-600 leading-relaxed" id="loading-modal-desc">
+        <h3 class="text-base font-bold text-navy-900" id="loading-modal-title">Submitting Homework...</h3>
+        <p class="text-xs text-navy-600 leading-relaxed" id="loading-modal-desc">
           Please wait while your answers and grading data sync to the Google Sheet. Do not refresh or close this page.
         </p>
       </div>
-      <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-        <div class="bg-blue-600 h-1.5 rounded-full animate-pulse w-3/4"></div>
+      <div class="w-full bg-navy-100 rounded-full h-1.5 overflow-hidden">
+        <div class="bg-navy-600 h-1.5 rounded-full animate-pulse w-3/4"></div>
       </div>
     </div>
   </div>
 
   <!-- 5. TEACHER REVIEW & MARKING MODAL (With Per-Question Scoring) -->
-  <div id="grading-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-3xl w-full max-h-[90vh] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+  <div id="grading-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-3xl w-full max-h-[90vh] rounded-2xl shadow-2xl border border-navy-200 flex flex-col overflow-hidden">
       <!-- Modal Header -->
-      <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+      <div class="px-6 py-4 border-b border-navy-200 bg-navy-50 flex items-center justify-between shrink-0">
         <div>
-          <h3 class="text-sm font-bold text-slate-800" id="grade-modal-title">Review Submission</h3>
-          <p class="text-xs text-slate-500" id="grade-modal-meta">Student Details</p>
+          <h3 class="text-sm font-bold text-navy-800" id="grade-modal-title">Review Submission</h3>
+          <p class="text-xs text-navy-500" id="grade-modal-meta">Student Details</p>
         </div>
-        <button id="close-grading-modal" class="text-slate-400 hover:text-slate-700 font-bold p-1">✕</button>
+        <button id="close-grading-modal" class="text-navy-400 hover:text-navy-700 font-bold p-1">✕</button>
       </div>
 
       <!-- Modal Body (Questions & Student Answers) -->
@@ -413,21 +446,21 @@
       </div>
 
       <!-- Modal Footer (Total Marks & Feedback) -->
-      <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 shrink-0 space-y-3">
+      <div class="px-6 py-4 border-t border-navy-200 bg-navy-50 shrink-0 space-y-3">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
-            <label class="text-xs font-bold text-slate-700">Calculated Final Score:</label>
-            <input type="number" id="grade-modal-final-input" class="w-16 px-2 py-1 bg-white border border-slate-300 rounded font-bold text-blue-700 text-center text-xs focus:outline-none focus:border-blue-500" min="0" step="0.5">
-            <span class="text-xs text-slate-500 font-medium" id="grade-modal-max-label">/ 8 marks</span>
+            <label class="text-xs font-bold text-navy-700">Calculated Final Score:</label>
+            <input type="number" id="grade-modal-final-input" class="w-16 px-2 py-1 bg-white border border-navy-300 rounded font-bold text-navy-700 text-center text-xs focus:outline-none focus:border-navy-500" min="0" step="0.5">
+            <span class="text-xs text-navy-500 font-medium" id="grade-modal-max-label">/ 8 marks</span>
           </div>
-          <div class="text-[11px] text-slate-500 italic">
+          <div class="text-[11px] text-navy-500 italic">
             Score recalculates automatically when question points are edited above.
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Teacher Feedback / Notes</label>
-          <textarea id="grade-modal-feedback" rows="2" placeholder="Write feedback visible in the Google Sheet and student record..." class="w-full text-xs p-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500"></textarea>
+          <label class="block text-xs font-semibold text-navy-700 mb-1">Teacher Feedback / Notes</label>
+          <textarea id="grade-modal-feedback" rows="2" placeholder="Write feedback visible in the Google Sheet and student record..." class="w-full text-xs p-2.5 bg-white border border-navy-300 rounded-lg focus:outline-none focus:border-navy-500"></textarea>
         </div>
 
         <div class="flex items-center justify-end space-x-2 pt-1">
@@ -441,63 +474,63 @@
   </div>
 
   <!-- 6. ADD USER MODAL -->
-  <div id="add-user-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="text-sm font-bold text-slate-800">Add New User</h3>
-        <button id="close-add-user-modal" class="text-slate-400 hover:text-slate-700 font-bold">✕</button>
+  <div id="add-user-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-navy-200 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-navy-100 pb-3">
+        <h3 class="text-sm font-bold text-navy-800">Add New User</h3>
+        <button id="close-add-user-modal" class="text-navy-400 hover:text-navy-700 font-bold">✕</button>
       </div>
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">User ID</label>
-          <input type="text" id="new-user-id" placeholder="e.g. STU-105 or ADM-002" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600">
+          <label class="block font-semibold text-navy-700 mb-1">User ID</label>
+          <input type="text" id="new-user-id" placeholder="e.g. STU-105 or ADM-002" class="w-full p-2 border border-navy-300 rounded-lg focus:outline-none focus:border-navy-600">
         </div>
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Full Name</label>
-          <input type="text" id="new-user-name" placeholder="e.g. Sarah Jenkins" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600">
+          <label class="block font-semibold text-navy-700 mb-1">Full Name</label>
+          <input type="text" id="new-user-name" placeholder="e.g. Sarah Jenkins" class="w-full p-2 border border-navy-300 rounded-lg focus:outline-none focus:border-navy-600">
         </div>
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Account Role</label>
-          <select id="new-user-role" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 bg-white">
+          <label class="block font-semibold text-navy-700 mb-1">Account Role</label>
+          <select id="new-user-role" class="w-full p-2 border border-navy-300 rounded-lg focus:outline-none focus:border-navy-600 bg-white">
             <option value="student">Student</option>
             <option value="admin">Teacher / Admin</option>
           </select>
         </div>
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Class / Department</label>
-          <input type="text" id="new-user-class" placeholder="e.g. Year 10-A or Staff" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600">
+          <label class="block font-semibold text-navy-700 mb-1">Class / Department</label>
+          <input type="text" id="new-user-class" placeholder="e.g. Year 10-A or Staff" class="w-full p-2 border border-navy-300 rounded-lg focus:outline-none focus:border-navy-600">
         </div>
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Password</label>
-          <input type="text" id="new-user-pass" placeholder="Assign password" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600">
+          <label class="block font-semibold text-navy-700 mb-1">Password</label>
+          <input type="text" id="new-user-pass" placeholder="Assign password" class="w-full p-2 border border-navy-300 rounded-lg focus:outline-none focus:border-navy-600">
         </div>
       </div>
-      <button id="btn-confirm-add-user" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-xs">
+      <button id="btn-confirm-add-user" class="w-full py-2.5 bg-navy-600 hover:bg-navy-700 text-white rounded-lg text-xs font-bold transition shadow-xs">
         Save User to Google Sheet
       </button>
     </div>
   </div>
 
   <!-- 7. GOOGLE SHEET SETTINGS MODAL -->
-  <div id="gas-settings-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-lg w-full rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="text-sm font-bold text-slate-800">Google Sheet Integration Settings</h3>
-        <button id="close-gas-settings" class="text-slate-400 hover:text-slate-700 font-bold">✕</button>
+  <div id="gas-settings-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-lg w-full rounded-2xl shadow-2xl border border-navy-200 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-navy-100 pb-3">
+        <h3 class="text-sm font-bold text-navy-800">Google Sheet Integration Settings</h3>
+        <button id="close-gas-settings" class="text-navy-400 hover:text-navy-700 font-bold">✕</button>
       </div>
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Google Apps Script Web App URL</label>
-          <input type="text" id="gas-url-input" class="w-full p-2 border border-slate-300 rounded-lg font-mono text-[11px] focus:outline-none focus:border-blue-600 text-slate-700">
-          <p class="text-[11px] text-slate-500 mt-1">This endpoint handles submissions, student roster sync, and server-side role validation.</p>
+          <label class="block font-semibold text-navy-700 mb-1">Google Apps Script Web App URL</label>
+          <input type="text" id="gas-url-input" class="w-full p-2 border border-navy-300 rounded-lg font-mono text-[11px] focus:outline-none focus:border-navy-600 text-navy-700">
+          <p class="text-[11px] text-navy-500 mt-1">This endpoint handles submissions, student roster sync, and server-side role validation.</p>
         </div>
-        <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 text-[11px] space-y-1">
+        <div class="p-3 bg-navy-50 border border-navy-200 rounded-lg text-navy-900 text-[11px] space-y-1">
           <p class="font-bold">✓ Backend Configuration Verified</p>
           <p>Your Google Apps Script Web App URL is permanently embedded in the application code.</p>
         </div>
       </div>
       <div class="flex justify-end space-x-2">
-        <button id="save-gas-url-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
+        <button id="save-gas-url-btn" class="px-4 py-2 bg-navy-600 hover:bg-navy-700 text-white rounded-lg text-xs font-bold transition">
           Save Settings
         </button>
       </div>
@@ -505,39 +538,39 @@
   </div>
 
   <!-- 8. STUDENT RESULT RECEIPT MODAL -->
-  <div id="student-result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4 text-center">
+  <div id="student-result-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-navy-200 p-6 space-y-4 text-center">
       <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-xl font-bold">✓</div>
       <div class="space-y-1">
-        <h3 class="text-base font-bold text-slate-900">Task Submitted Successfully!</h3>
-        <p class="text-xs text-slate-500">Your answers and marks have been synchronized with your teacher's Google Sheet.</p>
+        <h3 class="text-base font-bold text-navy-900">Task Submitted Successfully!</h3>
+        <p class="text-xs text-navy-500">Your answers and marks have been synchronized with your teacher's Google Sheet.</p>
       </div>
-      <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1 text-slate-700">
+      <div class="p-4 bg-navy-50 rounded-xl border border-navy-200 text-xs space-y-1 text-navy-700">
         <div>Student: <strong id="receipt-student-name"></strong></div>
         <div>Exercise: <strong id="receipt-exercise-title"></strong></div>
-        <div class="text-blue-700 font-bold text-sm pt-1">Automated Score: <span id="receipt-auto-score"></span></div>
+        <div class="text-navy-700 font-bold text-sm pt-1">Automated Score: <span id="receipt-auto-score"></span></div>
       </div>
-      <button id="btn-close-receipt" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition">
+      <button id="btn-close-receipt" class="w-full py-2.5 bg-navy-900 hover:bg-navy-800 text-white rounded-lg text-xs font-bold transition">
         Return to Dashboard / Log Out
       </button>
     </div>
   </div>
 
   <!-- 9. STUDENT GRADES & FEEDBACK MODAL -->
-  <div id="student-grades-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-2xl w-full max-h-[85vh] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+  <div id="student-grades-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-2xl w-full max-h-[85vh] rounded-2xl shadow-2xl border border-navy-200 flex flex-col overflow-hidden">
       <!-- Modal Header -->
-      <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+      <div class="px-6 py-4 border-b border-navy-200 bg-navy-50 flex items-center justify-between shrink-0">
         <div>
-          <h3 class="text-sm font-bold text-slate-800">My Submissions & Graded Tasks</h3>
-          <p class="text-xs text-slate-500" id="student-grades-meta">Student Details</p>
+          <h3 class="text-sm font-bold text-navy-800">My Submissions & Graded Tasks</h3>
+          <p class="text-xs text-navy-500" id="student-grades-meta">Student Details</p>
         </div>
         <div class="flex items-center space-x-2">
-          <button id="refresh-student-grades-btn" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded text-xs font-semibold transition flex items-center space-x-1">
-            <svg class="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+          <button id="refresh-student-grades-btn" class="px-2.5 py-1 bg-white hover:bg-navy-100 text-navy-700 border border-navy-300 rounded text-xs font-semibold transition flex items-center space-x-1">
+            <svg class="w-3 h-3 text-navy-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
             <span>Refresh</span>
           </button>
-          <button id="close-student-grades-modal" class="text-slate-400 hover:text-slate-700 font-bold p-1">✕</button>
+          <button id="close-student-grades-modal" class="text-navy-400 hover:text-navy-700 font-bold p-1">✕</button>
         </div>
       </div>
       <!-- Modal Content List -->
@@ -713,20 +746,20 @@
         passageTitle: "Pocket Money - Activities we did to earn pocket money when we were young",
         passageContent: `
           <div class="space-y-4">
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-              <h4 class="font-bold text-blue-900 text-sm mb-1">A Colette - Sweeping leaves</h4>
+            <div class="p-4 bg-navy-50 rounded-xl border border-navy-200">
+              <h4 class="font-bold text-navy-900 text-sm mb-1">A Colette - Sweeping leaves</h4>
               <p>I always admired my older brother, and I knew my parents had given him some money for taking out the rubbish, so I couldn't wait to have my own job to do! My mum said I was too small to carry the rubbish, but there were lots of leaves in the back yard that I could sweep up. It wasn't as easy as I thought, but I did better after my dad suggested I used a smaller brush. After I finished, the yard looked great. I slept well that night, and in the morning, I went out to the yard. It was covered with leaves again! I was angry at first, but mum sat with me, and calmed me down, saying there are just some things you can't get upset about. She was right, and I haven't forgotten it. It's been useful in various situations since then.</p>
             </div>
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-              <h4 class="font-bold text-blue-900 text-sm mb-1">B Bilal - Cutting the grass</h4>
+            <div class="p-4 bg-navy-50 rounded-xl border border-navy-200">
+              <h4 class="font-bold text-navy-900 text-sm mb-1">B Bilal - Cutting the grass</h4>
               <p>I started cutting the grass in our garden for my parents when I was thirteen. I'd already done other smaller jobs at home, but I'd always thought cutting the grass was important, and it looked really fun. When I started, I preferred making patterns in the grass, rather than making it nice and smooth, which my parents weren't pleased about! I didn't think they'd let me do it again, but they did. I cut the grass weekly, and also did it at my grandad's house. Although I would've done it for nothing, he insisted on paying me. So I earned quite a lot in the end! Grandad had an old machine for cutting the grass, which was always breaking down. With practice, I managed to repair it with no problems at all and since then I've been able to fix all sorts of things for my friends and family!</p>
             </div>
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-              <h4 class="font-bold text-blue-900 text-sm mb-1">C Ana - Washing cars</h4>
+            <div class="p-4 bg-navy-50 rounded-xl border border-navy-200">
+              <h4 class="font-bold text-navy-900 text-sm mb-1">C Ana - Washing cars</h4>
               <p>I got a bit of pocket money from my parents by washing their car, which I think is probably something that most kids have done at one time or another. I'm quite glad I don't have to do it anymore, though! But back then, as long as the weather was warm, I didn't mind doing it, although I always had more fun when I could persuade one of my friends to come along and help. I thought I might have to go over the bits of the car they'd missed, but they always did a good job! One summer I really wanted a new skateboard. My mum suggested that I used the money from car washing to get it, so that's what I decided to do. I remember spending every day with my sister, learning how to ride my new skateboard. In the end I was pretty good, although she's always been better than me.</p>
             </div>
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-              <h4 class="font-bold text-blue-900 text-sm mb-1">D Daruiz - Doing shopping</h4>
+            <div class="p-4 bg-navy-50 rounded-xl border border-navy-200">
+              <h4 class="font-bold text-navy-900 text-sm mb-1">D Daruiz - Doing shopping</h4>
               <p>There are some shops right around the corner from my house. I used to love going there with my mum, as she'd always buy me a comic. My brother started going to the shops on his own when he was nine, and soon after, my mum asked him to get some things for her. She only asked for a few things so that it wouldn't be heavy. When she asked me to start doing some shopping for her though, the list seemed to be much longer. Luckily, I'm strong! I enjoyed heading off to the shops with the money my parents had given me, and I felt really grown up. When school got busier and I was also trying to improve my tennis skills, I didn't have time to do the shopping trips. My mum didn't mind; by then my little sister was keen to take over.</p>
             </div>
           </div>
@@ -977,19 +1010,19 @@
         const isAnswered = checkQuestionAnswered(ex.id, q);
         const isMarked = questionReviewFlags[ex.id][q.id];
 
-        let borderClass = isActive ? 'border-2 border-blue-600 bg-blue-50/50 shadow-xs' : 'border border-slate-300 hover:border-blue-400 bg-white';
+        let borderClass = isActive ? 'border-2 border-navy-600 bg-navy-50/50 shadow-xs' : 'border border-navy-300 hover:border-navy-400 bg-white';
         btn.className = `min-w-[40px] h-10 px-2.5 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center relative ${borderClass}`;
         
         let label = q.number.replace("Question ", "");
-        btn.innerHTML = `<span class="text-slate-800">${label}</span>`;
+        btn.innerHTML = `<span class="text-navy-800">${label}</span>`;
 
         if (isMarked) {
           const dot = document.createElement('span');
-          dot.className = "w-2 h-2 rounded-full bg-amber-500 absolute -top-1 -right-1 ring-2 ring-white";
+          dot.className = "w-2 h-2 rounded-full bg-gold-500 absolute -top-1 -right-1 ring-2 ring-white";
           btn.appendChild(dot);
         } else if (isAnswered) {
           const dot = document.createElement('span');
-          dot.className = "w-2 h-2 rounded-full bg-blue-600 absolute -top-1 -right-1 ring-2 ring-white";
+          dot.className = "w-2 h-2 rounded-full bg-navy-600 absolute -top-1 -right-1 ring-2 ring-white";
           btn.appendChild(dot);
         }
 
@@ -1033,7 +1066,7 @@
         area.id = 'active-input-field';
         area.rows = 4;
         area.placeholder = "Type your answer here based on the text...";
-        area.className = "w-full p-3.5 bg-white border border-slate-300 rounded-xl text-sm leading-relaxed text-slate-800 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 shadow-2xs";
+        area.className = "w-full p-3.5 bg-white border border-navy-300 rounded-xl text-sm leading-relaxed text-navy-800 focus:outline-none focus:border-navy-600 focus:ring-1 focus:ring-navy-600 shadow-2xs";
         area.value = currentVal || "";
         inputContainer.appendChild(area);
       } else if (q.type === "multi-input") {
@@ -1044,8 +1077,8 @@
           const div = document.createElement('div');
           div.className = "flex items-center space-x-2";
           div.innerHTML = `
-            <span class="w-6 text-center text-xs font-bold text-slate-500">${i + 1}.</span>
-            <input type="text" class="multi-field flex-1 p-2.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-blue-600" placeholder="Detail ${i + 1}..." value="${valArr[i] || ''}">
+            <span class="w-6 text-center text-xs font-bold text-navy-500">${i + 1}.</span>
+            <input type="text" class="multi-field flex-1 p-2.5 bg-white border border-navy-300 rounded-lg text-xs focus:outline-none focus:border-navy-600" placeholder="Detail ${i + 1}..." value="${valArr[i] || ''}">
           `;
           multiBox.appendChild(div);
         }
@@ -1062,9 +1095,9 @@
         options.forEach(opt => {
           const isSelected = currentVal === opt.letter;
           const choiceBtn = document.createElement('button');
-          choiceBtn.className = `p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${isSelected ? 'border-blue-600 bg-blue-50/80 text-blue-900 font-bold' : 'border-slate-300 bg-white hover:border-slate-400 text-slate-700'}`;
+          choiceBtn.className = `p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${isSelected ? 'border-navy-600 bg-navy-50/80 text-navy-900 font-bold' : 'border-navy-300 bg-white hover:border-navy-400 text-navy-700'}`;
           choiceBtn.innerHTML = `
-            <span class="text-sm font-extrabold w-6 h-6 rounded-full flex items-center justify-center ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'}">${opt.letter}</span>
+            <span class="text-sm font-extrabold w-6 h-6 rounded-full flex items-center justify-center ${isSelected ? 'bg-navy-600 text-white' : 'bg-navy-100 text-navy-700'}">${opt.letter}</span>
             <span class="text-[11px]">${opt.name}</span>
           `;
           choiceBtn.addEventListener('click', () => {
@@ -1144,25 +1177,25 @@
       document.getElementById('sub-count-badge').textContent = `${submissionRecords.length} records`;
 
       if (submissionRecords.length === 0) {
-        subTbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-slate-400">No submissions recorded yet.</td></tr>';
+        subTbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-navy-400">No submissions recorded yet.</td></tr>';
       } else {
         submissionRecords.forEach(sub => {
           const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+          tr.className = "hover:bg-navy-50 transition border-b border-navy-100";
           const statusBadge = sub.status === "Graded"
             ? '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[10px]">Graded</span>'
-            : '<span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]">Pending</span>';
+            : '<span class="px-2 py-0.5 bg-gold-100 text-gold-800 rounded-full font-bold text-[10px]">Pending</span>';
           
           tr.innerHTML = `
-            <td class="py-3 px-4 font-bold text-slate-800">${sub.studentName}</td>
-            <td class="py-3 px-4 text-slate-600">${sub.class || 'N/A'}</td>
-            <td class="py-3 px-4 text-slate-700">${sub.exerciseTitle}</td>
-            <td class="py-3 px-4 font-mono font-semibold text-slate-600">${sub.autoScore} / ${sub.maxScore}</td>
-            <td class="py-3 px-4 font-mono font-bold text-blue-700">${sub.finalScore !== undefined ? sub.finalScore : sub.autoScore} / ${sub.maxScore}</td>
+            <td class="py-3 px-4 font-bold text-navy-800">${sub.studentName}</td>
+            <td class="py-3 px-4 text-navy-600">${sub.class || 'N/A'}</td>
+            <td class="py-3 px-4 text-navy-700">${sub.exerciseTitle}</td>
+            <td class="py-3 px-4 font-mono font-semibold text-navy-600">${sub.autoScore} / ${sub.maxScore}</td>
+            <td class="py-3 px-4 font-mono font-bold text-navy-700">${sub.finalScore !== undefined ? sub.finalScore : sub.autoScore} / ${sub.maxScore}</td>
             <td class="py-3 px-4">${statusBadge}</td>
-            <td class="py-3 px-4 text-slate-500 text-[11px]">${sub.timestamp || 'N/A'}</td>
+            <td class="py-3 px-4 text-navy-500 text-[11px]">${sub.timestamp || 'N/A'}</td>
             <td class="py-3 px-4 text-right">
-              <button class="review-sub-btn px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded font-semibold text-xs transition" data-subid="${sub.submissionId}">
+              <button class="review-sub-btn px-2.5 py-1 bg-navy-50 hover:bg-navy-100 text-navy-700 border border-navy-200 rounded font-semibold text-xs transition" data-subid="${sub.submissionId}">
                 Review & Mark
               </button>
             </td>
@@ -1185,17 +1218,17 @@
 
       listToRender.forEach(u => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 border-b border-slate-100";
+        tr.className = "hover:bg-navy-50 border-b border-navy-100";
         const roleBadge = u.role === 'admin'
           ? '<span class="px-2 py-0.5 bg-purple-100 text-purple-800 rounded font-bold text-[10px]">Admin</span>'
-          : '<span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-bold text-[10px]">Student</span>';
+          : '<span class="px-2 py-0.5 bg-navy-100 text-navy-800 rounded font-bold text-[10px]">Student</span>';
         tr.innerHTML = `
-          <td class="py-2.5 px-4 font-mono text-slate-600">${u.id}</td>
-          <td class="py-2.5 px-4 font-bold text-slate-800">${u.name}</td>
+          <td class="py-2.5 px-4 font-mono text-navy-600">${u.id}</td>
+          <td class="py-2.5 px-4 font-bold text-navy-800">${u.name}</td>
           <td class="py-2.5 px-4">${roleBadge}</td>
-          <td class="py-2.5 px-4 text-slate-600">${u.class || 'N/A'}</td>
-          <td class="py-2.5 px-4 font-mono text-slate-500">${u.password ? u.password : '••••'}</td>
-          <td class="py-2.5 px-4 text-slate-500 text-[11px]">${u.dateAdded ? new Date(u.dateAdded).toLocaleDateString() : 'Active'}</td>
+          <td class="py-2.5 px-4 text-navy-600">${u.class || 'N/A'}</td>
+          <td class="py-2.5 px-4 font-mono text-navy-500">${u.password ? u.password : '••••'}</td>
+          <td class="py-2.5 px-4 text-navy-500 text-[11px]">${u.dateAdded ? new Date(u.dateAdded).toLocaleDateString() : 'Active'}</td>
         `;
         rosTbody.appendChild(tr);
       });
@@ -1220,7 +1253,7 @@
 
       evalResult.details.forEach((item, index) => {
         const itemDiv = document.createElement('div');
-        itemDiv.className = "p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs transition";
+        itemDiv.className = "p-4 bg-navy-50 rounded-xl border border-navy-200 space-y-2 text-xs transition";
         
         let ansDisplay = item.studentAns;
         if (Array.isArray(ansDisplay)) {
@@ -1234,28 +1267,28 @@
           : item.score;
 
         itemDiv.innerHTML = `
-          <div class="flex items-center justify-between font-bold text-slate-800 gap-2">
+          <div class="flex items-center justify-between font-bold text-navy-800 gap-2">
             <span class="leading-snug">${item.prompt}</span>
-            <div class="flex items-center space-x-1.5 shrink-0 bg-white border border-slate-300 px-2 py-1 rounded-lg shadow-2xs">
-              <label class="text-[11px] font-semibold text-slate-500">Score:</label>
+            <div class="flex items-center space-x-1.5 shrink-0 bg-white border border-navy-300 px-2 py-1 rounded-lg shadow-2xs">
+              <label class="text-[11px] font-semibold text-navy-500">Score:</label>
               <input type="number" 
-                     class="q-score-override w-14 text-center font-bold text-blue-700 border border-blue-200 rounded px-1 py-0.5 focus:border-blue-600 focus:outline-none bg-blue-50/40" 
+                     class="q-score-override w-14 text-center font-bold text-navy-700 border border-navy-200 rounded px-1 py-0.5 focus:border-navy-600 focus:outline-none bg-navy-50/40" 
                      data-qindex="${index}" 
                      data-max="${item.maxMarks}" 
                      min="0" 
                      max="${item.maxMarks}" 
                      step="0.5" 
                      value="${initialScore}">
-              <span class="text-[11px] text-slate-500 font-semibold">/ ${item.maxMarks}</span>
+              <span class="text-[11px] text-navy-500 font-semibold">/ ${item.maxMarks}</span>
             </div>
           </div>
-          <div class="bg-white p-2.5 rounded-lg border border-slate-200 font-mono text-slate-800">
-            <span class="text-slate-400 font-sans block text-[10px] font-semibold uppercase tracking-wider">Student Answer:</span>
+          <div class="bg-white p-2.5 rounded-lg border border-navy-200 font-mono text-navy-800">
+            <span class="text-navy-400 font-sans block text-[10px] font-semibold uppercase tracking-wider">Student Answer:</span>
             <span class="select-text">${String(ansDisplay)}</span>
           </div>
-          <div class="text-[11px] text-slate-600 bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg">
+          <div class="text-[11px] text-navy-600 bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg">
             <span class="font-bold text-emerald-800">Mark Scheme:</span> ${item.officialAnswer}
-            <span class="block text-slate-500 mt-0.5 italic">${item.notes || ""}</span>
+            <span class="block text-navy-500 mt-0.5 italic">${item.notes || ""}</span>
           </div>
         `;
         answersCont.appendChild(itemDiv);
@@ -1360,10 +1393,10 @@
 
       if (mySubs.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-12 text-slate-400 space-y-2">
+          <div class="text-center py-12 text-navy-400 space-y-2">
             <div class="text-3xl">📝</div>
             <p class="text-xs font-semibold">No homework submissions found yet.</p>
-            <p class="text-[11px] text-slate-400">Complete an exercise and click "Finish & Submit Task" to submit your work.</p>
+            <p class="text-[11px] text-navy-400">Complete an exercise and click "Finish & Submit Task" to submit your work.</p>
           </div>
         `;
         return;
@@ -1371,24 +1404,24 @@
 
       mySubs.forEach((sub, subIdx) => {
         const card = document.createElement('div');
-        card.className = "bg-white border border-slate-200 rounded-xl p-5 space-y-4 shadow-2xs";
+        card.className = "bg-white border border-navy-200 rounded-xl p-5 space-y-4 shadow-2xs";
 
         const isGraded = sub.status === "Graded";
         const statusBadge = isGraded
           ? '<span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-full font-bold text-xs">Graded by Teacher</span>'
-          : '<span class="px-2.5 py-0.5 bg-amber-100 text-amber-800 border border-amber-200 rounded-full font-bold text-xs">Pending Teacher Review</span>';
+          : '<span class="px-2.5 py-0.5 bg-gold-100 text-gold-800 border border-gold-200 rounded-full font-bold text-xs">Pending Teacher Review</span>';
 
         const finalScoreDisplay = isGraded
-          ? `<span class="text-base font-extrabold text-blue-700 font-mono">${sub.finalScore}</span> <span class="text-slate-500 font-semibold text-xs">/ ${sub.maxScore} marks</span>`
-          : `<span class="text-slate-600 font-bold text-xs font-mono">${sub.autoScore} / ${sub.maxScore} <span class="font-normal text-[11px] text-slate-500 italic">(Auto-checked)</span></span>`;
+          ? `<span class="text-base font-extrabold text-navy-700 font-mono">${sub.finalScore}</span> <span class="text-navy-500 font-semibold text-xs">/ ${sub.maxScore} marks</span>`
+          : `<span class="text-navy-600 font-bold text-xs font-mono">${sub.autoScore} / ${sub.maxScore} <span class="font-normal text-[11px] text-navy-500 italic">(Auto-checked)</span></span>`;
 
         const feedbackSection = sub.feedback ? `
-          <div class="p-3 bg-blue-50/90 border border-blue-200 rounded-xl text-xs space-y-1">
-            <div class="font-bold text-blue-900 flex items-center space-x-1.5">
-              <svg class="w-3.5 h-3.5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+          <div class="p-3 bg-navy-50/90 border border-navy-200 rounded-xl text-xs space-y-1">
+            <div class="font-bold text-navy-900 flex items-center space-x-1.5">
+              <svg class="w-3.5 h-3.5 text-navy-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
               <span>Teacher Feedback & Advice:</span>
             </div>
-            <p class="text-slate-700 pl-5 leading-relaxed font-medium">${escapeHtml(sub.feedback)}</p>
+            <p class="text-navy-700 pl-5 leading-relaxed font-medium">${escapeHtml(sub.feedback)}</p>
           </div>
         ` : '';
 
@@ -1401,38 +1434,38 @@
           if (Array.isArray(ansDisplay)) {
             ansDisplay = ansDisplay.map((a, i) => `
               <div class="flex items-start space-x-1.5 py-0.5">
-                <span class="font-bold text-slate-500">${i + 1}.</span>
-                <span class="${a ? 'text-slate-800' : 'italic text-slate-400'}">${escapeHtml(a || '(blank)')}</span>
+                <span class="font-bold text-navy-500">${i + 1}.</span>
+                <span class="${a ? 'text-navy-800' : 'italic text-navy-400'}">${escapeHtml(a || '(blank)')}</span>
               </div>
             `).join('');
           } else if (!ansDisplay && ansDisplay !== 0) {
-            ansDisplay = '<span class="italic text-slate-400 font-sans">No answer submitted</span>';
+            ansDisplay = '<span class="italic text-navy-400 font-sans">No answer submitted</span>';
           } else {
-            ansDisplay = `<span class="text-slate-900 font-semibold select-text">${escapeHtml(String(ansDisplay))}</span>`;
+            ansDisplay = `<span class="text-navy-900 font-semibold select-text">${escapeHtml(String(ansDisplay))}</span>`;
           }
 
           const isFullMarks = item.score >= item.maxMarks;
           const isZero = item.score === 0;
           const scoreBadgeClass = isFullMarks
             ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-            : (isZero ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-amber-50 text-amber-700 border-amber-200');
+            : (isZero ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-gold-50 text-gold-700 border-gold-200');
 
           return `
-            <div class="bg-slate-50/70 rounded-xl border border-slate-200/90 p-3.5 space-y-2.5 text-xs">
+            <div class="bg-navy-50/70 rounded-xl border border-navy-200/90 p-3.5 space-y-2.5 text-xs">
               <div class="flex items-start justify-between gap-3">
-                <span class="font-bold text-slate-800 leading-snug">${escapeHtml(item.prompt)}</span>
+                <span class="font-bold text-navy-800 leading-snug">${escapeHtml(item.prompt)}</span>
                 <span class="px-2 py-0.5 rounded-md font-mono font-bold text-[11px] border shrink-0 ${scoreBadgeClass}">
                   ${item.score} / ${item.maxMarks} mark${item.maxMarks > 1 ? 's' : ''}
                 </span>
               </div>
 
               <!-- Student Response Section -->
-              <div class="p-2.5 rounded-lg border bg-white ${isFullMarks ? 'border-emerald-200 ring-1 ring-emerald-100' : 'border-slate-200'}">
-                <div class="flex items-center justify-between mb-1 text-[10px] font-bold uppercase tracking-wider ${isFullMarks ? 'text-emerald-700' : (isZero ? 'text-rose-600' : 'text-amber-600')}">
+              <div class="p-2.5 rounded-lg border bg-white ${isFullMarks ? 'border-emerald-200 ring-1 ring-emerald-100' : 'border-navy-200'}">
+                <div class="flex items-center justify-between mb-1 text-[10px] font-bold uppercase tracking-wider ${isFullMarks ? 'text-emerald-700' : (isZero ? 'text-rose-600' : 'text-gold-600')}">
                   <span>Your Submitted Answer:</span>
                   <span>${isFullMarks ? '✓ Full Credit' : (isZero ? '✗ No Mark Awarded' : '⚠ Partial Credit')}</span>
                 </div>
-                <div class="font-mono text-xs text-slate-800 leading-relaxed">
+                <div class="font-mono text-xs text-navy-800 leading-relaxed">
                   ${ansDisplay}
                 </div>
               </div>
@@ -1446,8 +1479,8 @@
                 <div class="font-semibold text-xs text-emerald-900 select-text">
                   ${escapeHtml(item.officialAnswer)}
                 </div>
-                ${item.notes ? `<div class="text-[11px] text-slate-600 italic leading-tight pt-0.5">${escapeHtml(item.notes)}</div>` : ''}
-                ${item.feedback && !isFullMarks ? `<div class="text-[11px] font-medium text-amber-800 bg-amber-50 p-1.5 rounded border border-amber-200 mt-1 leading-tight">${escapeHtml(item.feedback)}</div>` : ''}
+                ${item.notes ? `<div class="text-[11px] text-navy-600 italic leading-tight pt-0.5">${escapeHtml(item.notes)}</div>` : ''}
+                ${item.feedback && !isFullMarks ? `<div class="text-[11px] font-medium text-gold-800 bg-gold-50 p-1.5 rounded border border-gold-200 mt-1 leading-tight">${escapeHtml(item.feedback)}</div>` : ''}
               </div>
             </div>
           `;
@@ -1457,18 +1490,18 @@
         const toggleBtnId = `btn-toggle-breakdown-${sub.submissionId}`;
 
         card.innerHTML = `
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-navy-100 pb-3 gap-2">
             <div>
-              <h4 class="font-bold text-slate-900 text-sm">${escapeHtml(sub.exerciseTitle)}</h4>
-              <p class="text-[11px] text-slate-500">Submitted on: <span class="font-medium">${escapeHtml(sub.timestamp || 'Recent')}</span></p>
+              <h4 class="font-bold text-navy-900 text-sm">${escapeHtml(sub.exerciseTitle)}</h4>
+              <p class="text-[11px] text-navy-500">Submitted on: <span class="font-medium">${escapeHtml(sub.timestamp || 'Recent')}</span></p>
             </div>
             <div class="flex items-center space-x-2">
               ${statusBadge}
             </div>
           </div>
 
-          <div class="flex items-center justify-between py-1 bg-slate-50 px-3.5 py-2.5 rounded-lg border border-slate-200/80 text-xs">
-            <span class="text-slate-600 font-semibold">Awarded Score:</span>
+          <div class="flex items-center justify-between py-1 bg-navy-50 px-3.5 py-2.5 rounded-lg border border-navy-200/80 text-xs">
+            <span class="text-navy-600 font-semibold">Awarded Score:</span>
             <div>${finalScoreDisplay}</div>
           </div>
 
@@ -1476,15 +1509,15 @@
 
           <!-- Detailed Answer Inspection Toggle Button -->
           <div class="pt-1">
-            <button id="${toggleBtnId}" class="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 border border-slate-300 shadow-2xs">
-              <svg class="w-3.5 h-3.5 text-blue-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button id="${toggleBtnId}" class="w-full py-2 px-3 bg-navy-100 hover:bg-navy-200 text-navy-700 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 border border-navy-300 shadow-2xs">
+              <svg class="w-3.5 h-3.5 text-navy-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
               <span class="btn-text">View Detailed Answers & Mark Scheme (${evalResult.details.length} questions)</span>
             </button>
 
             <!-- Collapsible Question Breakdown -->
-            <div id="${breakdownContainerId}" class="hidden mt-3 space-y-3 pt-2 border-t border-slate-200/70">
+            <div id="${breakdownContainerId}" class="hidden mt-3 space-y-3 pt-2 border-t border-navy-200/70">
               ${questionsBreakdownHtml}
             </div>
           </div>
@@ -1501,12 +1534,12 @@
             if (isHidden) {
               breakdownCont.classList.remove('hidden');
               toggleBtn.querySelector('.btn-text').textContent = "Hide Detailed Breakdown";
-              toggleBtn.classList.add('bg-blue-50', 'border-blue-300', 'text-blue-800');
+              toggleBtn.classList.add('bg-navy-50', 'border-navy-300', 'text-navy-800');
               toggleBtn.querySelector('svg').classList.add('rotate-180');
             } else {
               breakdownCont.classList.add('hidden');
               toggleBtn.querySelector('.btn-text').textContent = `View Detailed Answers & Mark Scheme (${evalResult.details.length} questions)`;
-              toggleBtn.classList.remove('bg-blue-50', 'border-blue-300', 'text-blue-800');
+              toggleBtn.classList.remove('bg-navy-50', 'border-navy-300', 'text-navy-800');
               toggleBtn.querySelector('svg').classList.remove('rotate-180');
             }
           });
@@ -1525,15 +1558,15 @@
       document.getElementById('tab-btn-student').addEventListener('click', () => {
         document.getElementById('tab-content-student').classList.remove('hidden');
         document.getElementById('tab-content-admin').classList.add('hidden');
-        document.getElementById('tab-btn-student').className = "flex-1 py-3.5 text-xs font-bold text-blue-700 border-b-2 border-blue-600 bg-white transition flex items-center justify-center space-x-1.5";
-        document.getElementById('tab-btn-admin').className = "flex-1 py-3.5 text-xs font-bold text-slate-500 hover:text-slate-700 transition flex items-center justify-center space-x-1.5";
+        document.getElementById('tab-btn-student').className = "flex-1 py-3.5 text-xs font-bold text-navy-700 border-b-2 border-gold-500 bg-white transition flex items-center justify-center space-x-1.5";
+        document.getElementById('tab-btn-admin').className = "flex-1 py-3.5 text-xs font-bold text-navy-500 hover:text-navy-700 transition flex items-center justify-center space-x-1.5";
       });
 
       document.getElementById('tab-btn-admin').addEventListener('click', () => {
         document.getElementById('tab-content-admin').classList.remove('hidden');
         document.getElementById('tab-content-student').classList.add('hidden');
-        document.getElementById('tab-btn-admin').className = "flex-1 py-3.5 text-xs font-bold text-slate-900 border-b-2 border-slate-900 bg-white transition flex items-center justify-center space-x-1.5";
-        document.getElementById('tab-btn-student').className = "flex-1 py-3.5 text-xs font-bold text-slate-500 hover:text-slate-700 transition flex items-center justify-center space-x-1.5";
+        document.getElementById('tab-btn-admin').className = "flex-1 py-3.5 text-xs font-bold text-navy-900 border-b-2 border-navy-900 bg-white transition flex items-center justify-center space-x-1.5";
+        document.getElementById('tab-btn-student').className = "flex-1 py-3.5 text-xs font-bold text-navy-500 hover:text-navy-700 transition flex items-center justify-center space-x-1.5";
       });
 
       // Student Select Listener
@@ -1752,15 +1785,15 @@
       document.getElementById('admin-tab-subs').addEventListener('click', () => {
         document.getElementById('admin-panel-subs').classList.remove('hidden');
         document.getElementById('admin-panel-users').classList.add('hidden');
-        document.getElementById('admin-tab-subs').className = "py-2.5 px-3 text-xs font-bold text-blue-700 border-b-2 border-blue-600 transition";
-        document.getElementById('admin-tab-users').className = "py-2.5 px-3 text-xs font-bold text-slate-500 hover:text-slate-700 transition";
+        document.getElementById('admin-tab-subs').className = "py-2.5 px-3 text-xs font-bold text-navy-700 border-b-2 border-gold-500 transition";
+        document.getElementById('admin-tab-users').className = "py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition";
       });
 
       document.getElementById('admin-tab-users').addEventListener('click', () => {
         document.getElementById('admin-panel-users').classList.remove('hidden');
         document.getElementById('admin-panel-subs').classList.add('hidden');
-        document.getElementById('admin-tab-users').className = "py-2.5 px-3 text-xs font-bold text-blue-700 border-b-2 border-blue-600 transition";
-        document.getElementById('admin-tab-subs').className = "py-2.5 px-3 text-xs font-bold text-slate-500 hover:text-slate-700 transition";
+        document.getElementById('admin-tab-users').className = "py-2.5 px-3 text-xs font-bold text-navy-700 border-b-2 border-gold-500 transition";
+        document.getElementById('admin-tab-subs').className = "py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition";
       });
 
       // Admin Save Grade with Progress Loading Modal
