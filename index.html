@@ -3,1199 +3,1718 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAT Style Practice - Fruit Bats Reading Comprehension</title>
+  <title>Cambridge Reading Practice & Grading Portal</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter & Merriweather -->
+  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Merriweather', 'serif']
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            }
+          }
+        }
+      }
+    };
+  </script>
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      user-select: text;
-    }
-    .serif-passage {
-      font-family: 'Crimson Pro', Georgia, serif;
-    }
-    /* Custom Bluebook SAT scrollbars */
+    /* Custom scrollbars */
     ::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
     }
     ::-webkit-scrollbar-track {
       background: #f1f5f9;
     }
     ::-webkit-scrollbar-thumb {
       background: #cbd5e1;
-      border-radius: 4px;
+      border-radius: 3px;
     }
     ::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
     }
-    /* Highlighting simulation */
-    ::selection {
-      background-color: #fef08a;
-      color: #0f172a;
-    }
-    .highlight-active {
+    /* Passage highlight class */
+    .user-highlight {
       background-color: #fef08a;
       border-radius: 2px;
       padding: 1px 2px;
     }
-    /* Modal backdrop blur */
-    .modal-backdrop {
-      background-color: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(4px);
+    .custom-ring:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-900 h-screen flex flex-col overflow-hidden antialiased select-none md:select-auto">
+<body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden select-none">
 
-  <!-- Bluebook / College Board Top Bar -->
-  <header class="bg-slate-900 text-white flex items-center justify-between px-4 py-2.5 border-b border-slate-800 shadow-md shrink-0 z-20">
+  <!-- Top Navigation Header -->
+  <header class="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center justify-between shadow-xs shrink-0 z-20">
     <div class="flex items-center space-x-3">
-      <div class="bg-blue-600 text-white px-2.5 py-1 rounded text-xs font-bold tracking-wider uppercase">
-        Section 1
+      <div class="w-8 h-8 rounded-lg bg-blue-700 text-white flex items-center justify-center font-bold text-sm tracking-wider shadow-sm">
+        CIE
       </div>
-      <div class="hidden sm:block">
-        <h1 class="text-sm font-semibold tracking-wide text-slate-100">Reading & Writing: Information & Ideas</h1>
-        <p class="text-[11px] text-slate-400">Exercise 1: Fruit bats (8 Points Total)</p>
+      <div>
+        <h1 class="text-sm font-bold text-slate-800 leading-tight">Cambridge IGCSE™ Reading Practice</h1>
+        <p class="text-[11px] text-slate-500" id="header-subtitle">English as a Second Language • Digital Portal</p>
       </div>
     </div>
 
-    <!-- Header Right Controls -->
+    <!-- Active User Status & Header Actions -->
     <div class="flex items-center space-x-2">
-      <!-- Annotation / Highlighter Tool Button -->
-      <button id="highlight-toggle-btn" title="Toggle passage highlighter mode" class="px-2.5 py-1.5 rounded text-xs font-medium border border-slate-700 hover:bg-slate-800 text-slate-300 flex items-center space-x-1.5 transition">
-        <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-        </svg>
-        <span class="hidden md:inline">Highlighter</span>
+      <!-- Admin Only Sheet Settings Button -->
+      <button id="gas-settings-btn" class="hidden px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-md border border-slate-300 transition flex items-center space-x-1.5" title="Google Sheet Webhook Settings">
+        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <span>Sheet Sync</span>
       </button>
 
-      <!-- Passage Font Size Adjuster -->
-      <div class="hidden sm:flex items-center border border-slate-700 rounded overflow-hidden">
-        <button id="font-decrease" class="px-2 py-1 text-xs hover:bg-slate-800 text-slate-300" title="Decrease passage font size">A-</button>
-        <button id="font-increase" class="px-2 py-1 text-xs hover:bg-slate-800 text-slate-300 border-l border-slate-700" title="Increase passage font size">A+</button>
+      <!-- Active User Badge -->
+      <div id="user-badge" class="hidden items-center space-x-2 px-2.5 py-1 bg-blue-50 border border-blue-200 rounded-md text-xs text-blue-900 font-medium">
+        <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+        <span id="user-display-name">Student</span>
       </div>
 
-      <!-- Question Navigator Trigger -->
-      <button id="nav-dropdown-btn" class="bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1.5 shadow-sm transition">
-        <span>Questions</span>
-        <span id="header-answered-badge" class="bg-blue-800 text-blue-100 text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold">0/6</span>
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+      <!-- Logout Button -->
+      <button id="logout-btn" class="hidden px-2.5 py-1.5 text-xs text-red-600 hover:bg-red-50 rounded-md font-medium border border-transparent hover:border-red-200 transition">
+        Exit
       </button>
     </div>
   </header>
 
-  <!-- Question Quick Selection Drawer / Dropdown -->
-  <div id="question-navigator-modal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full border border-slate-200 overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-        <div>
-          <h3 class="font-bold text-slate-800 text-base">Question Review List</h3>
-          <p class="text-xs text-slate-500">Jump directly to any question or mark review</p>
+  <!-- Main View Container -->
+  <main class="flex-1 relative overflow-hidden flex flex-col">
+
+    <!-- 1. LOGIN & GATEWAY VIEW -->
+    <div id="view-login" class="h-full flex items-center justify-center p-4 bg-slate-100 overflow-y-auto">
+      <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden my-auto">
+        <!-- Gateway Header Tabs -->
+        <div class="flex border-b border-slate-200">
+          <button id="tab-btn-student" class="flex-1 py-3 text-sm font-semibold text-blue-700 border-b-2 border-blue-700 bg-blue-50/50 transition">
+            Student Access
+          </button>
+          <button id="tab-btn-admin" class="flex-1 py-3 text-sm font-semibold text-slate-500 hover:text-slate-700 transition">
+            Teacher / Admin
+          </button>
         </div>
-        <button id="close-nav-btn" class="text-slate-400 hover:text-slate-600 p-1">
+
+        <!-- Student Login Tab Content -->
+        <div id="tab-content-student" class="p-6 space-y-4">
+          <div class="text-center space-y-1">
+            <h2 class="text-lg font-bold text-slate-900">Student Sign In</h2>
+            <p class="text-xs text-slate-500">Choose your name and enter your password to start your assigned practice.</p>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Select Student Name</label>
+              <select id="login-student-select" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+                <option value="">Loading enrolled students...</option>
+              </select>
+            </div>
+
+            <div id="student-info-preview" class="hidden p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs space-y-1">
+              <div class="flex justify-between text-slate-600">
+                <span>Class: <strong id="stu-preview-class" class="text-slate-800">-</strong></span>
+                <span>ID: <strong id="stu-preview-id" class="text-slate-800 font-mono">-</strong></span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
+              <input type="password" id="login-student-pass" placeholder="Enter assigned password" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+            </div>
+
+            <div id="student-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
+              Incorrect password. Please verify with your teacher.
+            </div>
+
+            <button id="student-login-submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-sm hover:shadow">
+              Launch Reading Practice
+            </button>
+          </div>
+        </div>
+
+        <!-- Admin Login Tab Content -->
+        <div id="tab-content-admin" class="hidden p-6 space-y-4">
+          <div class="text-center space-y-1">
+            <h2 class="text-lg font-bold text-slate-900">Teacher Dashboard</h2>
+            <p class="text-xs text-slate-500">Manage student roster, review homework submissions, and finalize grades.</p>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Admin Master Passcode</label>
+              <input type="password" id="login-admin-pass" placeholder="Default: admin123" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+            </div>
+
+            <div id="admin-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
+              Invalid master passcode.
+            </div>
+
+            <button id="admin-login-submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition shadow-sm">
+              Open Teacher Portal
+            </button>
+          </div>
+        </div>
+
+        <div class="p-3 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500">
+          Cambridge IGCSE English Portal
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. ADMIN DASHBOARD VIEW -->
+    <div id="view-admin" class="hidden h-full flex flex-col bg-slate-100 overflow-hidden">
+      <!-- Admin Action Bar -->
+      <div class="bg-white border-b border-slate-200 px-6 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Teacher Assessment Hub</h2>
+          <p class="text-xs text-slate-500">Monitor student progress, grade submissions, and update roster.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="admin-gas-settings-btn" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span>Sheet Settings</span>
+          </button>
+          <button id="admin-export-github-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-slate-200 rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5" title="Download index.html with your URL baked in for GitHub Pages">
+            <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            <span>Export for GitHub</span>
+          </button>
+          <button id="admin-refresh-btn" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            <span>Sync Data</span>
+          </button>
+          <button id="admin-add-stu-btn" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>Add New Student</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dashboard Body Tabs -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-6">
+        <!-- Submissions Table Section -->
+        <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
+          <div class="px-5 py-3.5 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+              <h3 class="text-sm font-bold text-slate-800">Student Homework Submissions</h3>
+            </div>
+            <span id="admin-submission-count" class="text-xs bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full font-semibold">0 submissions</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[10px]">
+                  <th class="py-3 px-4">Student</th>
+                  <th class="py-3 px-4">Class</th>
+                  <th class="py-3 px-4">Exercise</th>
+                  <th class="py-3 px-4">Auto Score</th>
+                  <th class="py-3 px-4">Final Score</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4">Submitted At</th>
+                  <th class="py-3 px-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-submissions-tbody" class="divide-y divide-slate-100 text-slate-700">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Student Roster Section -->
+        <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
+          <div class="px-5 py-3.5 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+              <h3 class="text-sm font-bold text-slate-800">Enrolled Student Roster</h3>
+            </div>
+            <span id="admin-roster-count" class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-semibold">0 students</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[10px]">
+                  <th class="py-3 px-4">ID</th>
+                  <th class="py-3 px-4">Full Name</th>
+                  <th class="py-3 px-4">Class</th>
+                  <th class="py-3 px-4">Password</th>
+                  <th class="py-3 px-4 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody id="admin-roster-tbody" class="divide-y divide-slate-100 text-slate-700">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. STUDENT EXAM & PRACTICE VIEW (SAT Style Dual-Pane) -->
+    <div id="view-exam" class="hidden h-full flex flex-col overflow-hidden bg-slate-100">
+      
+      <!-- Top Exam Bar (Exercise Selector & Controls) -->
+      <div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between shadow-xs shrink-0">
+        <div class="flex items-center space-x-3">
+          <label class="text-xs font-semibold text-slate-600">Exercise:</label>
+          <select id="exam-exercise-select" class="text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg px-2.5 py-1 cursor-pointer focus:outline-none">
+            <!-- Dynamically populated options -->
+          </select>
+          <span id="exercise-badge-marks" class="text-xs bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded-md">8 marks</span>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <!-- Text Size Adjusters -->
+          <div class="flex items-center bg-slate-100 rounded-lg border border-slate-300 p-0.5">
+            <button id="btn-font-smaller" class="px-2 py-0.5 text-xs text-slate-600 hover:text-slate-900 font-bold" title="Decrease font size">A-</button>
+            <div class="h-3 w-px bg-slate-300"></div>
+            <button id="btn-font-larger" class="px-2 py-0.5 text-xs text-slate-600 hover:text-slate-900 font-bold" title="Increase font size">A+</button>
+          </div>
+          <!-- Highlighter Toggle -->
+          <button id="btn-highlighter" class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-300 bg-white hover:bg-yellow-50 text-slate-700 flex items-center space-x-1.5 transition">
+            <span class="w-3 h-3 rounded-full bg-yellow-300 border border-yellow-400"></span>
+            <span>Highlight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dual Pane Container -->
+      <div class="flex-1 flex overflow-hidden">
+        
+        <!-- LEFT PANE: Reading Passage -->
+        <div class="w-1/2 border-r border-slate-200 bg-white flex flex-col overflow-hidden">
+          <div class="px-6 py-3 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between shrink-0">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-600" id="passage-label">Reading Text</span>
+            <span class="text-[11px] text-slate-400 italic">Select text to highlight</span>
+          </div>
+
+          <!-- Passage Text Content -->
+          <div id="passage-container" class="flex-1 p-6 md:p-8 overflow-y-auto font-serif text-slate-800 leading-relaxed space-y-4 text-justify" style="font-size: 18px;">
+            <!-- Injected by Active Exercise -->
+          </div>
+        </div>
+
+        <!-- RIGHT PANE: Digital SAT Question Workspace -->
+        <div class="w-1/2 bg-slate-50 flex flex-col overflow-hidden">
+          
+          <!-- Question Header & Review Bar Container -->
+          <div class="p-4 border-b border-slate-200 bg-white shrink-0 space-y-3 shadow-xs">
+            
+            <!-- Exact Question Review List Banner as Requested -->
+            <div id="review-list-banner" class="bg-white rounded-xl border border-slate-200 p-3 shadow-xs">
+              <div class="flex items-center justify-between mb-2">
+                <div>
+                  <h3 class="text-sm font-bold text-slate-900">Question Review List</h3>
+                  <p class="text-[11px] text-slate-500">Jump directly to any question or mark review</p>
+                </div>
+                <button id="close-review-banner-btn" class="text-slate-400 hover:text-slate-600 p-1" title="Minimize review list">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+              </div>
+
+              <!-- Question Grid Items -->
+              <div id="review-grid-buttons" class="flex flex-wrap gap-2 mb-3">
+                <!-- Dynamically populated buttons -->
+              </div>
+
+              <!-- Legend and Done Button -->
+              <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] text-slate-600">
+                <div class="flex items-center space-x-3">
+                  <span class="flex items-center space-x-1">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
+                    <span>Answered</span>
+                  </span>
+                  <span class="flex items-center space-x-1">
+                    <span class="w-2.5 h-2.5 rounded-full border border-slate-300 inline-block"></span>
+                    <span>Unanswered</span>
+                  </span>
+                  <span class="flex items-center space-x-1">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                    <span>Review</span>
+                  </span>
+                </div>
+                <button id="done-review-banner-btn" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-md text-xs transition">
+                  Done
+                </button>
+              </div>
+            </div>
+
+            <!-- Question Number & Mark for Review Toggle -->
+            <div class="flex items-center justify-between pt-1">
+              <div class="flex items-center space-x-2">
+                <span class="px-2.5 py-1 bg-slate-900 text-white text-xs font-bold rounded-md" id="q-counter-label">Question 1 of 6</span>
+                <span class="text-xs font-semibold text-slate-500" id="q-mark-value">[1 mark]</span>
+              </div>
+              <button id="btn-mark-review" class="px-3 py-1 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-xs font-medium text-slate-700 flex items-center space-x-1.5 transition">
+                <svg class="w-3.5 h-3.5 text-slate-400" id="mark-review-flag" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path></svg>
+                <span id="mark-review-text">Mark for Review</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Question Content & Response Workspace -->
+          <div class="flex-1 p-6 overflow-y-auto space-y-4">
+            <!-- Question Prompt Box -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-1">
+              <span class="text-[11px] font-bold text-blue-600 uppercase tracking-wider" id="q-instruction-label">Exercise Question</span>
+              <p class="text-sm font-semibold text-slate-800 leading-snug" id="q-prompt-text">
+                Where in the world do most species of fruit bat live?
+              </p>
+            </div>
+
+            <!-- Dynamic Input Workspace Area -->
+            <div id="q-input-container" class="space-y-3">
+              <!-- Dynamically populated with Single Free-Text, Multiple Sub-details (Q6), or Multiple Choice (A-D) -->
+            </div>
+          </div>
+
+          <!-- Question Navigation Footer Bar -->
+          <div class="p-4 bg-white border-t border-slate-200 flex items-center justify-between shrink-0">
+            <button id="btn-prev-q" class="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed">
+              Back
+            </button>
+            <div class="flex items-center space-x-3">
+              <button id="btn-next-q" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow-sm transition">
+                Next
+              </button>
+              <button id="btn-submit-task" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center space-x-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                <span>Submit Task</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 4. MODALS & OVERLAYS -->
+
+  <!-- A. Teacher Submission Grading & Review Modal -->
+  <div id="grading-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
+    <div class="bg-white max-w-3xl w-full rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[90vh] flex flex-col">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900" id="grade-modal-title">Review Student Submission</h3>
+          <p class="text-xs text-slate-500" id="grade-modal-meta">Student Name • Exercise</p>
+        </div>
+        <button id="close-grading-modal" class="text-slate-400 hover:text-slate-600 p-1">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
-      
-      <div class="p-5 grid grid-cols-6 gap-2.5" id="nav-grid">
+
+      <!-- Modal Body: Answer Review List -->
+      <div class="flex-1 p-6 overflow-y-auto space-y-4" id="grade-modal-answers">
         <!-- Rendered dynamically -->
       </div>
 
-      <div class="bg-slate-50 px-5 py-3 border-t border-slate-100 text-xs text-slate-500 flex justify-between items-center">
+      <!-- Modal Grading Footer -->
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         <div class="flex items-center space-x-3">
-          <div class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span><span>Answered</span></div>
-          <div class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full border border-slate-300 inline-block"></span><span>Unanswered</span></div>
-          <div class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span><span>Review</span></div>
+          <label class="text-xs font-bold text-slate-700">Final Awarded Score:</label>
+          <div class="flex items-center space-x-1.5">
+            <input type="number" id="grade-modal-final-input" min="0" max="20" class="w-16 px-2 py-1 text-xs border border-slate-300 rounded font-bold text-center">
+            <span class="text-xs text-slate-500 font-semibold" id="grade-modal-max-label">/ 8 marks</span>
+          </div>
         </div>
-        <button id="close-nav-bottom-btn" class="px-3 py-1 bg-slate-200 hover:bg-slate-300 rounded font-medium text-slate-700">Done</button>
+        <div class="flex items-center space-x-2">
+          <input type="text" id="grade-modal-feedback" placeholder="Teacher feedback notes..." class="flex-1 md:w-64 px-3 py-1.5 text-xs border border-slate-300 rounded-lg">
+          <button id="save-final-grade-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition">
+            Save & Finalize
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Split Main Container (Passage on Left, Question & Writing Space on Right) -->
-  <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
-    
-    <!-- LEFT PANEL: Reading Text (SAT Style Passage) -->
-    <section class="w-full md:w-1/2 h-1/2 md:h-full overflow-y-auto border-r border-slate-300 bg-white p-6 lg:p-8 flex flex-col" id="left-passage-panel">
-      
-      <!-- Passage Metadata Pill -->
-      <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
-        <div class="flex items-center space-x-2">
-          <span class="bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded text-xs tracking-wider border border-slate-200 uppercase">Reading Passage</span>
-          <span class="text-xs text-slate-500">IGCSE / SAT Exercise 1</span>
-        </div>
-        <span class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Informational Text</span>
-      </div>
-
-      <!-- Article Title & Instructions -->
-      <div class="mb-4">
-        <p class="text-xs font-semibold uppercase tracking-wider text-blue-700 mb-1">Exercise 1</p>
-        <p class="text-xs text-slate-600 italic mb-3">Read the article about an animal called the fruit bat, and then answer the questions.</p>
-        <h2 class="text-2xl lg:text-3xl font-bold tracking-tight text-slate-900 border-l-4 border-blue-600 pl-3 py-0.5">
-          Fruit bats
-        </h2>
-      </div>
-
-      <!-- Passage Body with line-height and serif style for authentic SAT reading -->
-      <article id="passage-content" class="serif-passage text-slate-800 text-base lg:text-[1.125rem] leading-relaxed space-y-4 pr-2 selection:bg-amber-200">
-        
-        <p data-paragraph="1">
-          Fruit bats are flying mammals named because of their habit of living on a diet of various tropical fruits and plants. There are over 170 different species around the world. Although mainly found in Africa, some can also be found in sites in Southeast Asia and Central and South America.
-        </p>
-
-        <p data-paragraph="2">
-          While most bats measure only a few centimetres in length, fruit bats are, on average, the largest bat species in the world. They range in size from the flying fox, which has wings up to 1.7 metres across when fully extended, down to the spotted-winged fruit bat, whose open wings measure around 28 centimetres from end to end.
-        </p>
-
-        <p data-paragraph="3">
-          Fruit bats are nocturnal, which means they usually only come out at night to feed. The most likely explanation for this is that the bat is trying to avoid dangerous animals such as rats. In island locations especially, these can seriously reduce numbers. Despite sharing certain types of behaviour with other bat species, fruit bats are unique in some respects. When it comes to flying at night, fruit bats regularly use smell to work out where they are going, whereas most bat species use sound to achieve this. It is unclear whether fruit bats simply lost that ability at some time in the past or just never developed it in the first place.
-        </p>
-
-        <p data-paragraph="4">
-          Fruit bats are among the most social of all mammals. With a few exceptions, they usually live in large groups of up to 200000 individuals. They gather at the end of the night when they have finished feeding and remain together until the next night. They do this in a variety of places including caves, bushes and even empty buildings, although more than half of all species are found in trees, sometimes in such large numbers that the branches can break under their weight. The size of the groups may be related to the availability of local food. In places where there is plenty, the bats will form even bigger groups. Female fruit bats are responsible for almost all the care of their young bats, known as pups. Research has shown that these remain with their mothers for around the first four months of their lives, receiving both milk and protection. It takes about two years for young bats to become adults. They can then live for up to 30 years.
-        </p>
-
-        <p data-paragraph="5">
-          While fruit bats are not yet an endangered species, they are increasingly at risk, for example from humans clearing land for farming. It is unclear at the moment exactly how much impact climate change is having on fruit bats, but it appears to be significant.
-        </p>
-
-      </article>
-
-      <div class="mt-8 pt-4 border-t border-slate-200 text-[11px] text-slate-500 italic flex justify-between items-center">
-        <span>0510/13/O/N/24</span>
-        <span>UCLES 2024</span>
-      </div>
-    </section>
-
-    <!-- RIGHT PANEL: Question Space, Input Fields, and Direct Student Answering Space -->
-    <section class="w-full md:w-1/2 h-1/2 md:h-full overflow-y-auto bg-slate-50 p-6 lg:p-8 flex flex-col justify-between" id="right-question-panel">
-      
-      <!-- Upper Section: Question Meta & Flagging -->
-      <div>
-        <!-- Inline Question Review List Card -->
-        <div id="inline-review-card" class="mb-5 bg-white rounded-xl border border-slate-200/90 shadow-sm p-4 transition-all">
-          <div class="flex items-start justify-between mb-3">
-            <div>
-              <h3 class="text-sm font-bold text-slate-900 tracking-tight">Question Review List</h3>
-              <p class="text-xs text-slate-500 mt-0.5">Jump directly to any question or mark review</p>
-            </div>
-            <button id="inline-toggle-btn" class="text-slate-400 hover:text-slate-600 p-1 rounded-md transition" title="Toggle question list">
-              <svg id="inline-toggle-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-
-          <!-- Dynamic 6 Question Nav Boxes -->
-          <div id="inline-nav-boxes" class="grid grid-cols-6 gap-2 sm:gap-2.5 mb-3.5">
-            <!-- Rendered by buildInlineNavGrid() -->
-          </div>
-
-          <!-- Legend and Done Button Row -->
-          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
-            <div class="flex items-center space-x-3 sm:space-x-4">
-              <div class="flex items-center space-x-1.5">
-                <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
-                <span class="text-[11px] sm:text-xs">Answered</span>
-              </div>
-              <div class="flex items-center space-x-1.5">
-                <span class="w-2.5 h-2.5 rounded-full border-2 border-slate-300 inline-block"></span>
-                <span class="text-[11px] sm:text-xs">Unanswered</span>
-              </div>
-              <div class="flex items-center space-x-1.5">
-                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
-                <span class="text-[11px] sm:text-xs">Review</span>
-              </div>
-            </div>
-            <button id="inline-done-btn" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-medium rounded-md text-xs transition">
-              Done
-            </button>
-          </div>
-        </div>
-
-        <!-- Collapsed Bar Trigger (Shown if user clicks Done or X) -->
-        <button id="inline-expand-bar" class="hidden mb-4 w-full py-2 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 flex items-center justify-between hover:bg-slate-50 transition shadow-xs">
-          <span class="flex items-center space-x-2">
-            <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            <span>Show Question Review List (1–6)</span>
-          </span>
-          <span class="text-blue-600 text-[11px]">Expand</span>
+  <!-- B. Add Student Modal -->
+  <div id="add-student-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-md w-full rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-base font-bold text-slate-900">Enroll New Student</h3>
+        <button id="close-add-stu-modal" class="text-slate-400 hover:text-slate-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-
-        <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
-          <div class="flex items-center space-x-2">
-            <span id="question-badge" class="bg-blue-600 text-white font-bold px-2.5 py-0.5 rounded text-xs">
-              Question 1 of 6
-            </span>
-            <span id="question-marks-badge" class="bg-slate-200 text-slate-700 px-2 py-0.5 rounded text-xs font-semibold">
-              [1 mark]
-            </span>
-          </div>
-
-          <!-- Mark for Review Toggle -->
-          <label class="flex items-center space-x-2 cursor-pointer group text-xs text-slate-600 font-medium select-none">
-            <input type="checkbox" id="mark-review-checkbox" class="w-4 h-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400 transition cursor-pointer">
-            <span class="group-hover:text-slate-900 transition flex items-center space-x-1">
-              <svg class="w-3.5 h-3.5 text-amber-500 fill-current inline" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v13a1 1 0 01-1.6.8L10 13.5l-5.4 4.3A1 1 0 013 17V4z"></path></svg>
-              <span>Mark for Review</span>
-            </span>
-          </label>
-        </div>
-
-        <!-- Question Prompt Display -->
-        <div class="mb-6">
-          <h2 id="question-text" class="text-lg lg:text-xl font-bold text-slate-900 leading-snug">
-            Where in the world do most species of fruit bat live?
-          </h2>
-          <p id="question-subtext" class="text-xs text-slate-500 mt-1.5 hidden"></p>
-        </div>
-
-        <!-- Writing / Input Response Space Container -->
-        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm mb-4" id="input-container">
-          <!-- Dynamic Response inputs inserted by JavaScript -->
-        </div>
-
-        <!-- Real-time Exam Tips / Directions note -->
-        <div class="p-3.5 bg-blue-50/70 rounded-lg border border-blue-100 flex items-start space-x-2.5 text-xs text-blue-900">
-          <svg class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
-            <line x1="12" y1="16" x2="12" y2="12" stroke-width="2"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8" stroke-width="2"></line>
-          </svg>
-          <div class="leading-relaxed">
-            <strong class="font-semibold">Cambridge Marking Directive:</strong> Be concise. Answers should be extracted directly from the passage text. Any bracketed words are optional, but crucially, <strong>inclusion of incorrect, distractor, or contradictory information negates the mark</strong>.
-          </div>
-        </div>
       </div>
 
-      <!-- Bottom Navigation Footer Buttons -->
-      <div class="pt-6 border-t border-slate-200 mt-6 flex items-center justify-between">
-        <button id="prev-btn" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-medium text-sm transition flex items-center space-x-1.5 shadow-sm disabled:opacity-40 disabled:pointer-events-none">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-          <span>Previous</span>
-        </button>
-
-        <div class="flex items-center space-x-2">
-          <button id="finish-exam-btn" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition shadow-sm flex items-center space-x-1.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            <span>Finish & Grade</span>
-          </button>
-          
-          <button id="next-btn" class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-sm transition flex items-center space-x-1.5 shadow-sm disabled:opacity-40 disabled:pointer-events-none">
-            <span>Next</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-          </button>
-        </div>
-      </div>
-
-    </section>
-  </main>
-
-  <!-- Final Scoring & Answer Review Modal -->
-  <div id="results-modal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full border border-slate-200 max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-      
-      <!-- Modal Header -->
-      <div class="px-6 py-5 bg-slate-900 text-white flex justify-between items-center shrink-0">
+      <div class="space-y-3 text-xs">
         <div>
-          <span class="text-xs font-mono uppercase tracking-widest text-blue-400 font-semibold">Official Mark Scheme Report</span>
-          <h2 class="text-xl font-bold text-white">Exercise 1 Performance Results</h2>
+          <label class="block font-semibold text-slate-700 mb-1">Full Student Name</label>
+          <input type="text" id="new-stu-name" placeholder="e.g. Maria Gonzalez" class="w-full py-2 px-3 border border-slate-300 rounded-lg">
         </div>
-        <div class="text-right">
-          <div class="text-2xl font-black text-amber-300" id="modal-score-ratio">0 / 8</div>
-          <div class="text-xs text-slate-300 font-medium" id="modal-percentage">0%</div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Student ID</label>
+            <input type="text" id="new-stu-id" placeholder="e.g. CIE-105" class="w-full py-2 px-3 border border-slate-300 rounded-lg">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Class / Group</label>
+            <input type="text" id="new-stu-class" placeholder="e.g. Year 10-A" class="w-full py-2 px-3 border border-slate-300 rounded-lg">
+          </div>
         </div>
-      </div>
-
-      <!-- Modal Body - Detailed Per Question Breakdown -->
-      <div class="p-6 overflow-y-auto space-y-4 flex-1 bg-slate-50" id="results-breakdown-list">
-        <!-- Filled dynamically by grading engine -->
-      </div>
-
-      <!-- Modal Action Bar -->
-      <div class="px-6 py-4 bg-white border-t border-slate-200 flex items-center justify-between shrink-0">
-        <button id="review-in-place-btn" class="px-4 py-2 border border-slate-300 hover:bg-slate-100 text-slate-700 font-medium rounded-lg text-sm transition">
-          Return to Exam View
-        </button>
-        <div class="flex items-center space-x-3">
-          <button id="copy-summary-btn" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-medium rounded-lg text-sm transition flex items-center space-x-1.5">
-            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-            <span>Copy Score Report</span>
-          </button>
-          <button id="retry-exam-btn" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition shadow-sm">
-            Restart Practice
-          </button>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Assigned Login Password</label>
+          <input type="text" id="new-stu-pass" placeholder="e.g. reading2026" class="w-full py-2 px-3 border border-slate-300 rounded-lg font-mono">
         </div>
       </div>
 
+      <div class="pt-2 flex justify-end space-x-2">
+        <button id="cancel-add-stu" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
+        <button id="confirm-add-student-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-xs">Save to Google Sheet</button>
+      </div>
     </div>
   </div>
 
-  <!-- Custom In-App Notification Toast (strictly avoiding alert()) -->
-  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium border border-slate-700 transform translate-y-16 opacity-0 transition-all duration-300 z-50 flex items-center space-x-2 pointer-events-none">
-    <svg id="toast-icon" class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-    <span id="toast-msg">Action confirmed</span>
+  <!-- C. Google Apps Script Webhook Settings Modal (Admin Only) -->
+  <div id="gas-settings-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
+    <div class="bg-white max-w-xl w-full rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4 my-auto">
+      <div class="flex justify-between items-center">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Google Sheet Integration</h3>
+          <p class="text-xs text-slate-500">Configure Webhook URL from Google Apps Script</p>
+        </div>
+        <button id="close-gas-modal" class="text-slate-400 hover:text-slate-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <label class="block font-semibold text-slate-700">Apps Script Web App URL</label>
+        <input type="text" id="gas-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full py-2 px-3 border border-slate-300 rounded-lg text-xs font-mono">
+        <p class="text-[11px] text-slate-500">Submissions, student rosters, and finalized teacher marks sync directly with your Google Sheet.</p>
+      </div>
+
+      <div class="pt-2 flex justify-between items-center">
+        <button id="copy-gas-code-btn" class="text-xs text-blue-600 hover:text-blue-800 font-semibold underline">
+          Copy Google Apps Script Template
+        </button>
+        <button id="save-gas-url-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold">
+          Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- D. SUBMISSION PROGRESS LOADING MODAL (Prevents duplicate clicks) -->
+  <div id="submission-loading-modal" class="hidden fixed inset-0 bg-slate-900/75 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-slate-200 p-6 text-center space-y-4">
+      <div class="w-14 h-14 mx-auto border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+      <div class="space-y-1">
+        <h3 class="text-base font-bold text-slate-900">Submitting Homework...</h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Please wait while your answers and grading data sync to the Google Sheet. Do not refresh or close this page.
+        </p>
+      </div>
+      <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+        <div class="bg-blue-600 h-1.5 rounded-full animate-pulse w-3/4"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- E. Student Submission Success & Score Receipt Modal -->
+  <div id="student-result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
+    <div class="bg-white max-w-lg w-full rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4 my-auto">
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">Task Completed & Submitted!</h3>
+        <p class="text-xs text-slate-500">Your homework has been submitted to your teacher for review.</p>
+      </div>
+
+      <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
+        <div class="flex justify-between items-center py-1 border-b border-slate-200">
+          <span class="text-slate-600">Student:</span>
+          <span class="font-bold text-slate-800" id="receipt-student-name">-</span>
+        </div>
+        <div class="flex justify-between items-center py-1 border-b border-slate-200">
+          <span class="text-slate-600">Exercise:</span>
+          <span class="font-bold text-slate-800" id="receipt-exercise-title">-</span>
+        </div>
+        <div class="flex justify-between items-center py-1 border-b border-slate-200">
+          <span class="text-slate-600">Preliminary Auto Score:</span>
+          <span class="font-bold text-blue-700 text-sm" id="receipt-auto-score">0 / 8</span>
+        </div>
+        <div class="flex justify-between items-center py-1">
+          <span class="text-slate-600">Grading Status:</span>
+          <span class="px-2 py-0.5 bg-amber-100 text-amber-800 font-semibold rounded text-[11px]">Pending Teacher Review</span>
+        </div>
+      </div>
+
+      <div class="flex space-x-2 pt-2">
+        <button id="btn-close-receipt" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition">
+          Return to Portal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Message Box -->
+  <div id="toast-box" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-xl opacity-0 transition-opacity duration-300 pointer-events-none z-50 flex items-center space-x-2">
+    <span id="toast-text">Message</span>
   </div>
 
   <script>
-    /* Questions definition with exact texts, point values, and mark scheme evaluation specifications */
-    const EXAM_QUESTIONS = [
+    /* =========================================================
+       EXERCISE DATA & CAMBRIDGE MARK SCHEMES (Extensible Array)
+    ========================================================= */
+    const EXERCISES = [
       {
-        id: 1,
-        prompt: "Where in the world do most species of fruit bat live?",
-        subtext: "Type your answer in the response box below.",
-        marks: 1,
-        type: "single",
-        placeholder: "Enter location...",
-        canonicalAnswer: "Africa",
-        explanation: "Mark scheme awards 1 mark for: Africa. (Passage: 'Although mainly found in Africa...')"
+        id: "ex1",
+        number: "Exercise 1",
+        title: "Fruit bats",
+        type: "comprehension",
+        totalMarks: 8,
+        passage: `
+          <h2 class="text-2xl font-bold text-slate-900 mb-3 tracking-tight">Fruit bats</h2>
+          <p class="mb-4">Fruit bats are flying mammals named because of their habit of living on a diet of various tropical fruits and plants. There are over 170 different species around the world. Although mainly found in Africa, some can also be found in sites in Southeast Asia and Central and South America.</p>
+          <p class="mb-4">While most bats measure only a few centimetres in length, fruit bats are, on average, the largest bat species in the world. They range in size from the flying fox, which has wings up to 1.7 metres across when fully extended, down to the spotted-winged fruit bat, whose open wings measure around 28 centimetres from end to end.</p>
+          <p class="mb-4">Fruit bats are nocturnal, which means they usually only come out at night to feed. The most likely explanation for this is that the bat is trying to avoid dangerous animals such as rats. In island locations especially, these can seriously reduce numbers. Despite sharing certain types of behaviour with other bat species, fruit bats are unique in some respects. When it comes to flying at night, fruit bats regularly use smell to work out where they are going, whereas most bat species use sound to achieve this. It is unclear whether fruit bats simply lost that ability at some time in the past or just never developed it in the first place.</p>
+          <p class="mb-4">Fruit bats are among the most social of all mammals. With a few exceptions, they usually live in large groups of up to 200000 individuals. They gather at the end of the night when they have finished feeding and remain together until the next night. They do this in a variety of places including caves, bushes and even empty buildings, although more than half of all species are found in trees, sometimes in such large numbers that the branches can break under their weight. The size of the groups may be related to the availability of local food. In places where there is plenty, the bats will form even bigger groups. Female fruit bats are responsible for almost all the care of their young bats, known as pups. Research has shown that these remain with their mothers for around the first four months of their lives, receiving both milk and protection. It takes about two years for young bats to become adults. They can then live for up to 30 years.</p>
+          <p class="mb-4">While fruit bats are not yet an endangered species, they are increasingly at risk, for example from humans clearing land for farming. It is unclear at the moment exactly how much impact climate change is having on fruit bats, but it appears to be significant.</p>
+        `,
+        questions: [
+          {
+            id: "q1",
+            number: 1,
+            prompt: "Where in the world do most species of fruit bat live?",
+            marks: 1,
+            type: "text",
+            officialAnswer: "Africa",
+            evaluator: (ans) => {
+              const text = (ans || "").toLowerCase().trim();
+              if (!text) return { score: 0, reason: "No response entered." };
+              // Reject contradictory or irrelevant locations
+              if (text.includes("asia") || text.includes("america") || text.includes("central") || text.includes("southeast")) {
+                return { score: 0, reason: "Incorrect: Included contradictory geographical information." };
+              }
+              if (text.includes("africa")) {
+                return { score: 1, reason: "Correct (Africa)" };
+              }
+              return { score: 0, reason: "Incorrect: Expected 'Africa'." };
+            }
+          },
+          {
+            id: "q2",
+            number: 2,
+            prompt: "Which is the largest type of fruit bat?",
+            marks: 1,
+            type: "text",
+            officialAnswer: "flying fox",
+            evaluator: (ans) => {
+              const text = (ans || "").toLowerCase().trim();
+              if (!text) return { score: 0, reason: "No response entered." };
+              if (text.includes("spotted-winged") || text.includes("spotted winged")) {
+                return { score: 0, reason: "Incorrect: Named smallest bat species." };
+              }
+              if (text.includes("flying fox")) {
+                return { score: 1, reason: "Correct (flying fox)" };
+              }
+              return { score: 0, reason: "Incorrect: Expected 'flying fox'." };
+            }
+          },
+          {
+            id: "q3",
+            number: 3,
+            prompt: "What do fruit bats use to help them find their way in the dark?",
+            marks: 1,
+            type: "text",
+            officialAnswer: "smell",
+            evaluator: (ans) => {
+              const text = (ans || "").toLowerCase().trim();
+              if (!text) return { score: 0, reason: "No response entered." };
+              if (text.includes("sound") || text.includes("hearing") || text.includes("echolocation")) {
+                return { score: 0, reason: "Incorrect: Sound is used by other bat species, not fruit bats." };
+              }
+              if (text.includes("smell") || text.includes("scent")) {
+                return { score: 1, reason: "Correct (smell)" };
+              }
+              return { score: 0, reason: "Incorrect: Expected 'smell'." };
+            }
+          },
+          {
+            id: "q4",
+            number: 4,
+            prompt: "Where do the majority of fruit bats tend to spend the daylight hours?",
+            marks: 1,
+            type: "text",
+            officialAnswer: "(in) trees / tree branches",
+            evaluator: (ans) => {
+              const text = (ans || "").toLowerCase().trim();
+              if (!text) return { score: 0, reason: "No response entered." };
+              if (text.includes("caves") || text.includes("bushes") || text.includes("buildings")) {
+                return { score: 0, reason: "Incorrect: Majority specifically roost in trees/branches." };
+              }
+              if (text.includes("tree") || text.includes("branch")) {
+                return { score: 1, reason: "Correct (trees / branches)" };
+              }
+              return { score: 0, reason: "Incorrect: Expected '(in) trees / tree branches'." };
+            }
+          },
+          {
+            id: "q5",
+            number: 5,
+            prompt: "How long do female fruit bats look after their young for?",
+            marks: 1,
+            type: "text",
+            officialAnswer: "(about) (the first) four months",
+            evaluator: (ans) => {
+              const text = (ans || "").toLowerCase().trim();
+              if (!text) return { score: 0, reason: "No response entered." };
+              if (text.includes("2 years") || text.includes("two years") || text.includes("30 years")) {
+                return { score: 0, reason: "Incorrect: Contradictory timeframes included." };
+              }
+              if ((text.includes("4") || text.includes("four")) && text.includes("month")) {
+                return { score: 1, reason: "Correct (four months)" };
+              }
+              return { score: 0, reason: "Incorrect: Expected '(about) (the first) four months'." };
+            }
+          },
+          {
+            id: "q6",
+            number: 6,
+            prompt: "What factors does the writer say affect fruit bat populations? Give three details.",
+            marks: 3,
+            type: "multitext",
+            subCount: 3,
+            officialAnswer: "1) dangerous animals / rats\n2) availability of (local) food\n3) (humans) clearing land (for farming)\n4) climate change",
+            evaluator: (ansArray) => {
+              if (!ansArray || !Array.isArray(ansArray)) return { score: 0, reason: "No responses entered." };
+              const awardedCategories = new Set();
+              ansArray.forEach(item => {
+                const text = (item || "").toLowerCase().trim();
+                if (!text) return;
+                if ((text.includes("dangerous animal") || text.includes("rat")) && !awardedCategories.has("c1")) {
+                  awardedCategories.add("c1");
+                } else if ((text.includes("food") || text.includes("availability of food")) && !awardedCategories.has("c2")) {
+                  awardedCategories.add("c2");
+                } else if ((text.includes("clearing land") || text.includes("farming") || text.includes("clear land")) && !awardedCategories.has("c3")) {
+                  awardedCategories.add("c3");
+                } else if (text.includes("climate change") && !awardedCategories.has("c4")) {
+                  awardedCategories.add("c4");
+                }
+              });
+              const pts = Math.min(3, awardedCategories.size);
+              return { score: pts, reason: `Awarded ${pts}/3 marks for ${pts} distinct factor(s).` };
+            }
+          }
+        ]
       },
       {
-        id: 2,
-        prompt: "Which is the largest type of fruit bat?",
-        subtext: "Provide the specific name mentioned in the passage.",
-        marks: 1,
-        type: "single",
-        placeholder: "Enter bat type...",
-        canonicalAnswer: "flying fox",
-        explanation: "Mark scheme awards 1 mark for: flying fox. (Passage: 'They range in size from the flying fox, which has wings up to 1.7 metres across...')"
-      },
-      {
-        id: 3,
-        prompt: "What do fruit bats use to help them find their way in the dark?",
-        subtext: "Identify the primary sense described in paragraph 3.",
-        marks: 1,
-        type: "single",
-        placeholder: "Enter sense...",
-        canonicalAnswer: "smell",
-        explanation: "Mark scheme awards 1 mark for: smell. (Passage: 'fruit bats regularly use smell to work out where they are going...')"
-      },
-      {
-        id: 4,
-        prompt: "Where do the majority of fruit bats tend to spend the daylight hours?",
-        subtext: "Specify the exact habitat where more than half are found.",
-        marks: 1,
-        type: "single",
-        placeholder: "Enter daylight roost location...",
-        canonicalAnswer: "(in) trees / tree branches",
-        explanation: "Mark scheme awards 1 mark for: (in) trees / tree branches. (Passage: 'more than half of all species are found in trees...')"
-      },
-      {
-        id: 5,
-        prompt: "How long do female fruit bats look after their young for?",
-        subtext: "State the duration during which pups stay with their mother.",
-        marks: 1,
-        type: "single",
-        placeholder: "Enter time period...",
-        canonicalAnswer: "(about) (the first) four months",
-        explanation: "Mark scheme awards 1 mark for: (about) (the first) four months. (Passage: 'remain with their mothers for around the first four months of their lives...')"
-      },
-      {
-        id: 6,
-        prompt: "What factors does the writer say affect fruit bat populations?",
-        subtext: "Give three details. Award one mark for each distinct detail up to a maximum of 3 marks.",
-        marks: 3,
-        type: "multi",
-        placeholder: "Enter detail...",
-        canonicalAnswer: "1) dangerous animals / rats; 2) availability of (local) food; 3) (humans) clearing land (for farming); 4) climate change",
-        explanation: "Mark scheme accepted factors (Any 3): (1) dangerous animals / rats; (2) availability of (local) food; (3) (humans) clearing land (for farming); (4) climate change."
+        id: "ex2",
+        number: "Exercise 2",
+        title: "Pocket Money",
+        type: "matching",
+        totalMarks: 9,
+        passage: `
+          <h2 class="text-2xl font-bold text-slate-900 mb-2 tracking-tight">Pocket Money</h2>
+          <p class="text-sm font-semibold text-slate-600 mb-4">Activities we did to earn pocket money when we were young</p>
+          
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-blue-900 mb-1">A Colette — Sweeping leaves</h3>
+            <p>I always admired my older brother, and I knew my parents had given him some money for taking out the rubbish, so I couldn't wait to have my own job to do! My mum said I was too small to carry the rubbish, but there were lots of leaves in the back yard that I could sweep up. It wasn't as easy as I thought, but I did better after my dad suggested I used a smaller brush. After I finished, the yard looked great. I slept well that night, and in the morning, I went out to the yard. It was covered with leaves again! I was angry at first, but mum sat with me, and calmed me down, saying there are just some things you can't get upset about. She was right, and I haven't forgotten it. It's been useful in various situations since then.</p>
+          </div>
+
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-blue-900 mb-1">B Bilal — Cutting the grass</h3>
+            <p>I started cutting the grass in our garden for my parents when I was thirteen. I'd already done other smaller jobs at home, but I'd always thought cutting the grass was important, and it looked really fun. When I started, I preferred making patterns in the grass, rather than making it nice and smooth, which my parents weren't pleased about! I didn't think they'd let me do it again, but they did. I cut the grass weekly, and also did it at my grandad's house. Although I would've done it for nothing, he insisted on paying me. So I earned quite a lot in the end! Grandad had an old machine for cutting the grass, which was always breaking down. With practice, I managed to repair it with no problems at all and since then I've been able to fix all sorts of things for my friends and family!</p>
+          </div>
+
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-blue-900 mb-1">C Ana — Washing cars</h3>
+            <p>I got a bit of pocket money from my parents by washing their car, which I think is probably something that most kids have done at one time or another. I'm quite glad I don't have to do it anymore, though! But back then, as long as the weather was warm, I didn't mind doing it, although I always had more fun when I could persuade one of my friends to come along and help. I thought I might have to go over the bits of the car they'd missed, but they always did a good job! One summer I really wanted a new skateboard. My mum suggested that I used the money from car washing to get it, so that's what I decided to do. I remember spending every day with my sister, learning how to ride my new skateboard. In the end I was pretty good, although she's always been better than me.</p>
+          </div>
+
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-blue-900 mb-1">D Daruiz — Doing shopping</h3>
+            <p>There are some shops right around the corner from my house. I used to love going there with my mum, as she'd always buy me a comic. My brother started going to the shops on his own when he was nine, and soon after, my mum asked him to get some things for her. She only asked for a few things so that it wouldn't be heavy. When she asked me to start doing some shopping for her though, the list seemed to be much longer. Luckily, I'm strong! I enjoyed heading off to the shops with the money my parents had given me, and I felt really grown up. When school got busier and I was also trying to improve my tennis skills, I didn't have time to do the shopping trips. My mum didn't mind; by then my little sister was keen to take over.</p>
+          </div>
+        `,
+        questions: [
+          { id: "q7a", number: "7(a)", prompt: "Which person explains what they did with the money they earned?", marks: 1, type: "choice", officialAnswer: "C" },
+          { id: "q7b", number: "7(b)", prompt: "Which person mentions something that affected which activity they did?", marks: 1, type: "choice", officialAnswer: "A" },
+          { id: "q7c", number: "7(c)", prompt: "Which person describes a technical skill they learned which has helped other people?", marks: 1, type: "choice", officialAnswer: "B" },
+          { id: "q7d", number: "7(d)", prompt: "Which person gives a reason why they stopped doing the activity?", marks: 1, type: "choice", officialAnswer: "D" },
+          { id: "q7e", number: "7(e)", prompt: "Which person describes some advice they received about how to do the activity?", marks: 1, type: "choice", officialAnswer: "A" },
+          { id: "q7f", number: "7(f)", prompt: "Which person admits getting into trouble for not doing the activity correctly at first?", marks: 1, type: "choice", officialAnswer: "B" },
+          { id: "q7g", number: "7(g)", prompt: "Which person mentions preferring to do the activity with someone else?", marks: 1, type: "choice", officialAnswer: "C" },
+          { id: "q7h", number: "7(h)", prompt: "Which person says they learned an important life lesson?", marks: 1, type: "choice", officialAnswer: "A" },
+          { id: "q7i", number: "7(i)", prompt: "Which person compares different people's experiences of doing the activity?", marks: 1, type: "choice", officialAnswer: "D" }
+        ]
       }
     ];
 
-    // Application state
-    let currentIndex = 0;
-    let studentResponses = {
-      1: "",
-      2: "",
-      3: "",
-      4: "",
-      5: "",
-      6: ["", "", ""] // 3 details for Question 6
-    };
-    let reviewFlags = {
-      1: false, 2: false, 3: false, 4: false, 5: false, 6: false
-    };
-    let isGraded = false;
-    let gradingResults = null;
-    let passageFontSize = 18; // px
+    /* App Current Session State */
+    let currentUser = null; // { role: 'student' | 'admin', data: {...} }
+    let activeExerciseIndex = 0;
+    let currentQuestionIndex = 0;
+    let exerciseResponses = {}; // { [exerciseId]: { [qId]: value } }
+    let exerciseReviews = {};   // { [exerciseId]: { [qId]: boolean } }
+    let isHighlighterActive = false;
+    let passageFontSize = 18;
 
-    /* DOM references */
-    const passageContentEl = document.getElementById('passage-content');
-    const questionBadgeEl = document.getElementById('question-badge');
-    const questionMarksBadgeEl = document.getElementById('question-marks-badge');
-    const questionTextEl = document.getElementById('question-text');
-    const questionSubtextEl = document.getElementById('question-subtext');
-    const inputContainerEl = document.getElementById('input-container');
-    const markReviewCheckboxEl = document.getElementById('mark-review-checkbox');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    const finishBtn = document.getElementById('finish-exam-btn');
-    const navDropdownBtn = document.getElementById('nav-dropdown-btn');
-    const questionNavigatorModal = document.getElementById('question-navigator-modal');
-    const closeNavBtn = document.getElementById('close-nav-btn');
-    const closeNavBottomBtn = document.getElementById('close-nav-bottom-btn');
-    const navGridEl = document.getElementById('nav-grid');
-    const headerAnsweredBadge = document.getElementById('header-answered-badge');
-    const resultsModal = document.getElementById('results-modal');
-    const resultsBreakdownList = document.getElementById('results-breakdown-list');
-    const modalScoreRatio = document.getElementById('modal-score-ratio');
-    const modalPercentage = document.getElementById('modal-percentage');
-    const reviewInPlaceBtn = document.getElementById('review-in-place-btn');
-    const retryExamBtn = document.getElementById('retry-exam-btn');
-    const copySummaryBtn = document.getElementById('copy-summary-btn');
-    const highlightToggleBtn = document.getElementById('highlight-toggle-btn');
-    let highlighterMode = false;
+    /* Embedded Google Apps Script Web App URL */
+    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzK1Lqp5zvdBh3KOtSMuTHjGmcCC348Am_92R-L4MPxQa2-KBAYDSLEbslguQhHv2n03g/exec";
+    let teacherAdminPasscode = localStorage.getItem('cambridge_admin_pass') || "admin123";
 
-    const inlineReviewCard = document.getElementById('inline-review-card');
-    const inlineNavBoxes = document.getElementById('inline-nav-boxes');
-    const inlineToggleBtn = document.getElementById('inline-toggle-btn');
-    const inlineDoneBtn = document.getElementById('inline-done-btn');
-    const inlineExpandBar = document.getElementById('inline-expand-bar');
+    // URL parameter support for instant zero-config sharing: ?gas=YOUR_URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('gas')) {
+      const paramUrl = urlParams.get('gas').trim();
+      if (paramUrl) {
+        localStorage.setItem('cambridge_gas_url', paramUrl);
+      }
+    }
+
+    /* Active Webhook URL (checks URL param, then localStorage, then DEFAULT_GAS_URL) */
+    let gasWebhookUrl = localStorage.getItem('cambridge_gas_url') || DEFAULT_GAS_URL;
+
+    function sanitize(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    /* Local Data Fallback State (Synchronizes with Sheet if Webhook is available) */
+    let studentRoster = [
+      { id: "STU-101", name: "Ahmed Al-Mansoor", class: "Year 10-A", password: "123" },
+      { id: "STU-102", name: "Fatima Al-Zahra", class: "Year 10-A", password: "123" },
+      { id: "STU-103", name: "David Chen", class: "Year 10-B", password: "123" },
+      { id: "STU-104", name: "Layla Hassan", class: "Year 10-B", password: "123" }
+    ];
+
+    let submissionRecords = [];
+
+    // Load local cache if available
+    try {
+      const cachedRoster = localStorage.getItem('cambridge_roster_cache');
+      if (cachedRoster) studentRoster = JSON.parse(cachedRoster);
+      const cachedSubs = localStorage.getItem('cambridge_subs_cache');
+      if (cachedSubs) submissionRecords = JSON.parse(cachedSubs);
+    } catch(e) {}
 
     function showToast(message, isSuccess = true) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-msg');
-      const toastIcon = document.getElementById('toast-icon');
-
-      toastMsg.textContent = message;
-      if (isSuccess) {
-        toastIcon.classList.remove('text-amber-400', 'text-rose-400');
-        toastIcon.classList.add('text-emerald-400');
-      } else {
-        toastIcon.classList.remove('text-emerald-400');
-        toastIcon.classList.add('text-amber-400');
-      }
-
-      toast.classList.remove('translate-y-16', 'opacity-0');
+      const box = document.getElementById('toast-box');
+      const text = document.getElementById('toast-text');
+      text.textContent = message;
+      box.classList.remove('opacity-0');
+      box.classList.add('opacity-100');
       setTimeout(() => {
-        toast.classList.add('translate-y-16', 'opacity-0');
-      }, 2500);
+        box.classList.remove('opacity-100');
+        box.classList.add('opacity-0');
+      }, 3200);
     }
 
-    function sanitizeString(str) {
-      if (!str) return "";
-      return str
-        .toLowerCase()
-        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-    }
-
-    function evaluateSubmission() {
-      let totalEarned = 0;
-      const breakdown = [];
-
-      // Q1: Africa (Strict: reject if mentioning distractors/contradictions like "asia", "america", etc.)
-      const q1Raw = studentResponses[1] || "";
-      const q1Clean = sanitizeString(q1Raw);
-      let q1Passed = false;
-      let q1Note = "";
-      const q1Distractors = ["asia", "america", "south america", "central america", "southeast asia", "europe", "australia"];
-      const q1FoundDistractor = q1Distractors.find(d => q1Clean.includes(d));
-
-      if (q1FoundDistractor) {
-        q1Passed = false;
-        q1Note = `Mark negated: Irrelevant / contradictory information included ("${q1FoundDistractor}"). The passage states only "some" are in Asia/America, while most live in Africa.`;
-      } else if (q1Clean.includes("africa")) {
-        q1Passed = true;
-      } else {
-        q1Note = "Incorrect or missing location.";
-      }
-      const q1Score = q1Passed ? 1 : 0;
-      totalEarned += q1Score;
-      breakdown.push({
-        id: 1,
-        question: EXAM_QUESTIONS[0].prompt,
-        userAnswer: q1Raw || "(blank)",
-        correctAnswer: "Africa",
-        score: q1Score,
-        maxScore: 1,
-        isCorrect: q1Passed,
-        note: q1Note,
-        explanation: EXAM_QUESTIONS[0].explanation
-      });
-
-      // Q2: flying fox (Strict: reject if mentioning distractors like "spotted-winged" or "spotted")
-      const q2Raw = studentResponses[2] || "";
-      const q2Clean = sanitizeString(q2Raw);
-      let q2Passed = false;
-      let q2Note = "";
-      const q2Distractors = ["spotted", "spotted wing", "spotted-winged", "smallest"];
-      const q2FoundDistractor = q2Distractors.find(d => q2Clean.includes(d));
-
-      if (q2FoundDistractor) {
-        q2Passed = false;
-        q2Note = `Mark negated: Contradictory bat mentioned ("${q2FoundDistractor}"). Spotted-winged is the smallest bat, not the largest.`;
-      } else if (q2Clean.includes("flying fox") || q2Clean.includes("flyingfox")) {
-        q2Passed = true;
-      } else {
-        q2Note = "Incorrect bat species provided.";
-      }
-      const q2Score = q2Passed ? 1 : 0;
-      totalEarned += q2Score;
-      breakdown.push({
-        id: 2,
-        question: EXAM_QUESTIONS[1].prompt,
-        userAnswer: q2Raw || "(blank)",
-        correctAnswer: "flying fox",
-        score: q2Score,
-        maxScore: 1,
-        isCorrect: q2Passed,
-        note: q2Note,
-        explanation: EXAM_QUESTIONS[1].explanation
-      });
-
-      // Q3: smell (Strict: reject if mentioning distractors like "sound", "hearing", "echolocation", "sight")
-      const q3Raw = studentResponses[3] || "";
-      const q3Clean = sanitizeString(q3Raw);
-      let q3Passed = false;
-      let q3Note = "";
-      const q3Distractors = ["sound", "hearing", "echo", "echolocation", "ear", "ears", "sight", "vision", "eye", "eyes"];
-      const q3FoundDistractor = q3Distractors.find(d => q3Clean.includes(d));
-
-      if (q3FoundDistractor) {
-        q3Passed = false;
-        q3Note = `Mark negated: Contradictory information ("${q3FoundDistractor}"). Sound is what other bats use, whereas fruit bats specifically use smell.`;
-      } else if (q3Clean.includes("smell") || q3Clean.includes("smelling") || q3Clean.includes("scent")) {
-        q3Passed = true;
-      } else {
-        q3Note = "Incorrect sense named.";
-      }
-      const q3Score = q3Passed ? 1 : 0;
-      totalEarned += q3Score;
-      breakdown.push({
-        id: 3,
-        question: EXAM_QUESTIONS[2].prompt,
-        userAnswer: q3Raw || "(blank)",
-        correctAnswer: "smell",
-        score: q3Score,
-        maxScore: 1,
-        isCorrect: q3Passed,
-        note: q3Note,
-        explanation: EXAM_QUESTIONS[2].explanation
-      });
-
-      // Q4: (in) trees / tree branches (Strict: reject if mentioning contradictory places like "caves", "bushes", "buildings")
-      const q4Raw = studentResponses[4] || "";
-      const q4Clean = sanitizeString(q4Raw);
-      let q4Passed = false;
-      let q4Note = "";
-      const q4Distractors = ["cave", "caves", "bush", "bushes", "building", "buildings", "empty buildings", "empty building"];
-      const q4FoundDistractor = q4Distractors.find(d => q4Clean.includes(d));
-
-      if (q4FoundDistractor) {
-        q4Passed = false;
-        q4Note = `Mark negated: Contradictory location included ("${q4FoundDistractor}"). The question asks where the majority (more than half) spend daylight.`;
-      } else if (q4Clean.includes("tree") || q4Clean.includes("trees") || q4Clean.includes("branch") || q4Clean.includes("branches")) {
-        q4Passed = true;
-      } else {
-        q4Note = "Incorrect habitat named.";
-      }
-      const q4Score = q4Passed ? 1 : 0;
-      totalEarned += q4Score;
-      breakdown.push({
-        id: 4,
-        question: EXAM_QUESTIONS[3].prompt,
-        userAnswer: q4Raw || "(blank)",
-        correctAnswer: "(in) trees / tree branches",
-        score: q4Score,
-        maxScore: 1,
-        isCorrect: q4Passed,
-        note: q4Note,
-        explanation: EXAM_QUESTIONS[3].explanation
-      });
-
-      // Q5: four months (Strict: reject if confusing pup care with adult age "2 years" or lifespan "30 years")
-      const q5Raw = studentResponses[5] || "";
-      const q5Clean = sanitizeString(q5Raw);
-      let q5Passed = false;
-      let q5Note = "";
-      const q5Distractors = ["two year", "2 year", "two years", "2 years", "30 year", "thirty year", "30 years", "thirty years", "day", "days", "week", "weeks"];
-      const q5FoundDistractor = q5Distractors.find(d => q5Clean.includes(d));
-
-      if (q5FoundDistractor) {
-        q5Passed = false;
-        q5Note = `Mark negated: Contradictory time duration ("${q5FoundDistractor}"). Confuses pup nursing period with adulthood (2 years) or lifespan (30 years).`;
-      } else if (q5Clean.includes("four month") || q5Clean.includes("4 month")) {
-        q5Passed = true;
-      } else {
-        q5Note = "Incorrect duration for maternal pup care.";
-      }
-      const q5Score = q5Passed ? 1 : 0;
-      totalEarned += q5Score;
-      breakdown.push({
-        id: 5,
-        question: EXAM_QUESTIONS[4].prompt,
-        userAnswer: q5Raw || "(blank)",
-        correctAnswer: "(about) (the first) four months",
-        score: q5Score,
-        maxScore: 1,
-        isCorrect: q5Passed,
-        note: q5Note,
-        explanation: EXAM_QUESTIONS[4].explanation
-      });
-
-      // Q6: 3 details out of 4 accepted factors with duplicate protection and irrelevant rejection
-      const q6Inputs = (studentResponses[6] || ["", "", ""]).map(s => sanitizeString(s));
-      const matchedCategories = new Set();
-      const detailResults = [];
-
-      q6Inputs.forEach((detail, idx) => {
-        let matchedCategory = null;
-        let rejectReason = "";
-
-        if (detail.length > 1) {
-          // Factor 1: dangerous animals / rats
-          if (detail.includes("rat") || detail.includes("dangerous animal") || detail.includes("predator")) {
-            matchedCategory = "category_1";
-          }
-          // Factor 2: availability of (local) food
-          else if (detail.includes("availability of") || detail.includes("local food") || (detail.includes("food") && !detail.includes("clearing") && !detail.includes("farm"))) {
-            matchedCategory = "category_2";
-          }
-          // Factor 3: (humans) clearing land (for farming)
-          else if (detail.includes("clearing land") || detail.includes("clear land") || detail.includes("farming") || detail.includes("clearing") || detail.includes("deforestation")) {
-            matchedCategory = "category_3";
-          }
-          // Factor 4: climate change
-          else if (detail.includes("climate") || detail.includes("climate change") || detail.includes("global warming")) {
-            matchedCategory = "category_4";
-          } else {
-            rejectReason = "Irrelevant detail not recognized in the 4 mark scheme factors.";
-          }
-        } else {
-          rejectReason = "No answer provided.";
-        }
-
-        if (matchedCategory) {
-          if (matchedCategories.has(matchedCategory)) {
-            detailResults.push({
-              text: studentResponses[6][idx] || "(blank)",
-              credited: false,
-              reason: "Duplicate factor already awarded credit."
-            });
-          } else {
-            matchedCategories.add(matchedCategory);
-            detailResults.push({
-              text: studentResponses[6][idx] || "(blank)",
-              credited: true,
-              rule: matchedCategory
-            });
-          }
-        } else {
-          detailResults.push({
-            text: studentResponses[6][idx] || "(blank)",
-            credited: false,
-            reason: rejectReason
-          });
-        }
-      });
-
-      const q6Score = Math.min(3, matchedCategories.size);
-      totalEarned += q6Score;
-      breakdown.push({
-        id: 6,
-        question: EXAM_QUESTIONS[5].prompt,
-        userAnswer: studentResponses[6],
-        detailsSummary: detailResults,
-        correctAnswer: "Any 3 of: 1) dangerous animals / rats | 2) availability of (local) food | 3) (humans) clearing land (for farming) | 4) climate change",
-        score: q6Score,
-        maxScore: 3,
-        isCorrect: q6Score === 3,
-        isPartial: q6Score > 0 && q6Score < 3,
-        explanation: EXAM_QUESTIONS[5].explanation
-      });
-
-      return {
-        totalScore: totalEarned,
-        maxTotal: 8,
-        breakdown: breakdown
-      };
-    }
-
-    function updateHeaderStats() {
-      // Calculate answered count
-      let answeredCount = 0;
-      for (let i = 1; i <= 5; i++) {
-        if (studentResponses[i] && studentResponses[i].trim() !== "") {
-          answeredCount++;
-        }
-      }
-      // Question 6 is considered answered if at least one detail is entered
-      const q6Items = studentResponses[6] || [];
-      if (q6Items.some(v => v && v.trim() !== "")) {
-        answeredCount++;
-      }
-
-      headerAnsweredBadge.textContent = `${answeredCount}/6`;
-    }
-
-    function renderCurrentQuestion() {
-      const q = EXAM_QUESTIONS[currentIndex];
-      
-      questionBadgeEl.textContent = `Question ${q.id} of ${EXAM_QUESTIONS.length}`;
-      questionMarksBadgeEl.textContent = `[${q.marks} mark${q.marks > 1 ? 's' : ''}]`;
-      questionTextEl.textContent = q.prompt;
-
-      if (q.subtext) {
-        questionSubtextEl.textContent = q.subtext;
-        questionSubtextEl.classList.remove('hidden');
-      } else {
-        questionSubtextEl.classList.add('hidden');
-      }
-
-      // Review checkbox state
-      markReviewCheckboxEl.checked = !!reviewFlags[q.id];
-
-      // Build writing space according to question type
-      inputContainerEl.innerHTML = '';
-
-      if (q.type === 'single') {
-        const inputWrapper = document.createElement('div');
-        inputWrapper.className = "flex flex-col space-y-2";
-        
-        const label = document.createElement('label');
-        label.className = "text-xs font-semibold text-slate-700 tracking-wide uppercase flex items-center justify-between";
-        label.innerHTML = `<span>Your Answer</span><span class="text-slate-400 font-normal text-[11px]">Free-text response</span>`;
-
-        const textarea = document.createElement('textarea');
-        textarea.rows = 3;
-        textarea.className = "w-full p-3 text-sm text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition resize-none font-medium leading-relaxed";
-        textarea.placeholder = q.placeholder || "Type your answer here...";
-        textarea.value = studentResponses[q.id] || "";
-        textarea.id = `input-q-${q.id}`;
-
-        textarea.addEventListener('input', (e) => {
-          studentResponses[q.id] = e.target.value;
-          updateHeaderStats();
-          buildNavigatorGrid();
-          buildInlineNavBoxes();
+    /* Google Apps Script Network Sync Functions */
+    async function syncDataWithGoogleSheet() {
+      if (!gasWebhookUrl) return false;
+      try {
+        const response = await fetch(`${gasWebhookUrl}?action=getData`, {
+          method: 'GET',
+          mode: 'cors'
         });
-
-        inputWrapper.appendChild(label);
-        inputWrapper.appendChild(textarea);
-        inputContainerEl.appendChild(inputWrapper);
-      } else if (q.type === 'multi') {
-        // 3 Detail Input lines for Q6
-        const container = document.createElement('div');
-        container.className = "space-y-3.5";
-
-        const label = document.createElement('div');
-        label.className = "text-xs font-semibold text-slate-700 tracking-wide uppercase flex items-center justify-between pb-1 border-b border-slate-100";
-        label.innerHTML = `<span>Enter 3 Distinct Factors / Details</span><span class="text-slate-400 font-normal text-[11px]">1 mark per detail (Max 3)</span>`;
-        container.appendChild(label);
-
-        const currentDetails = studentResponses[q.id] || ["", "", ""];
-
-        for (let i = 0; i < 3; i++) {
-          const row = document.createElement('div');
-          row.className = "flex flex-col space-y-1";
-
-          const subLabel = document.createElement('label');
-          subLabel.className = "text-xs font-medium text-slate-600 flex items-center space-x-1.5";
-          subLabel.innerHTML = `<span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 font-bold text-[10px] inline-flex items-center justify-center">${i + 1}</span><span>Detail ${i + 1}:</span>`;
-
-          const input = document.createElement('input');
-          input.type = "text";
-          input.className = "w-full px-3 py-2 text-sm text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-medium";
-          input.placeholder = `e.g. Factor ${i + 1} from the passage...`;
-          input.value = currentDetails[i] || "";
-
-          input.addEventListener('input', (e) => {
-            studentResponses[q.id][i] = e.target.value;
-            updateHeaderStats();
-            buildNavigatorGrid();
-            buildInlineNavBoxes();
-          });
-
-          row.appendChild(subLabel);
-          row.appendChild(input);
-          container.appendChild(row);
-        }
-
-        inputContainerEl.appendChild(container);
-      }
-
-      // If graded, show answer evaluation box immediately under input
-      if (isGraded && gradingResults) {
-        const itemResult = gradingResults.breakdown.find(b => b.id === q.id);
-        if (itemResult) {
-          const feedbackBox = document.createElement('div');
-          feedbackBox.className = `mt-4 p-4 rounded-xl border text-sm ${itemResult.score === itemResult.maxScore ? 'bg-emerald-50 border-emerald-200 text-emerald-950' : itemResult.score > 0 ? 'bg-amber-50 border-amber-200 text-amber-950' : 'bg-rose-50 border-rose-200 text-rose-950'}`;
-          
-          let noteHtml = '';
-          if (itemResult.note) {
-            noteHtml = `<div class="mt-2 p-2 bg-rose-100/70 border border-rose-200 rounded text-xs text-rose-800 font-medium">${itemResult.note}</div>`;
+        const json = await response.json();
+        if (json.status === "success") {
+          // Parse students
+          if (json.students && json.students.length > 1) {
+            const rows = json.students.slice(1);
+            studentRoster = rows.map(r => ({
+              id: String(r[0] || '').trim(),
+              name: String(r[1] || '').trim(),
+              class: String(r[2] || '').trim(),
+              password: String(r[3] || '').trim()
+            })).filter(s => s.name && s.id);
+            localStorage.setItem('cambridge_roster_cache', JSON.stringify(studentRoster));
           }
-
-          feedbackBox.innerHTML = `
-            <div class="flex items-center justify-between font-bold mb-1">
-              <span class="flex items-center space-x-1.5">
-                ${itemResult.score === itemResult.maxScore ? '<span class="text-emerald-600">✓ Full Credit</span>' : itemResult.score > 0 ? '<span class="text-amber-600">⚠ Partial Credit</span>' : '<span class="text-rose-600">✗ No Credit</span>'}
-              </span>
-              <span class="font-mono text-xs px-2 py-0.5 rounded bg-white/80 border">${itemResult.score} / ${itemResult.maxScore} marks</span>
-            </div>
-            ${noteHtml}
-            <p class="text-xs font-semibold text-slate-700 mt-2">Official Mark Scheme Answer:</p>
-            <p class="text-xs bg-white/70 p-2 rounded mt-1 border border-slate-200/50 font-mono text-slate-800">${itemResult.correctAnswer}</p>
-            <p class="text-xs text-slate-600 mt-2 italic">${itemResult.explanation}</p>
-          `;
-          inputContainerEl.appendChild(feedbackBox);
+          // Parse submissions
+          if (json.submissions && json.submissions.length > 1) {
+            const sRows = json.submissions.slice(1);
+            submissionRecords = sRows.map(r => ({
+              submissionId: r[0],
+              studentId: r[1],
+              studentName: r[2],
+              class: r[3],
+              exerciseId: r[4],
+              exerciseTitle: r[5],
+              autoScore: r[6],
+              maxScore: r[7],
+              finalScore: r[8],
+              status: r[9],
+              feedback: r[10] || "",
+              answers: typeof r[11] === 'string' ? JSON.parse(r[11] || '{}') : (r[11] || {}),
+              timestamp: r[12]
+            }));
+            localStorage.setItem('cambridge_subs_cache', JSON.stringify(submissionRecords));
+          }
+          return true;
         }
+      } catch (err) {
+        console.warn("GAS fetch error:", err);
+      }
+      return false;
+    }
+
+    async function sendNewStudentToSheet(stu) {
+      studentRoster.push(stu);
+      localStorage.setItem('cambridge_roster_cache', JSON.stringify(studentRoster));
+      if (!gasWebhookUrl) return;
+      try {
+        await fetch(gasWebhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: "addStudent", ...stu })
+        });
+      } catch (e) {
+        console.error("Failed to append student to sheet", e);
+      }
+    }
+
+    async function sendSubmissionToSheet(sub) {
+      submissionRecords.unshift(sub);
+      localStorage.setItem('cambridge_subs_cache', JSON.stringify(submissionRecords));
+      if (!gasWebhookUrl) return;
+      try {
+        await fetch(gasWebhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: "submitHomework", ...sub })
+        });
+      } catch (e) {
+        console.error("Failed to append submission to sheet", e);
+      }
+    }
+
+    async function sendFinalGradeToSheet(submissionId, finalScore, feedback) {
+      const rec = submissionRecords.find(s => s.submissionId === submissionId);
+      if (rec) {
+        rec.finalScore = finalScore;
+        rec.status = "Graded";
+        rec.feedback = feedback;
+        localStorage.setItem('cambridge_subs_cache', JSON.stringify(submissionRecords));
+      }
+      if (!gasWebhookUrl) return;
+      try {
+        await fetch(gasWebhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: "finalizeGrade", submissionId, finalScore, feedback })
+        });
+      } catch (e) {
+        console.error("Failed to update final marks in sheet", e);
+      }
+    }
+
+    /* Initialize Login Dropdown */
+    function populateStudentSelect() {
+      const sel = document.getElementById('login-student-select');
+      sel.innerHTML = '<option value="">-- Choose your name --</option>';
+      studentRoster.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = `${s.name} (${s.class})`;
+        sel.appendChild(opt);
+      });
+    }
+
+    // Switch between Student and Admin tabs on Gateway
+    document.getElementById('tab-btn-student').addEventListener('click', () => {
+      document.getElementById('tab-btn-student').className = "flex-1 py-3 text-sm font-semibold text-blue-700 border-b-2 border-blue-700 bg-blue-50/50 transition";
+      document.getElementById('tab-btn-admin').className = "flex-1 py-3 text-sm font-semibold text-slate-500 hover:text-slate-700 transition";
+      document.getElementById('tab-content-student').classList.remove('hidden');
+      document.getElementById('tab-content-admin').classList.add('hidden');
+    });
+
+    document.getElementById('tab-btn-admin').addEventListener('click', () => {
+      document.getElementById('tab-btn-admin').className = "flex-1 py-3 text-sm font-semibold text-blue-700 border-b-2 border-blue-700 bg-blue-50/50 transition";
+      document.getElementById('tab-btn-student').className = "flex-1 py-3 text-sm font-semibold text-slate-500 hover:text-slate-700 transition";
+      document.getElementById('tab-content-admin').classList.remove('hidden');
+      document.getElementById('tab-content-student').classList.add('hidden');
+    });
+
+    document.getElementById('login-student-select').addEventListener('change', (e) => {
+      const stuId = e.target.value;
+      const preview = document.getElementById('student-info-preview');
+      if (!stuId) {
+        preview.classList.add('hidden');
+        return;
+      }
+      const s = studentRoster.find(item => item.id === stuId);
+      if (s) {
+        document.getElementById('stu-preview-class').textContent = s.class;
+        document.getElementById('stu-preview-id').textContent = s.id;
+        preview.classList.remove('hidden');
+      }
+    });
+
+    // Student Login
+    document.getElementById('student-login-submit').addEventListener('click', () => {
+      const stuId = document.getElementById('login-student-select').value;
+      const pass = document.getElementById('login-student-pass').value.trim();
+      const errBox = document.getElementById('student-login-error');
+
+      if (!stuId) {
+        errBox.textContent = "Please select your name from the list.";
+        errBox.classList.remove('hidden');
+        return;
       }
 
-      // Update button states
-      prevBtn.disabled = (currentIndex === 0);
-      nextBtn.disabled = (currentIndex === EXAM_QUESTIONS.length - 1);
+      const stu = studentRoster.find(s => s.id === stuId);
+      if (stu && String(stu.password) === pass) {
+        errBox.classList.add('hidden');
+        currentUser = { role: 'student', data: stu };
+        initStudentExamView();
+      } else {
+        errBox.textContent = "Incorrect password. Please verify with your teacher.";
+        errBox.classList.remove('hidden');
+      }
+    });
+
+    // Admin Login
+    document.getElementById('admin-login-submit').addEventListener('click', () => {
+      const pass = document.getElementById('login-admin-pass').value.trim();
+      const errBox = document.getElementById('admin-login-error');
+
+      if (pass === teacherAdminPasscode) {
+        errBox.classList.add('hidden');
+        currentUser = { role: 'admin', data: { name: "Teacher Admin" } };
+        initAdminView();
+      } else {
+        errBox.classList.remove('hidden');
+      }
+    });
+
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      currentUser = null;
+      document.getElementById('view-login').classList.remove('hidden');
+      document.getElementById('view-admin').classList.add('hidden');
+      document.getElementById('view-exam').classList.add('hidden');
+      document.getElementById('user-badge').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('gas-settings-btn').classList.add('hidden');
+      document.getElementById('login-student-pass').value = '';
+      document.getElementById('login-admin-pass').value = '';
+    });
+
+    /* Initialize Student Exam View */
+    function initStudentExamView() {
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('view-admin').classList.add('hidden');
+      document.getElementById('view-exam').classList.remove('hidden');
+
+      // Update header
+      document.getElementById('user-badge').classList.remove('hidden');
+      document.getElementById('user-display-name').textContent = currentUser.data.name;
+      document.getElementById('logout-btn').classList.remove('hidden');
+      // STRICT REQUIREMENT: Google Sheet sync is NEVER visible to students
+      document.getElementById('gas-settings-btn').classList.add('hidden');
+
+      // Populate exercise selector
+      const exSel = document.getElementById('exam-exercise-select');
+      exSel.innerHTML = '';
+      EXERCISES.forEach((ex, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = `${ex.number}: ${ex.title}`;
+        exSel.appendChild(opt);
+      });
+      exSel.value = activeExerciseIndex;
+
+      loadExercise(activeExerciseIndex);
+    }
+
+    document.getElementById('exam-exercise-select').addEventListener('change', (e) => {
+      activeExerciseIndex = parseInt(e.target.value, 10);
+      currentQuestionIndex = 0;
+      loadExercise(activeExerciseIndex);
+    });
+
+    function loadExercise(idx) {
+      const ex = EXERCISES[idx];
+      document.getElementById('exercise-badge-marks').textContent = `${ex.totalMarks} marks`;
+      document.getElementById('passage-label').textContent = `${ex.number}: ${ex.title}`;
       
-      updateHeaderStats();
-      buildInlineNavBoxes();
-    }
+      // Inject passage
+      const passageCont = document.getElementById('passage-container');
+      passageCont.innerHTML = ex.passage;
+      passageCont.style.fontSize = `${passageFontSize}px`;
 
-    function buildInlineNavBoxes() {
-      if (!inlineNavBoxes) return;
-      inlineNavBoxes.innerHTML = '';
+      // Reset response map for exercise if not defined
+      if (!exerciseResponses[ex.id]) {
+        exerciseResponses[ex.id] = {};
+      }
+      if (!exerciseReviews[ex.id]) {
+        exerciseReviews[ex.id] = {};
+      }
 
-      EXAM_QUESTIONS.forEach((q, idx) => {
-        const btn = document.createElement('button');
-        const isCurrent = (idx === currentIndex);
-        const isFlagged = !!reviewFlags[q.id];
-
-        let hasAnswer = false;
-        if (q.type === 'single') {
-          hasAnswer = !!(studentResponses[q.id] && studentResponses[q.id].trim() !== "");
-        } else {
-          hasAnswer = (studentResponses[q.id] || []).some(x => x && x.trim() !== "");
-        }
-
-        // Base styles matching the provided card screenshot
-        let classes = "relative h-12 rounded-xl text-base font-bold flex flex-col items-center justify-center transition-all bg-white ";
-
-        if (isCurrent) {
-          // Selected box has distinctive blue border ring as shown on box 5
-          classes += "border-2 border-blue-600 text-slate-900 shadow-sm ";
-        } else {
-          classes += "border border-slate-300 text-slate-800 hover:border-slate-400 hover:bg-slate-50 ";
-        }
-
-        btn.className = classes;
-
-        // Dot indicators: Amber if flagged, Blue if answered, hollow/none if unanswered
-        let indicatorHtml = '';
-        if (isFlagged) {
-          indicatorHtml = `<span class="absolute top-1 right-1.5 w-2 h-2 rounded-full bg-amber-500"></span>`;
-        } else if (hasAnswer) {
-          indicatorHtml = `<span class="absolute top-1 right-1.5 w-2 h-2 rounded-full bg-blue-600"></span>`;
-        }
-
-        let scoreHtml = '';
-        if (isGraded && gradingResults) {
-          const res = gradingResults.breakdown[idx];
-          scoreHtml = `<span class="text-[9px] font-medium text-slate-500 -mt-0.5">${res.score}/${q.marks}</span>`;
-        }
-
-        btn.innerHTML = `
-          ${indicatorHtml}
-          <span>${q.id}</span>
-          ${scoreHtml}
-        `;
-
-        btn.addEventListener('click', () => {
-          currentIndex = idx;
-          renderCurrentQuestion();
-        });
-
-        inlineNavBoxes.appendChild(btn);
-      });
-    }
-
-    function buildNavigatorGrid() {
-      navGridEl.innerHTML = '';
-      
-      EXAM_QUESTIONS.forEach((q, idx) => {
-        const btn = document.createElement('button');
-        const isCurrent = (idx === currentIndex);
-        const isFlagged = reviewFlags[q.id];
-        
-        // Determine if answered
-        let hasAnswer = false;
-        if (q.type === 'single') {
-          hasAnswer = !!(studentResponses[q.id] && studentResponses[q.id].trim() !== "");
-        } else {
-          hasAnswer = (studentResponses[q.id] || []).some(x => x && x.trim() !== "");
-        }
-
-        let baseClasses = "relative h-12 rounded-lg font-bold text-sm flex flex-col items-center justify-center border transition shadow-sm ";
-        
-        if (isCurrent) {
-          baseClasses += "ring-2 ring-blue-600 ring-offset-1 ";
-        }
-
-        if (isFlagged) {
-          baseClasses += "border-amber-400 bg-amber-50 text-amber-900 ";
-        } else if (hasAnswer) {
-          baseClasses += "bg-blue-600 text-white border-blue-600 ";
-        } else {
-          baseClasses += "bg-white text-slate-700 border-slate-300 hover:bg-slate-100 ";
-        }
-
-        btn.className = baseClasses;
-        btn.innerHTML = `
-          <span>${q.id}</span>
-          ${isFlagged ? '<span class="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-amber-500 text-white rounded-full flex items-center justify-center text-[9px] shadow">★</span>' : ''}
-          ${isGraded ? `<span class="text-[9px] font-normal opacity-90">${gradingResults.breakdown[idx].score}/${q.marks}</span>` : ''}
-        `;
-
-        btn.addEventListener('click', () => {
-          currentIndex = idx;
-          renderCurrentQuestion();
-          questionNavigatorModal.classList.add('hidden');
-        });
-
-        navGridEl.appendChild(btn);
-      });
-    }
-
-    function displayResultsModal() {
-      gradingResults = evaluateSubmission();
-      isGraded = true;
-
-      // Update Top Summary in Modal
-      modalScoreRatio.textContent = `${gradingResults.totalScore} / ${gradingResults.maxTotal}`;
-      const percentage = Math.round((gradingResults.totalScore / gradingResults.maxTotal) * 100);
-      modalPercentage.textContent = `${percentage}% Final Score`;
-
-      // Render Itemized breakdown
-      resultsBreakdownList.innerHTML = '';
-
-      gradingResults.breakdown.forEach((item, index) => {
-        const itemCard = document.createElement('div');
-        itemCard.className = "bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col space-y-2.5";
-
-        const badgeClass = item.score === item.maxScore 
-          ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-          : item.score > 0 
-            ? "bg-amber-100 text-amber-800 border-amber-300"
-            : "bg-rose-100 text-rose-800 border-rose-300";
-
-        let userResponseHtml = "";
-        if (Array.isArray(item.userAnswer)) {
-          userResponseHtml = `
-            <div class="mt-1 space-y-1">
-              ${item.detailsSummary.map((d, i) => `
-                <div class="text-xs p-2 rounded border flex items-center justify-between ${d.credited ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900' : 'bg-rose-50/70 border-rose-200 text-rose-900'}">
-                  <div>
-                    <span><strong>Detail ${i+1}:</strong> ${d.text}</span>
-                    ${d.reason ? `<div class="text-[10px] text-rose-600 mt-0.5 italic">${d.reason}</div>` : ''}
-                  </div>
-                  <span class="text-[11px] font-bold uppercase shrink-0 ml-2">${d.credited ? '+1 Mark' : '0 Mark'}</span>
-                </div>
-              `).join('')}
-            </div>
-          `;
-        } else {
-          userResponseHtml = `
-            <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-800 font-medium">
-              ${item.userAnswer}
-            </div>
-            ${item.note ? `<div class="mt-1.5 p-2 bg-rose-50 border border-rose-200 rounded text-xs text-rose-800 font-medium">${item.note}</div>` : ''}
-          `;
-        }
-
-        itemCard.innerHTML = `
-          <div class="flex items-start justify-between">
-            <div class="flex items-center space-x-2">
-              <span class="w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center">Q${item.id}</span>
-              <h4 class="text-sm font-bold text-slate-800">${item.question}</h4>
-            </div>
-            <span class="px-2 py-0.5 rounded text-xs font-bold border ${badgeClass} shrink-0 ml-2 font-mono">
-              ${item.score} / ${item.maxScore} marks
-            </span>
-          </div>
-
-          <div class="pt-1">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Your Submission:</div>
-            ${userResponseHtml}
-          </div>
-
-          <div class="pt-1 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-            <div class="text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-0.5">Mark Scheme Accepted:</div>
-            <div class="text-xs text-blue-950 font-semibold font-mono">${item.correctAnswer}</div>
-            <div class="text-[11px] text-slate-500 mt-1 italic">${item.explanation}</div>
-          </div>
-        `;
-
-        resultsBreakdownList.appendChild(itemCard);
-      });
-
-      resultsModal.classList.remove('hidden');
+      currentQuestionIndex = 0;
+      renderReviewButtons();
       renderCurrentQuestion();
-      buildNavigatorGrid();
-      buildInlineNavBoxes();
     }
 
-    // Previous & Next navigation
-    prevBtn.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        renderCurrentQuestion();
-      }
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if (currentIndex < EXAM_QUESTIONS.length - 1) {
-        currentIndex++;
-        renderCurrentQuestion();
-      }
-    });
-
-    // Mark for review toggle
-    markReviewCheckboxEl.addEventListener('change', (e) => {
-      const q = EXAM_QUESTIONS[currentIndex];
-      reviewFlags[q.id] = e.target.checked;
-      buildNavigatorGrid();
-      buildInlineNavBoxes();
-      showToast(reviewFlags[q.id] ? `Question ${q.id} flagged for review` : `Question ${q.id} unflagged`);
-    });
-
-    function collapseInlineCard() {
-      inlineReviewCard.classList.add('hidden');
-      inlineExpandBar.classList.remove('hidden');
-    }
-
-    function expandInlineCard() {
-      inlineReviewCard.classList.remove('hidden');
-      inlineExpandBar.classList.add('hidden');
-      buildInlineNavBoxes();
-    }
-
-    inlineToggleBtn.addEventListener('click', collapseInlineCard);
-    inlineDoneBtn.addEventListener('click', collapseInlineCard);
-    inlineExpandBar.addEventListener('click', expandInlineCard);
-
-    // Question navigator drawer open/close
-    navDropdownBtn.addEventListener('click', () => {
-      buildNavigatorGrid();
-      questionNavigatorModal.classList.remove('hidden');
-    });
-
-    closeNavBtn.addEventListener('click', () => {
-      questionNavigatorModal.classList.add('hidden');
-    });
-
-    closeNavBottomBtn.addEventListener('click', () => {
-      questionNavigatorModal.classList.add('hidden');
-    });
-
-    // Font size controls
-    document.getElementById('font-increase').addEventListener('click', () => {
-      if (passageFontSize < 24) {
-        passageFontSize += 1.5;
-        passageContentEl.style.fontSize = `${passageFontSize}px`;
-        showToast(`Text size: ${Math.round(passageFontSize)}px`);
-      }
-    });
-
-    document.getElementById('font-decrease').addEventListener('click', () => {
+    // Font Sizing
+    document.getElementById('btn-font-smaller').addEventListener('click', () => {
       if (passageFontSize > 14) {
-        passageFontSize -= 1.5;
-        passageContentEl.style.fontSize = `${passageFontSize}px`;
-        showToast(`Text size: ${Math.round(passageFontSize)}px`);
+        passageFontSize -= 2;
+        document.getElementById('passage-container').style.fontSize = `${passageFontSize}px`;
       }
     });
 
-    // Highlighter tool simulation
-    highlightToggleBtn.addEventListener('click', () => {
-      highlighterMode = !highlighterMode;
-      if (highlighterMode) {
-        highlightToggleBtn.classList.add('bg-amber-500/20', 'border-amber-400', 'text-amber-300');
-        showToast("Highlighter mode ACTIVE. Select passage text to mark it.");
+    document.getElementById('btn-font-larger').addEventListener('click', () => {
+      if (passageFontSize < 26) {
+        passageFontSize += 2;
+        document.getElementById('passage-container').style.fontSize = `${passageFontSize}px`;
+      }
+    });
+
+    // Highlighter
+    const hlBtn = document.getElementById('btn-highlighter');
+    hlBtn.addEventListener('click', () => {
+      isHighlighterActive = !isHighlighterActive;
+      if (isHighlighterActive) {
+        hlBtn.classList.add('bg-yellow-200', 'border-yellow-400');
+        showToast("Highlighter active: Select text in the passage to highlight.");
       } else {
-        highlightToggleBtn.classList.remove('bg-amber-500/20', 'border-amber-400', 'text-amber-300');
-        showToast("Highlighter mode OFF");
+        hlBtn.classList.remove('bg-yellow-200', 'border-yellow-400');
       }
     });
 
-    passageContentEl.addEventListener('mouseup', () => {
-      if (!highlighterMode) return;
+    document.getElementById('passage-container').addEventListener('mouseup', () => {
+      if (!isHighlighterActive) return;
       const selection = window.getSelection();
       if (!selection.rangeCount || selection.isCollapsed) return;
 
       const range = selection.getRangeAt(0);
-      // Ensure selection is inside the passage
-      if (passageContentEl.contains(range.commonAncestorContainer)) {
-        const span = document.createElement('span');
-        span.className = "highlight-active";
-        try {
-          range.surroundContents(span);
-          selection.removeAllRanges();
-          showToast("Highlighted selection");
-        } catch (e) {
-          // If range crosses multiple nodes, skip quietly
-        }
-      }
-    });
-
-    // Finish & Grade Action
-    finishBtn.addEventListener('click', () => {
-      displayResultsModal();
-    });
-
-    // Return to exam view to see marks in question pane
-    reviewInPlaceBtn.addEventListener('click', () => {
-      resultsModal.classList.add('hidden');
-      renderCurrentQuestion();
-      showToast("Review mode active. Inspect individual questions.");
-    });
-
-    // Restart exam
-    retryExamBtn.addEventListener('click', () => {
-      resultsModal.classList.add('hidden');
-      currentIndex = 0;
-      isGraded = false;
-      gradingResults = null;
-      studentResponses = { 1: "", 2: "", 3: "", 4: "", 5: "", 6: ["", "", ""] };
-      reviewFlags = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
-      renderCurrentQuestion();
-      buildNavigatorGrid();
-      buildInlineNavBoxes();
-      showToast("Practice session reset. Good luck!");
-    });
-
-    // Copy Summary Report to Clipboard (No alert())
-    copySummaryBtn.addEventListener('click', () => {
-      if (!gradingResults) return;
-      let text = `=== Cambridge Reading Practice: Fruit Bats ===\n`;
-      text += `Score: ${gradingResults.totalScore} / ${gradingResults.maxTotal} (${Math.round((gradingResults.totalScore / gradingResults.maxTotal) * 100)}%)\n\n`;
-      gradingResults.breakdown.forEach(b => {
-        text += `Q${b.id}: ${b.score}/${b.maxScore} marks\n`;
-        text += `Your Answer: ${Array.isArray(b.userAnswer) ? b.userAnswer.join(', ') : b.userAnswer}\n`;
-        text += `Official Key: ${b.correctAnswer}\n\n`;
-      });
-      
-      const tempArea = document.createElement('textarea');
-      tempArea.value = text;
-      document.body.appendChild(tempArea);
-      tempArea.select();
+      const span = document.createElement('span');
+      span.className = 'user-highlight';
       try {
-        document.execCommand('copy');
-        showToast("Score report copied to clipboard!");
+        range.surroundContents(span);
+        selection.removeAllRanges();
       } catch (err) {
-        showToast("Unable to copy report", false);
+        // Selection crosses multiple blocks
       }
-      document.body.removeChild(tempArea);
     });
 
-    window.addEventListener('DOMContentLoaded', () => {
+    /* Render Inline Review List Grid (Matching Exact Requested Screenshot) */
+    function renderReviewButtons() {
+      const ex = EXERCISES[activeExerciseIndex];
+      const grid = document.getElementById('review-grid-buttons');
+      grid.innerHTML = '';
+
+      ex.questions.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        const isCurrent = idx === currentQuestionIndex;
+        const isReviewed = !!exerciseReviews[ex.id][q.id];
+        
+        // Determine answered status
+        let isAnswered = false;
+        const resp = exerciseResponses[ex.id][q.id];
+        if (q.type === 'multitext') {
+          if (Array.isArray(resp) && resp.some(item => (item || '').trim().length > 0)) {
+            isAnswered = true;
+          }
+        } else if (resp && String(resp).trim().length > 0) {
+          isAnswered = true;
+        }
+
+        // Base styling for rounded box matching the prompt screenshot
+        let baseClass = "relative w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm transition-all duration-150 border ";
+
+        if (isCurrent) {
+          // Blue outline matching screenshot item 5
+          baseClass += "border-blue-600 ring-2 ring-blue-500/20 text-blue-700 bg-white shadow-xs ";
+        } else {
+          baseClass += "border-slate-200 bg-white hover:bg-slate-50 text-slate-800 ";
+        }
+
+        btn.className = baseClass;
+        btn.innerHTML = `<span>${idx + 1}</span>`;
+
+        // Indicator dot for answered / review
+        if (isReviewed) {
+          const dot = document.createElement('span');
+          dot.className = "absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-500 border-2 border-white";
+          btn.appendChild(dot);
+        } else if (isAnswered) {
+          const dot = document.createElement('span');
+          dot.className = "absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-blue-600 border border-white";
+          btn.appendChild(dot);
+        }
+
+        btn.addEventListener('click', () => {
+          saveCurrentQuestionInput();
+          currentQuestionIndex = idx;
+          renderReviewButtons();
+          renderCurrentQuestion();
+        });
+
+        grid.appendChild(btn);
+      });
+    }
+
+    // Collapse / Expand Review List Banner
+    document.getElementById('close-review-banner-btn').addEventListener('click', () => {
+      document.getElementById('review-list-banner').classList.toggle('hidden');
+    });
+    document.getElementById('done-review-banner-btn').addEventListener('click', () => {
+      document.getElementById('review-list-banner').classList.add('hidden');
+    });
+
+    /* Render Current Active Question */
+    function renderCurrentQuestion() {
+      const ex = EXERCISES[activeExerciseIndex];
+      const q = ex.questions[currentQuestionIndex];
+
+      document.getElementById('q-counter-label').textContent = `Question ${currentQuestionIndex + 1} of ${ex.questions.length}`;
+      document.getElementById('q-mark-value').textContent = `[${q.marks} mark${q.marks > 1 ? 's' : ''}]`;
+      document.getElementById('q-prompt-text').textContent = q.prompt;
+
+      // Update Mark for Review Flag state
+      const isReviewed = !!exerciseReviews[ex.id][q.id];
+      const flagSvg = document.getElementById('mark-review-flag');
+      const flagText = document.getElementById('mark-review-text');
+      if (isReviewed) {
+        flagSvg.classList.add('text-amber-500', 'fill-amber-500');
+        flagText.textContent = "Marked for Review";
+      } else {
+        flagSvg.classList.remove('text-amber-500', 'fill-amber-500');
+        flagText.textContent = "Mark for Review";
+      }
+
+      // Render Dynamic Response Input Fields
+      const inputCont = document.getElementById('q-input-container');
+      inputCont.innerHTML = '';
+
+      if (q.type === 'text') {
+        const val = exerciseResponses[ex.id][q.id] || "";
+        inputCont.innerHTML = `
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Your Response:</label>
+            <textarea id="active-text-input" rows="4" placeholder="Type your answer clearly based on the reading passage..." class="w-full p-3 text-xs md:text-sm bg-white border border-slate-300 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition leading-relaxed">${sanitize(val)}</textarea>
+          </div>
+        `;
+        document.getElementById('active-text-input').addEventListener('input', (e) => {
+          exerciseResponses[ex.id][q.id] = e.target.value;
+          renderReviewButtons();
+        });
+      } else if (q.type === 'multitext') {
+        const valArray = exerciseResponses[ex.id][q.id] || ["", "", ""];
+        let html = `<label class="block text-xs font-semibold text-slate-700 mb-2">Give three distinct details from the text:</label>`;
+        for (let i = 0; i < 3; i++) {
+          html += `
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0">${i + 1}</span>
+              <input type="text" data-subindex="${i}" value="${sanitize(valArray[i] || "")}" placeholder="Detail ${i + 1}..." class="multi-detail-input flex-1 p-2.5 text-xs md:text-sm bg-white border border-slate-300 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none">
+            </div>
+          `;
+        }
+        inputCont.innerHTML = html;
+        document.querySelectorAll('.multi-detail-input').forEach(inp => {
+          inp.addEventListener('input', () => {
+            const arr = [];
+            document.querySelectorAll('.multi-detail-input').forEach(el => arr.push(el.value));
+            exerciseResponses[ex.id][q.id] = arr;
+            renderReviewButtons();
+          });
+        });
+      } else if (q.type === 'choice') {
+        const choices = ["A", "B", "C", "D"];
+        const curChoice = exerciseResponses[ex.id][q.id] || "";
+        let html = `<label class="block text-xs font-semibold text-slate-700 mb-2">Select the correct person (A, B, C or D):</label><div class="grid grid-cols-2 sm:grid-cols-4 gap-2">`;
+        choices.forEach(ch => {
+          const isSelected = curChoice === ch;
+          html += `
+            <button type="button" data-choice="${ch}" class="choice-opt-btn py-3 px-4 rounded-xl border text-center font-bold text-sm transition ${isSelected ? 'border-blue-600 bg-blue-50 text-blue-700 ring-2 ring-blue-500/20' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'}">
+              <span>${ch}</span>
+            </button>
+          `;
+        });
+        html += `</div>`;
+        inputCont.innerHTML = html;
+        document.querySelectorAll('.choice-opt-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const ch = btn.getAttribute('data-choice');
+            exerciseResponses[ex.id][q.id] = ch;
+            renderCurrentQuestion();
+            renderReviewButtons();
+          });
+        });
+      }
+
+      // Update Nav Buttons
+      document.getElementById('btn-prev-q').disabled = currentQuestionIndex === 0;
+      if (currentQuestionIndex === ex.questions.length - 1) {
+        document.getElementById('btn-next-q').classList.add('hidden');
+      } else {
+        document.getElementById('btn-next-q').classList.remove('hidden');
+      }
+    }
+
+    function saveCurrentQuestionInput() {
+      const ex = EXERCISES[activeExerciseIndex];
+      const q = ex.questions[currentQuestionIndex];
+      if (q.type === 'text') {
+        const el = document.getElementById('active-text-input');
+        if (el) exerciseResponses[ex.id][q.id] = el.value;
+      }
+    }
+
+    // Toggle Review Flag
+    document.getElementById('btn-mark-review').addEventListener('click', () => {
+      const ex = EXERCISES[activeExerciseIndex];
+      const q = ex.questions[currentQuestionIndex];
+      exerciseReviews[ex.id][q.id] = !exerciseReviews[ex.id][q.id];
       renderCurrentQuestion();
-      buildNavigatorGrid();
-      buildInlineNavBoxes();
+      renderReviewButtons();
+    });
+
+    document.getElementById('btn-prev-q').addEventListener('click', () => {
+      saveCurrentQuestionInput();
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderCurrentQuestion();
+        renderReviewButtons();
+      }
+    });
+
+    document.getElementById('btn-next-q').addEventListener('click', () => {
+      saveCurrentQuestionInput();
+      const ex = EXERCISES[activeExerciseIndex];
+      if (currentQuestionIndex < ex.questions.length - 1) {
+        currentQuestionIndex++;
+        renderCurrentQuestion();
+        renderReviewButtons();
+      }
+    });
+
+    /* Automated Cambridge Scoring Engine */
+    function evaluateExerciseAnswers(ex, responses) {
+      let earned = 0;
+      const details = [];
+
+      ex.questions.forEach(q => {
+        const studentAns = responses[q.id];
+        let qScore = 0;
+        let notes = "";
+
+        if (q.type === 'choice') {
+          if (String(studentAns || '').toUpperCase() === String(q.officialAnswer).toUpperCase()) {
+            qScore = 1;
+            notes = `Correct (${q.officialAnswer})`;
+          } else {
+            notes = `Incorrect. Expected: ${q.officialAnswer}`;
+          }
+        } else if (typeof q.evaluator === 'function') {
+          const res = q.evaluator(studentAns);
+          qScore = res.score;
+          notes = res.reason;
+        }
+
+        earned += qScore;
+        details.push({
+          qId: q.id,
+          prompt: q.prompt,
+          studentAns: studentAns,
+          score: qScore,
+          maxMarks: q.marks,
+          officialAnswer: q.officialAnswer,
+          notes: notes
+        });
+      });
+
+      return { earned, totalMarks: ex.totalMarks, details };
+    }
+
+    /* Submit Task Handler (With Loading Progress Spinner & Double-Click Guard) */
+    document.getElementById('btn-submit-task').addEventListener('click', async () => {
+      saveCurrentQuestionInput();
+      const ex = EXERCISES[activeExerciseIndex];
+      const subBtn = document.getElementById('btn-submit-task');
+
+      // Lock button immediately to prevent spamming
+      subBtn.disabled = true;
+      subBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      // Show Submission Loading Progress Modal
+      const loadingModal = document.getElementById('submission-loading-modal');
+      loadingModal.classList.remove('hidden');
+
+      // Calculate auto score
+      const result = evaluateExerciseAnswers(ex, exerciseResponses[ex.id]);
+
+      const subId = "SUB-" + Math.floor(100000 + Math.random() * 900000);
+      const submissionObj = {
+        submissionId: subId,
+        studentId: currentUser.data.id,
+        studentName: currentUser.data.name,
+        class: currentUser.data.class,
+        exerciseId: ex.id,
+        exerciseTitle: `${ex.number}: ${ex.title}`,
+        autoScore: result.earned,
+        maxScore: ex.totalMarks,
+        finalScore: result.earned,
+        status: "Pending Review",
+        feedback: "",
+        answers: exerciseResponses[ex.id],
+        timestamp: new Date().toLocaleString()
+      };
+
+      // Send to Google Sheet
+      await sendSubmissionToSheet(submissionObj);
+
+      // Dismiss loading progress modal
+      loadingModal.classList.add('hidden');
+      subBtn.disabled = false;
+      subBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+      // Show receipt modal
+      document.getElementById('receipt-student-name').textContent = currentUser.data.name;
+      document.getElementById('receipt-exercise-title').textContent = `${ex.number}: ${ex.title}`;
+      document.getElementById('receipt-auto-score').textContent = `${result.earned} / ${ex.totalMarks}`;
+      document.getElementById('student-result-modal').classList.remove('hidden');
+    });
+
+    document.getElementById('btn-close-receipt').addEventListener('click', () => {
+      document.getElementById('student-result-modal').classList.add('hidden');
+      document.getElementById('logout-btn').click();
+    });
+
+    /* Initialize Admin View & Dashboard */
+    function initAdminView() {
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('view-exam').classList.add('hidden');
+      document.getElementById('view-admin').classList.remove('hidden');
+
+      // Header controls
+      document.getElementById('user-badge').classList.remove('hidden');
+      document.getElementById('user-display-name').textContent = "Teacher Admin";
+      document.getElementById('logout-btn').classList.remove('hidden');
+      // Google Sheet sync is strictly for admin
+      document.getElementById('gas-settings-btn').classList.remove('hidden');
+
+      renderAdminDashboard();
+    }
+
+    function renderAdminDashboard() {
+      // Submissions table
+      const subTbody = document.getElementById('admin-submissions-tbody');
+      subTbody.innerHTML = '';
+      document.getElementById('admin-submission-count').textContent = `${submissionRecords.length} submissions`;
+
+      if (submissionRecords.length === 0) {
+        subTbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">No student homework submissions yet.</td></tr>`;
+      } else {
+        submissionRecords.forEach(sub => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50/80 transition";
+          const isGraded = sub.status === "Graded";
+          tr.innerHTML = `
+            <td class="py-3 px-4 font-semibold text-slate-900">${sanitize(sub.studentName)}</td>
+            <td class="py-3 px-4 text-slate-600">${sanitize(sub.class)}</td>
+            <td class="py-3 px-4 font-medium text-slate-800">${sanitize(sub.exerciseTitle)}</td>
+            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded font-mono font-bold bg-slate-100 text-slate-700">${sub.autoScore} / ${sub.maxScore}</span></td>
+            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded font-mono font-bold ${isGraded ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'}">${sub.finalScore !== undefined ? sub.finalScore : sub.autoScore} / ${sub.maxScore}</span></td>
+            <td class="py-3 px-4">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isGraded ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${sub.status}</span>
+            </td>
+            <td class="py-3 px-4 text-slate-400 text-[11px]">${sanitize(sub.timestamp || 'Just now')}</td>
+            <td class="py-3 px-4 text-right">
+              <button class="review-sub-btn px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold shadow-xs" data-subid="${sub.submissionId}">
+                Review & Mark
+              </button>
+            </td>
+          `;
+          subTbody.appendChild(tr);
+        });
+      }
+
+      // Add click listeners to review buttons
+      document.querySelectorAll('.review-sub-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          const id = b.getAttribute('data-subid');
+          openGradingModal(id);
+        });
+      });
+
+      // Roster Table
+      const rosTbody = document.getElementById('admin-roster-tbody');
+      rosTbody.innerHTML = '';
+      document.getElementById('admin-roster-count').textContent = `${studentRoster.length} students`;
+
+      studentRoster.forEach(stu => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="py-2.5 px-4 font-mono font-semibold text-slate-700">${sanitize(stu.id)}</td>
+          <td class="py-2.5 px-4 font-semibold text-slate-900">${sanitize(stu.name)}</td>
+          <td class="py-2.5 px-4 text-slate-600">${sanitize(stu.class)}</td>
+          <td class="py-2.5 px-4 font-mono text-slate-500">${sanitize(stu.password)}</td>
+          <td class="py-2.5 px-4 text-right"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Active</td>
+        `;
+        rosTbody.appendChild(tr);
+      });
+    }
+
+    /* Side-by-Side Review Inspector Modal */
+    let currentInspectedSubmissionId = null;
+
+    function openGradingModal(subId) {
+      const sub = submissionRecords.find(s => s.submissionId === subId);
+      if (!sub) return;
+      currentInspectedSubmissionId = subId;
+
+      const ex = EXERCISES.find(e => e.id === sub.exerciseId) || EXERCISES[0];
+      const evalResult = evaluateExerciseAnswers(ex, sub.answers || {});
+
+      document.getElementById('grade-modal-title').textContent = `Submission Review: ${sub.studentName}`;
+      document.getElementById('grade-modal-meta').textContent = `${sub.class} • ${sub.exerciseTitle} • Submitted: ${sub.timestamp}`;
+      document.getElementById('grade-modal-final-input').value = sub.finalScore !== undefined ? sub.finalScore : sub.autoScore;
+      document.getElementById('grade-modal-max-label').textContent = `/ ${ex.totalMarks} marks`;
+      document.getElementById('grade-modal-feedback').value = sub.feedback || "";
+
+      const answersCont = document.getElementById('grade-modal-answers');
+      answersCont.innerHTML = '';
+
+      evalResult.details.forEach((d, idx) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = "p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2";
+
+        let studentResponseHtml = '';
+        if (Array.isArray(d.studentAns)) {
+          studentResponseHtml = `<ol class="list-decimal pl-4 font-medium text-slate-800">${d.studentAns.map(a => `<li>${sanitize(a) || '<span class="italic text-slate-400">Empty</span>'}</li>`).join('')}</ol>`;
+        } else {
+          studentResponseHtml = `<p class="font-medium text-slate-900 bg-white p-2 rounded border border-slate-200">${sanitize(d.studentAns) || '<span class="italic text-slate-400">No response</span>'}</p>`;
+        }
+
+        itemDiv.innerHTML = `
+          <div class="flex justify-between items-start">
+            <span class="font-bold text-slate-900">Question ${idx + 1}: ${sanitize(d.prompt)}</span>
+            <span class="px-2 py-0.5 rounded font-bold ${d.score > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+              ${d.score} / ${d.maxMarks} mark${d.maxMarks > 1 ? 's' : ''}
+            </span>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-slate-500 uppercase">Student Answer:</span>
+            ${studentResponseHtml}
+          </div>
+          <div class="p-2 bg-blue-50/70 border border-blue-200 rounded-lg text-blue-900">
+            <span class="font-bold">Official Mark Scheme:</span>
+            <div class="whitespace-pre-line font-mono text-[11px] mt-0.5">${sanitize(d.officialAnswer)}</div>
+            <div class="text-[11px] text-blue-700 italic mt-1">${sanitize(d.notes)}</div>
+          </div>
+        `;
+        answersCont.appendChild(itemDiv);
+      });
+
+      document.getElementById('grading-modal').classList.remove('hidden');
+    }
+
+    document.getElementById('close-grading-modal').addEventListener('click', () => {
+      document.getElementById('grading-modal').classList.add('hidden');
+    });
+
+    document.getElementById('save-final-grade-btn').addEventListener('click', async () => {
+      if (!currentInspectedSubmissionId) return;
+      const scoreInput = document.getElementById('grade-modal-final-input').value;
+      const feedbackInput = document.getElementById('grade-modal-feedback').value;
+      const finalScore = parseFloat(scoreInput) || 0;
+
+      await sendFinalGradeToSheet(currentInspectedSubmissionId, finalScore, feedbackInput);
+      document.getElementById('grading-modal').classList.add('hidden');
+      renderAdminDashboard();
+      showToast("Final grade and feedback saved & synced to Google Sheet!");
+    });
+
+    // Add Student
+    document.getElementById('admin-add-stu-btn').addEventListener('click', () => {
+      document.getElementById('add-student-modal').classList.remove('hidden');
+    });
+    document.getElementById('close-add-stu-modal').addEventListener('click', () => {
+      document.getElementById('add-student-modal').classList.add('hidden');
+    });
+    document.getElementById('cancel-add-stu').addEventListener('click', () => {
+      document.getElementById('add-student-modal').classList.add('hidden');
+    });
+
+    document.getElementById('confirm-add-student-btn').addEventListener('click', async () => {
+      const name = document.getElementById('new-stu-name').value.trim();
+      const id = document.getElementById('new-stu-id').value.trim();
+      const cls = document.getElementById('new-stu-class').value.trim();
+      const pass = document.getElementById('new-stu-pass').value.trim();
+
+      if (!name || !id || !pass) {
+        showToast("Please fill in all student fields", false);
+        return;
+      }
+
+      await sendNewStudentToSheet({
+        id: id,
+        name: name,
+        class: cls || "Class 1",
+        password: pass
+      });
+
+      document.getElementById('add-student-modal').classList.add('hidden');
+      document.getElementById('new-stu-name').value = "";
+      document.getElementById('new-stu-id').value = "";
+      document.getElementById('new-stu-class').value = "";
+      document.getElementById('new-stu-pass').value = "";
+      populateStudentSelect();
+      renderAdminDashboard();
+      showToast("Student added & synced to sheet!");
+    });
+
+    // Admin Sync Button
+    document.getElementById('admin-refresh-btn').addEventListener('click', async () => {
+      showToast("Syncing with Google Sheet...");
+      const success = await syncDataWithGoogleSheet();
+      populateStudentSelect();
+      renderAdminDashboard();
+      if (success) showToast("Synced successfully with Google Sheet!");
+      else showToast("Sync finished (using current roster)");
+    });
+
+    // Google Apps Script Settings Modal
+    document.getElementById('gas-settings-btn').addEventListener('click', openGasSettingsModal);
+    document.getElementById('admin-gas-settings-btn').addEventListener('click', openGasSettingsModal);
+    document.getElementById('close-gas-modal').addEventListener('click', () => {
+      document.getElementById('gas-settings-modal').classList.add('hidden');
+    });
+
+    function openGasSettingsModal() {
+      document.getElementById('gas-url-input').value = gasWebhookUrl;
+      document.getElementById('gas-settings-modal').classList.remove('hidden');
+    }
+
+    document.getElementById('save-gas-url-btn').addEventListener('click', async () => {
+      const newUrl = document.getElementById('gas-url-input').value.trim();
+      gasWebhookUrl = newUrl;
+      localStorage.setItem('cambridge_gas_url', newUrl);
+      document.getElementById('gas-settings-modal').classList.add('hidden');
+      showToast("Webhook URL saved!");
+      await syncDataWithGoogleSheet();
+      populateStudentSelect();
+      renderAdminDashboard();
+    });
+
+    // Copy Apps Script Template
+    document.getElementById('copy-gas-code-btn').addEventListener('click', () => {
+      const scriptCode = `function doGet(e) { return handleRequest(e); }
+function doPost(e) { return handleRequest(e); }
+function handleRequest(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var params = (e && e.parameter) ? e.parameter : {};
+  var postData = {};
+  if (e && e.postData && e.postData.contents) {
+    try { postData = JSON.parse(e.postData.contents); } catch(err) { postData = {}; }
+  }
+  var action = params.action || postData.action;
+  
+  var stuSheet = ss.getSheetByName("Students");
+  if (!stuSheet) {
+    stuSheet = ss.insertSheet("Students");
+    stuSheet.appendRow(["Student ID", "Full Name", "Class", "Password", "Date Added"]);
+  }
+  var subSheet = ss.getSheetByName("Submissions");
+  if (!subSheet) {
+    subSheet = ss.insertSheet("Submissions");
+    subSheet.appendRow(["Submission ID", "Student ID", "Student Name", "Class", "Exercise ID", "Exercise Title", "Auto Score", "Max Score", "Final Score", "Status", "Teacher Feedback", "Answers JSON", "Timestamp"]);
+  }
+  
+  if (action === "getData") {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "success",
+      students: stuSheet.getDataRange().getValues(),
+      submissions: subSheet.getDataRange().getValues()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+  if (action === "addStudent") {
+    stuSheet.appendRow([postData.id, postData.name, postData.class, String(postData.password), new Date()]);
+    return ContentService.createTextOutput(JSON.stringify({status: "success"})).setMimeType(ContentService.MimeType.JSON);
+  }
+  if (action === "submitHomework") {
+    subSheet.appendRow([
+      postData.submissionId, postData.studentId, postData.studentName, postData.class,
+      postData.exerciseId, postData.exerciseTitle, postData.autoScore, postData.maxScore,
+      postData.finalScore !== undefined ? postData.finalScore : postData.autoScore,
+      postData.status || "Pending Review", postData.feedback || "",
+      JSON.stringify(postData.answers), new Date()
+    ]);
+    return ContentService.createTextOutput(JSON.stringify({status: "success"})).setMimeType(ContentService.MimeType.JSON);
+  }
+  if (action === "finalizeGrade") {
+    var data = subSheet.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]) === String(postData.submissionId)) {
+        subSheet.getRange(i + 1, 9).setValue(postData.finalScore);
+        subSheet.getRange(i + 1, 10).setValue("Graded");
+        subSheet.getRange(i + 1, 11).setValue(postData.feedback);
+        break;
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({status: "success"})).setMimeType(ContentService.MimeType.JSON);
+  }
+  return ContentService.createTextOutput(JSON.stringify({status: "ok"})).setMimeType(ContentService.MimeType.JSON);
+}`;
+      const textArea = document.createElement("textarea");
+      textArea.value = scriptCode;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      showToast("Google Apps Script code copied to clipboard!");
+    });
+
+    // Export for GitHub Pages
+    document.getElementById('admin-export-github-btn').addEventListener('click', () => {
+      const targetUrl = gasWebhookUrl || DEFAULT_GAS_URL;
+      let htmlContent = document.documentElement.outerHTML;
+      htmlContent = htmlContent.replace(
+        /const DEFAULT_GAS_URL = ".*?";/,
+        `const DEFAULT_GAS_URL = "${targetUrl.trim()}";`
+      );
+
+      const blob = new Blob(["<!DOCTYPE html>\n<html lang=\"en\">\n" + htmlContent + "\n</html>"], { type: "text/html" });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = "index.html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast("Exported index.html ready for GitHub!");
+    });
+
+    // Initial page boot
+    window.addEventListener('DOMContentLoaded', async () => {
+      populateStudentSelect();
+      if (gasWebhookUrl) {
+        await syncDataWithGoogleSheet();
+        populateStudentSelect();
+      }
     });
   </script>
 </body>
