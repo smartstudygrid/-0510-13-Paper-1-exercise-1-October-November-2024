@@ -960,6 +960,37 @@
       const preview = document.getElementById('student-info-preview');
       if (!stuId) {
         preview.classList.add('hidden');
+        return;
+      }
+      const stu = studentRoster.find(s => s.id === stuId);
+      if (stu) {
+        document.getElementById('stu-preview-class').textContent = stu.class;
+        document.getElementById('stu-preview-id').textContent = stu.id;
+        preview.classList.remove('hidden');
+      }
+    });
+
+    // Student Login Submit Handler
+    document.getElementById('student-login-submit').addEventListener('click', () => {
+      const stuId = document.getElementById('login-student-select').value;
+      const pass = document.getElementById('login-student-pass').value.trim();
+      const errBox = document.getElementById('student-login-error');
+
+      if (!stuId) {
+        showToast("Please select your name from the list.", false);
+        return;
+      }
+
+      const stu = studentRoster.find(s => s.id === stuId);
+      if (stu && stu.password === pass) {
+        errBox.classList.add('hidden');
+        currentUser = { role: 'student', data: stu };
+        initStudentExamView();
+      } else {
+        errBox.classList.remove('hidden');
+      }
+    });
+
     // Admin Login (Validated securely against Google Apps Script backend)
     document.getElementById('admin-login-submit').addEventListener('click', async () => {
       const pass = document.getElementById('login-admin-pass').value.trim();
