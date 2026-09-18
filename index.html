@@ -3,30 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cambridge Reading Practice & Grading Portal</title>
+  <title>Cambridge IGCSE™ Reading Practice Portal</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter & Merriweather -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            serif: ['Merriweather', 'serif']
-          }
-        }
-      }
-    };
-  </script>
   <style>
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    /* Custom scrollbars and transitions */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
     .user-highlight {
       background-color: #fef08a;
       border-radius: 2px;
@@ -34,7 +29,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden select-none">
+<body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden">
 
   <!-- Top Navigation Header -->
   <header class="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center justify-between shadow-xs shrink-0 z-20">
@@ -44,342 +39,239 @@
       </div>
       <div>
         <h1 class="text-sm font-bold text-slate-800 leading-tight">Cambridge IGCSE™ Reading Practice</h1>
-        <p class="text-[11px] text-slate-500" id="header-subtitle">English as a Second Language • Teacher: Amanullah Khan</p>
+        <p class="text-[11px] text-slate-500" id="header-subtitle">English as a Second Language • Digital Portal</p>
       </div>
     </div>
 
     <!-- Active User Status & Header Actions -->
-    <div class="flex items-center space-x-2">
+    <div class="flex items-center space-x-2.5">
+      <!-- Creator Credit Badge -->
+      <div class="flex items-center space-x-1.5 px-3 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-full text-xs font-semibold text-slate-700 shadow-xs">
+        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+        <span>Created by: <span class="text-blue-800 font-bold tracking-tight">Amanullah Khan</span></span>
+      </div>
+
       <!-- Admin Only Sheet Settings Button -->
       <button id="gas-settings-btn" class="hidden px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-md border border-slate-300 transition flex items-center space-x-1.5" title="Google Sheet Webhook Settings">
-        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
         <span>Sheet Sync</span>
       </button>
 
-      <!-- Active User Badge -->
-      <div id="user-badge" class="hidden items-center space-x-2 px-2.5 py-1 bg-blue-50 border border-blue-200 rounded-md text-xs text-blue-900 font-medium">
-        <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-        <span id="user-display-name">Student</span>
+      <!-- Active User Badge & Logout Button -->
+      <div id="user-header-status" class="hidden flex items-center space-x-2 bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1 text-xs">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span id="header-user-display" class="font-medium text-slate-700">Student</span>
+        <button id="btn-logout" class="text-slate-400 hover:text-red-600 font-bold ml-1 transition" title="Log Out">✕</button>
       </div>
-
-      <!-- Logout Button -->
-      <button id="logout-btn" class="hidden px-2.5 py-1.5 text-xs text-red-600 hover:bg-red-50 rounded-md font-medium border border-transparent hover:border-red-200 transition">
-        Exit
-      </button>
     </div>
   </header>
 
-  <!-- Main View Container -->
-  <main class="flex-1 relative overflow-hidden flex flex-col">
+  <!-- 1. LOGIN GATEWAY MODAL -->
+  <div id="login-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
+      <!-- Modal Tabs -->
+      <div class="flex border-b border-slate-200 bg-slate-50">
+        <button id="tab-btn-student" class="flex-1 py-3.5 text-xs font-bold text-blue-700 border-b-2 border-blue-600 bg-white transition flex items-center justify-center space-x-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+          <span>Student Sign In</span>
+        </button>
+        <button id="tab-btn-admin" class="flex-1 py-3.5 text-xs font-bold text-slate-500 hover:text-slate-700 transition flex items-center justify-center space-x-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span>Teacher / Admin</span>
+        </button>
+      </div>
 
-    <!-- 1. LOGIN & GATEWAY VIEW -->
-    <div id="view-login" class="h-full flex items-center justify-center p-4 bg-slate-100 overflow-y-auto">
-      <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden my-auto">
-        <!-- Gateway Header Tabs -->
-        <div class="flex border-b border-slate-200">
-          <button id="tab-btn-student" class="flex-1 py-3 text-sm font-semibold text-blue-700 border-b-2 border-blue-700 bg-blue-50/50 transition">
-            Student Access
+      <!-- Student Sign In Form -->
+      <div id="tab-content-student" class="p-6 space-y-4">
+        <div class="text-center space-y-1">
+          <h2 class="text-lg font-bold text-slate-900">Student Sign In</h2>
+          <p class="text-xs text-slate-500">Select your name from the class roster and enter your password.</p>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Select Your Name</label>
+            <select id="login-student-select" class="w-full text-xs py-2.5 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+              <option value="">-- Choose your name --</option>
+            </select>
+          </div>
+
+          <div id="student-class-display-box" class="hidden p-2.5 bg-blue-50/70 border border-blue-100 rounded-lg text-xs flex justify-between items-center text-blue-900">
+            <span class="font-medium">Class: <strong id="student-class-label"></strong></span>
+            <span class="text-slate-500 text-[11px]">ID: <span id="student-id-label" class="font-mono"></span></span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
+            <input type="password" id="login-student-pass" placeholder="Enter assigned password" class="w-full text-xs py-2.5 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+          </div>
+
+          <div id="student-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
+            Incorrect password or student ID not found.
+          </div>
+
+          <button id="student-login-submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center space-x-2">
+            <span id="student-login-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span id="student-login-btn-text">Begin Practice Task</span>
           </button>
-          <button id="tab-btn-admin" class="flex-1 py-3 text-sm font-semibold text-slate-500 hover:text-slate-700 transition">
-            Teacher / Admin
+        </div>
+      </div>
+
+      <!-- Admin Sign In Form -->
+      <div id="tab-content-admin" class="hidden p-6 space-y-4">
+        <div class="text-center space-y-1">
+          <h2 class="text-lg font-bold text-slate-900">Teacher / Admin Sign In</h2>
+          <p class="text-xs text-slate-500">Access verified via your account and role in the Google Sheet.</p>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Admin Username or User ID</label>
+            <input type="text" id="login-admin-user" placeholder="e.g. ADM-001 or Teacher Admin" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Admin Password</label>
+            <input type="password" id="login-admin-pass" placeholder="Enter password" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
+          </div>
+
+          <div id="admin-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
+            Invalid credentials or unauthorized role.
+          </div>
+
+          <button id="admin-login-submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center space-x-2">
+            <span id="admin-login-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span id="admin-login-btn-text">Verify & Open Portal</span>
           </button>
         </div>
+      </div>
 
-        <!-- Student Login Tab Content -->
-        <div id="tab-content-student" class="p-6 space-y-4">
-          <div class="text-center space-y-1">
-            <h2 class="text-lg font-bold text-slate-900">Student Sign In</h2>
-            <p class="text-xs text-slate-500">Choose your name and enter your password to start your assigned practice.</p>
-          </div>
+      <div class="p-3 bg-slate-50 border-t border-slate-200 text-center text-[12px] text-slate-600">
+        Cambridge IGCSE English Portal • <span class="font-semibold text-slate-800">Created by Amanullah Khan</span>
+      </div>
+    </div>
+  </div>
 
-          <div class="space-y-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Select Student Name</label>
-              <select id="login-student-select" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
-                <option value="">Loading enrolled students...</option>
-              </select>
-            </div>
+  <!-- 2. STUDENT EXAM WORKSPACE (DUAL-PANE) -->
+  <main id="exam-workspace" class="hidden flex-1 flex flex-col overflow-hidden">
+    <!-- Sub-header Bar: Exercise selector & Tools -->
+    <div class="bg-white border-b border-slate-200 px-6 py-2 flex items-center justify-between shrink-0 text-xs">
+      <div class="flex items-center space-x-3">
+        <label class="font-semibold text-slate-600">Active Task:</label>
+        <select id="exercise-switcher" class="bg-slate-50 border border-slate-300 rounded px-2.5 py-1 text-xs font-medium text-slate-800 focus:outline-none focus:border-blue-500">
+          <option value="ex1">Exercise 1: Fruit bats (Reading Comprehension)</option>
+          <option value="ex2">Exercise 2: Pocket Money (Multiple Matching)</option>
+        </select>
+      </div>
 
-            <div id="student-info-preview" class="hidden p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs space-y-1">
-              <div class="flex justify-between text-slate-600">
-                <span>Class: <strong id="stu-preview-class" class="text-slate-800">-</strong></span>
-                <span>ID: <strong id="stu-preview-id" class="text-slate-800 font-mono">-</strong></span>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
-              <input type="password" id="login-student-pass" placeholder="Enter assigned password" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
-            </div>
-
-            <div id="student-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
-              Incorrect password. Verified through Google Sheet.
-            </div>
-
-            <button id="student-login-submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-sm hover:shadow flex items-center justify-center space-x-2">
-              <span id="student-login-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-              <span id="student-login-btn-text">Launch Reading Practice</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Admin Login Tab Content -->
-        <div id="tab-content-admin" class="hidden p-6 space-y-4">
-          <div class="text-center space-y-1">
-            <h2 class="text-lg font-bold text-slate-900">Teacher / Admin Sign In</h2>
-            <p class="text-xs text-slate-500">Access verified via your account and role in the Google Sheet.</p>
-          </div>
-
-          <div class="space-y-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Admin Username or User ID</label>
-              <input type="text" id="login-admin-user" placeholder="e.g. ADM-001 or Teacher Admin" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Admin Password</label>
-              <input type="password" id="login-admin-pass" placeholder="Enter password" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-blue-600 focus:outline-none">
-            </div>
-
-            <div id="admin-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
-              Invalid credentials or unauthorized role.
-            </div>
-
-            <button id="admin-login-submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center space-x-2">
-              <span id="admin-login-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-              <span id="admin-login-btn-text">Verify & Open Portal</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="p-3 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500">
-          Cambridge IGCSE English Portal
-        </div>
+      <!-- Passage Tools -->
+      <div class="flex items-center space-x-2">
+        <button id="btn-font-dec" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded border border-slate-300 font-bold text-slate-700" title="Decrease Font">A-</button>
+        <button id="btn-font-inc" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded border border-slate-300 font-bold text-slate-700" title="Increase Font">A+</button>
+        <button id="btn-highlight-toggle" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 rounded font-medium transition flex items-center space-x-1">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+          <span>Highlight Text</span>
+        </button>
       </div>
     </div>
 
-    <!-- 2. ADMIN DASHBOARD VIEW -->
-    <div id="view-admin" class="hidden h-full flex flex-col bg-slate-100 overflow-hidden">
-      <!-- Admin Action Bar -->
-      <div class="bg-white border-b border-slate-200 px-6 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
-        <div>
-          <h2 class="text-base font-bold text-slate-900">Teacher Assessment Hub</h2>
-          <p class="text-xs text-slate-500">Monitor student progress, grade submissions, and update roster.</p>
+    <!-- Dual Pane Content Area -->
+    <div class="flex-1 flex overflow-hidden">
+      <!-- LEFT PANE: Reading Passage -->
+      <div class="w-1/2 border-r border-slate-200 bg-white flex flex-col overflow-hidden">
+        <div class="px-6 py-2.5 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between shrink-0">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-600" id="passage-label">Reading Text</span>
+          <span class="text-[11px] text-slate-500 font-medium">Select and copy text freely to paste answers</span>
         </div>
-        <div class="flex items-center space-x-2">
-          <button id="admin-gas-settings-btn" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5">
-            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-            <span>Sheet Settings</span>
-          </button>
-          <button id="admin-export-github-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-slate-200 rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5" title="Download index.html with your URL baked in for GitHub Pages">
-            <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            <span>Export for GitHub</span>
-          </button>
-          <button id="admin-refresh-btn" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5">
-            <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            <span>Sync Data</span>
-          </button>
-          <button id="admin-add-stu-btn" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            <span>Add New User</span>
-          </button>
+
+        <!-- Passage Text Content -->
+        <div id="passage-container" class="flex-1 p-6 md:p-8 overflow-y-auto font-serif text-slate-800 leading-relaxed space-y-4 text-justify select-text cursor-text" style="font-size: 18px;">
+          <!-- Injected dynamically based on active exercise -->
         </div>
       </div>
 
-      <!-- Dashboard Body Tabs -->
-      <div class="flex-1 overflow-y-auto p-6 space-y-6">
-        <!-- Submissions Table Section -->
-        <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
-          <div class="px-5 py-3.5 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
-            <div class="flex items-center space-x-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
-              <h3 class="text-sm font-bold text-slate-800">Student Homework Submissions</h3>
-            </div>
-            <span id="admin-submission-count" class="text-xs bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full font-semibold">0 submissions</span>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[10px]">
-                  <th class="py-3 px-4">Student</th>
-                  <th class="py-3 px-4">Class</th>
-                  <th class="py-3 px-4">Exercise</th>
-                  <th class="py-3 px-4">Auto Score</th>
-                  <th class="py-3 px-4">Final Score</th>
-                  <th class="py-3 px-4">Status</th>
-                  <th class="py-3 px-4">Submitted At</th>
-                  <th class="py-3 px-4 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody id="admin-submissions-tbody" class="divide-y divide-slate-100 text-slate-700">
-                <!-- Dynamically populated -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- User Accounts & Roster Section -->
-        <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
-          <div class="px-5 py-3.5 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
-            <div class="flex items-center space-x-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
-              <h3 class="text-sm font-bold text-slate-800">User Accounts & Roster (Google Sheet)</h3>
-            </div>
-            <span id="admin-roster-count" class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-semibold">0 users</span>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[10px]">
-                  <th class="py-3 px-4">User ID</th>
-                  <th class="py-3 px-4">Full Name</th>
-                  <th class="py-3 px-4">Role</th>
-                  <th class="py-3 px-4">Class / Department</th>
-                  <th class="py-3 px-4">Password</th>
-                  <th class="py-3 px-4 text-right">Status</th>
-                </tr>
-              </thead>
-              <tbody id="admin-roster-tbody" class="divide-y divide-slate-100 text-slate-700">
-                <!-- Dynamically populated -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. STUDENT EXAM & PRACTICE VIEW (SAT Style Dual-Pane) -->
-    <div id="view-exam" class="hidden h-full flex flex-col overflow-hidden bg-slate-100">
-      
-      <!-- Top Exam Bar (Exercise Selector & Controls) -->
-      <div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between shadow-xs shrink-0">
-        <div class="flex items-center space-x-3">
-          <label class="text-xs font-semibold text-slate-600">Exercise:</label>
-          <select id="exam-exercise-select" class="text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg px-2.5 py-1 cursor-pointer focus:outline-none">
-            <!-- Dynamically populated options -->
-          </select>
-          <span id="exercise-badge-marks" class="text-xs bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded-md">8 marks</span>
-        </div>
-
-        <div class="flex items-center space-x-2">
-          <!-- Text Size Adjusters -->
-          <div class="flex items-center bg-slate-100 rounded-lg border border-slate-300 p-0.5">
-            <button id="btn-font-smaller" class="px-2 py-0.5 text-xs text-slate-600 hover:text-slate-900 font-bold" title="Decrease font size">A-</button>
-            <div class="h-3 w-px bg-slate-300"></div>
-            <button id="btn-font-larger" class="px-2 py-0.5 text-xs text-slate-600 hover:text-slate-900 font-bold" title="Increase font size">A+</button>
-          </div>
-          <!-- Highlighter Toggle -->
-          <button id="btn-highlighter" class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-300 bg-white hover:bg-yellow-50 text-slate-700 flex items-center space-x-1.5 transition">
-            <span class="w-3 h-3 rounded-full bg-yellow-300 border border-yellow-400"></span>
-            <span>Highlight</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Dual Pane Container -->
-      <div class="flex-1 flex overflow-hidden">
+      <!-- RIGHT PANE: Question Area & Navigation -->
+      <div class="w-1/2 bg-slate-50 flex flex-col overflow-hidden">
         
-        <!-- LEFT PANE: Reading Passage -->
-        <div class="w-1/2 border-r border-slate-200 bg-white flex flex-col overflow-hidden">
-          <div class="px-6 py-3 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between shrink-0">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-600" id="passage-label">Reading Text</span>
-            <span class="text-[11px] text-slate-400 italic">Select text to highlight</span>
-          </div>
+        <!-- Question Review List (Direct Navigation matching user design) -->
+        <div class="p-4 bg-white border-b border-slate-200 shrink-0">
+          <div class="bg-white border border-slate-200/90 rounded-xl p-3.5 shadow-2xs space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-xs font-bold text-slate-800 tracking-tight">Question Review List</h3>
+                <p class="text-[10px] text-slate-500">Jump directly to any question or mark review</p>
+              </div>
+              <button id="review-list-toggle" class="text-slate-400 hover:text-slate-700 text-xs p-1" title="Toggle Compact View">✕</button>
+            </div>
 
-          <!-- Passage Text Content -->
-          <div id="passage-container" class="flex-1 p-6 md:p-8 overflow-y-auto font-serif text-slate-800 leading-relaxed space-y-4 text-justify" style="font-size: 18px;">
-            <!-- Injected by Active Exercise -->
+            <!-- Numbered Button Bar -->
+            <div id="review-boxes-container" class="flex items-center gap-2 overflow-x-auto py-1">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Legend & Done Button -->
+            <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px] text-slate-500">
+              <div class="flex items-center space-x-3">
+                <span class="flex items-center space-x-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
+                  <span>Answered</span>
+                </span>
+                <span class="flex items-center space-x-1">
+                  <span class="w-2.5 h-2.5 rounded-full border border-slate-300 bg-white inline-block"></span>
+                  <span>Unanswered</span>
+                </span>
+                <span class="flex items-center space-x-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                  <span>Review</span>
+                </span>
+              </div>
+              <button id="btn-review-done" class="px-2.5 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded text-[11px] transition">Done</button>
+            </div>
           </div>
         </div>
 
-        <!-- RIGHT PANE: Digital SAT Question Workspace -->
-        <div class="w-1/2 bg-slate-50 flex flex-col overflow-hidden">
-          
-          <!-- Question Header & Review Bar Container -->
-          <div class="p-4 border-b border-slate-200 bg-white shrink-0 space-y-3 shadow-xs">
-            
-            <!-- Question Review List Banner -->
-            <div id="review-list-banner" class="bg-white rounded-xl border border-slate-200 p-3 shadow-xs">
-              <div class="flex items-center justify-between mb-2">
-                <div>
-                  <h3 class="text-sm font-bold text-slate-900">Question Review List</h3>
-                  <p class="text-[11px] text-slate-500">Jump directly to any question or mark review</p>
-                </div>
-                <button id="close-review-banner-btn" class="text-slate-400 hover:text-slate-600 p-1" title="Minimize review list">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-              </div>
-
-              <!-- Question Grid Items -->
-              <div id="review-grid-buttons" class="flex flex-wrap gap-2 mb-3">
-                <!-- Dynamically populated buttons -->
-              </div>
-
-              <!-- Legend and Done Button -->
-              <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] text-slate-600">
-                <div class="flex items-center space-x-3">
-                  <span class="flex items-center space-x-1">
-                    <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
-                    <span>Answered</span>
-                  </span>
-                  <span class="flex items-center space-x-1">
-                    <span class="w-2.5 h-2.5 rounded-full border border-slate-300 inline-block"></span>
-                    <span>Unanswered</span>
-                  </span>
-                  <span class="flex items-center space-x-1">
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
-                    <span>Review</span>
-                  </span>
-                </div>
-                <button id="done-review-banner-btn" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-md text-xs transition">
-                  Done
-                </button>
-              </div>
-            </div>
-
-            <!-- Question Number & Mark for Review Toggle -->
-            <div class="flex items-center justify-between pt-1">
+        <!-- Question Viewport -->
+        <div class="flex-1 p-6 overflow-y-auto flex flex-col justify-between">
+          <div class="space-y-4">
+            <!-- Question Meta Header -->
+            <div class="flex items-center justify-between">
+              <span id="question-index-label" class="text-xs font-bold uppercase tracking-wider text-slate-500">Question 1 of 6</span>
               <div class="flex items-center space-x-2">
-                <span class="px-2.5 py-1 bg-slate-900 text-white text-xs font-bold rounded-md" id="q-counter-label">Question 1 of 6</span>
-                <span class="text-xs font-semibold text-slate-500" id="q-mark-value">[1 mark]</span>
+                <span id="question-marks-badge" class="px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-bold text-xs">[1 mark]</span>
+                <label class="flex items-center space-x-1.5 text-xs text-amber-700 font-medium cursor-pointer">
+                  <input type="checkbox" id="mark-review-checkbox" class="rounded border-amber-300 text-amber-600 focus:ring-amber-500">
+                  <span>Mark for review</span>
+                </label>
               </div>
-              <button id="btn-mark-review" class="px-3 py-1 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-xs font-medium text-slate-700 flex items-center space-x-1.5 transition">
-                <svg class="w-3.5 h-3.5 text-slate-400" id="mark-review-flag" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path></svg>
-                <span id="mark-review-text">Mark for Review</span>
-              </button>
+            </div>
+
+            <!-- Question Prompt Title -->
+            <div id="question-prompt" class="text-base font-bold text-slate-900 leading-snug">
+              <!-- Prompt inserted dynamically -->
+            </div>
+
+            <!-- Question Input Area -->
+            <div id="question-input-container" class="pt-2">
+              <!-- Free response textarea or radio cards injected here -->
             </div>
           </div>
 
-          <!-- Question Content & Response Workspace -->
-          <div class="flex-1 p-6 overflow-y-auto space-y-4">
-            <!-- Question Prompt Box -->
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-1">
-              <span class="text-[11px] font-bold text-blue-600 uppercase tracking-wider" id="q-instruction-label">Exercise Question</span>
-              <p class="text-sm font-semibold text-slate-800 leading-snug" id="q-prompt-text">
-                Where in the world do most species of fruit bat live?
-              </p>
-            </div>
-
-            <!-- Dynamic Input Workspace Area -->
-            <div id="q-input-container" class="space-y-3">
-              <!-- Dynamically populated with Single Free-Text, Multiple Sub-details, or Choice buttons -->
-            </div>
-          </div>
-
-          <!-- Question Navigation Footer Bar -->
-          <div class="p-4 bg-white border-t border-slate-200 flex items-center justify-between shrink-0">
-            <button id="btn-prev-q" class="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed">
-              Back
+          <!-- Question Footer Navigation Buttons -->
+          <div class="pt-6 border-t border-slate-200 flex items-center justify-between shrink-0">
+            <button id="btn-prev-question" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs">
+              ← Previous
             </button>
-            <div class="flex items-center space-x-3">
-              <button id="btn-next-q" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow-sm transition">
-                Next
+            
+            <div class="flex items-center space-x-2">
+              <button id="btn-next-question" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-xs">
+                Next →
               </button>
-              <button id="btn-submit-task" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center space-x-1.5">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                <span>Submit Task</span>
+              <button id="btn-submit-task" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-xs">
+                Finish & Submit Task
               </button>
             </div>
           </div>
@@ -388,131 +280,103 @@
     </div>
   </main>
 
-    <!-- 4. MODALS & OVERLAYS -->
-
-  <!-- A. Teacher Submission Grading & Review Modal -->
-  <div id="grading-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
-    <div class="bg-white max-w-3xl w-full rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[90vh] flex flex-col">
-      <!-- Modal Header -->
-      <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+  <!-- 3. TEACHER / ADMIN DASHBOARD -->
+  <main id="admin-workspace" class="hidden flex-1 p-6 overflow-y-auto bg-slate-50">
+    <div class="max-w-6xl mx-auto space-y-6">
+      <!-- Admin Top Bar -->
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
         <div>
-          <h3 class="text-sm font-bold text-slate-900" id="grade-modal-title">Review Student Submission</h3>
-          <p class="text-xs text-slate-500" id="grade-modal-meta">Student Name • Exercise</p>
+          <h2 class="text-base font-bold text-slate-800">Teacher Management Console</h2>
+          <p class="text-xs text-slate-500">Manage student roster, verify logins, and review graded homework submissions.</p>
         </div>
-        <button id="close-grading-modal" class="text-slate-400 hover:text-slate-600 p-1">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        <div class="flex items-center space-x-2">
+          <button id="admin-sync-btn" class="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 text-xs font-semibold rounded-lg transition flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            <span>Sync Sheet</span>
+          </button>
+          <button id="admin-add-user-btn" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition shadow-2xs flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+            <span>Add User</span>
+          </button>
+          <button id="admin-gas-btn" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-semibold rounded-lg transition">
+            Sheet Setup
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin Tabs -->
+      <div class="border-b border-slate-200 flex space-x-4">
+        <button id="admin-tab-subs" class="py-2.5 px-3 text-xs font-bold text-blue-700 border-b-2 border-blue-600 transition">
+          Submissions & Grading Review
+        </button>
+        <button id="admin-tab-users" class="py-2.5 px-3 text-xs font-bold text-slate-500 hover:text-slate-700 transition">
+          User & Student Roster
         </button>
       </div>
 
-      <!-- Modal Body: Answer Review List -->
-      <div class="flex-1 p-6 overflow-y-auto space-y-4" id="grade-modal-answers">
-        <!-- Rendered dynamically -->
+      <!-- Submissions Review Panel -->
+      <div id="admin-panel-subs" class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Homework Submissions</span>
+          <span id="sub-count-badge" class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0 records</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+              <tr>
+                <th class="py-3 px-4">Student Name</th>
+                <th class="py-3 px-4">Class</th>
+                <th class="py-3 px-4">Exercise</th>
+                <th class="py-3 px-4">Auto Score</th>
+                <th class="py-3 px-4">Final Score</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Date</th>
+                <th class="py-3 px-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-subs-tbody" class="divide-y divide-slate-100">
+              <tr>
+                <td colspan="8" class="text-center py-6 text-slate-400">No submissions recorded yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <!-- Modal Grading Footer -->
-      <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-        <div class="flex items-center space-x-3">
-          <label class="text-xs font-bold text-slate-700">Final Awarded Score:</label>
-          <div class="flex items-center space-x-1.5">
-            <input type="number" id="grade-modal-final-input" min="0" max="20" class="w-16 px-2 py-1 text-xs border border-slate-300 rounded font-bold text-center">
-            <span class="text-xs text-slate-500 font-semibold" id="grade-modal-max-label">/ 8 marks</span>
-          </div>
+      <!-- User Roster Panel -->
+      <div id="admin-panel-users" class="hidden bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Registered Accounts</span>
+          <span id="roster-count-badge" class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">0 users</span>
         </div>
-        <div class="flex-1">
-          <input type="text" id="grade-modal-feedback" placeholder="Teacher comments / feedback..." class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+              <tr>
+                <th class="py-3 px-4">User ID</th>
+                <th class="py-3 px-4">Full Name</th>
+                <th class="py-3 px-4">Role</th>
+                <th class="py-3 px-4">Class</th>
+                <th class="py-3 px-4">Password</th>
+                <th class="py-3 px-4">Date Added</th>
+              </tr>
+            </thead>
+            <tbody id="admin-roster-tbody" class="divide-y divide-slate-100">
+              <!-- User rows injected dynamically -->
+            </tbody>
+          </table>
         </div>
-        <button id="save-final-grade-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow-sm">
-          Save & Finalize Marks
-        </button>
       </div>
     </div>
-  </div>
+  </main>
 
-  <!-- B. Add User Modal (Student or Admin) -->
-  <div id="add-student-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-md w-full rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4">
-      <div class="flex justify-between items-center">
-        <div>
-          <h3 class="text-base font-bold text-slate-900">Add New User</h3>
-          <p class="text-xs text-slate-500">Creates user in your Google Sheet with specified role.</p>
-        </div>
-        <button id="close-add-stu-modal" class="text-slate-400 hover:text-slate-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Account Role</label>
-          <select id="new-user-role" class="w-full py-2 px-3 border border-slate-300 rounded-lg bg-slate-50 focus:bg-white font-semibold">
-            <option value="student">Student (Taking practice exam)</option>
-            <option value="admin">Teacher / Admin (Grading & roster access)</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Full Name</label>
-          <input type="text" id="new-stu-name" placeholder="e.g. Maria Gonzalez or Mr. Davis" class="w-full py-2 px-3 border border-slate-300 rounded-lg">
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">User ID</label>
-            <input type="text" id="new-stu-id" placeholder="e.g. STU-105 or ADM-002" class="w-full py-2 px-3 border border-slate-300 rounded-lg font-mono">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Class / Department</label>
-            <input type="text" id="new-stu-class" placeholder="e.g. Year 10-A or English Dept" class="w-full py-2 px-3 border border-slate-300 rounded-lg">
-          </div>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Assigned Password</label>
-          <input type="text" id="new-stu-pass" placeholder="e.g. reading2026" class="w-full py-2 px-3 border border-slate-300 rounded-lg font-mono">
-        </div>
-      </div>
-
-      <div class="pt-2 flex justify-end space-x-2">
-        <button id="cancel-add-stu" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
-        <button id="confirm-add-student-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-xs">Save to Google Sheet</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- C. Google Apps Script Webhook Settings Modal (Admin Only) -->
-  <div id="gas-settings-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
-    <div class="bg-white max-w-xl w-full rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4 my-auto">
-      <div class="flex justify-between items-center">
-        <div>
-          <h3 class="text-base font-bold text-slate-900">Google Sheet Integration</h3>
-          <p class="text-xs text-slate-500">Configure Webhook URL from Google Apps Script</p>
-        </div>
-        <button id="close-gas-modal" class="text-slate-400 hover:text-slate-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-
-      <div class="space-y-2 text-xs">
-        <label class="block font-semibold text-slate-700">Apps Script Web App URL</label>
-        <input type="text" id="gas-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full py-2 px-3 border border-slate-300 rounded-lg text-xs font-mono">
-        <p class="text-[11px] text-slate-500">Submissions, user roster, and finalized teacher marks sync directly with your Google Sheet.</p>
-      </div>
-
-      <div class="pt-2 flex justify-between items-center">
-        <button id="copy-gas-code-btn" class="text-xs text-blue-600 hover:text-blue-800 font-semibold underline">
-          Copy Google Apps Script Template
-        </button>
-        <button id="save-gas-url-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold">
-          Save Settings
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- D. SUBMISSION PROGRESS LOADING MODAL -->
-  <div id="submission-loading-modal" class="hidden fixed inset-0 bg-slate-900/75 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <!-- 4. SUBMISSION & SAVING PROGRESS LOADING MODAL -->
+  <div id="submission-loading-modal" class="hidden fixed inset-0 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-4 z-50">
     <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-slate-200 p-6 text-center space-y-4">
       <div class="w-14 h-14 mx-auto border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
       <div class="space-y-1">
-        <h3 class="text-base font-bold text-slate-900">Submitting Homework...</h3>
-        <p class="text-xs text-slate-600 leading-relaxed">
+        <h3 class="text-base font-bold text-slate-900" id="loading-modal-title">Submitting Homework...</h3>
+        <p class="text-xs text-slate-600 leading-relaxed" id="loading-modal-desc">
           Please wait while your answers and grading data sync to the Google Sheet. Do not refresh or close this page.
         </p>
       </div>
@@ -522,190 +386,287 @@
     </div>
   </div>
 
-  <!-- E. Student Submission Success Receipt Modal -->
-  <div id="student-result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
-    <div class="bg-white max-w-lg w-full rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4 my-auto">
-      <div class="text-center space-y-2">
-        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+  <!-- 5. TEACHER REVIEW & MARKING MODAL (With Per-Question Scoring) -->
+  <div id="grading-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-3xl w-full max-h-[90vh] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="text-sm font-bold text-slate-800" id="grade-modal-title">Review Submission</h3>
+          <p class="text-xs text-slate-500" id="grade-modal-meta">Student Details</p>
         </div>
-        <h3 class="text-lg font-bold text-slate-900">Task Completed & Submitted!</h3>
-        <p class="text-xs text-slate-500">Your homework has been submitted to your teacher for review.</p>
+        <button id="close-grading-modal" class="text-slate-400 hover:text-slate-700 font-bold p-1">✕</button>
       </div>
 
-      <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
-        <div class="flex justify-between items-center py-1 border-b border-slate-200">
-          <span class="text-slate-600">Student:</span>
-          <span class="font-bold text-slate-800" id="receipt-student-name">-</span>
-        </div>
-        <div class="flex justify-between items-center py-1 border-b border-slate-200">
-          <span class="text-slate-600">Exercise:</span>
-          <span class="font-bold text-slate-800" id="receipt-exercise-title">-</span>
-        </div>
-        <div class="flex justify-between items-center py-1 border-b border-slate-200">
-          <span class="text-slate-600">Preliminary Auto Score:</span>
-          <span class="font-bold text-blue-700 text-sm" id="receipt-auto-score">0 / 8</span>
-        </div>
-        <div class="flex justify-between items-center py-1">
-          <span class="text-slate-600">Grading Status:</span>
-          <span class="px-2 py-0.5 bg-amber-100 text-amber-800 font-semibold rounded text-[11px]">Pending Teacher Review</span>
-        </div>
+      <!-- Modal Body (Questions & Student Answers) -->
+      <div class="p-6 overflow-y-auto space-y-4 flex-1" id="grade-modal-answers">
+        <!-- Question review cards injected here with per-question score inputs -->
       </div>
 
-      <div class="flex space-x-2 pt-2">
-        <button id="btn-close-receipt" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition">
-          Return to Portal
+      <!-- Modal Footer (Total Marks & Feedback) -->
+      <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 shrink-0 space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <label class="text-xs font-bold text-slate-700">Calculated Final Score:</label>
+            <input type="number" id="grade-modal-final-input" class="w-16 px-2 py-1 bg-white border border-slate-300 rounded font-bold text-blue-700 text-center text-xs focus:outline-none focus:border-blue-500" min="0" step="0.5">
+            <span class="text-xs text-slate-500 font-medium" id="grade-modal-max-label">/ 8 marks</span>
+          </div>
+          <div class="text-[11px] text-slate-500 italic">
+            Score recalculates automatically when question points are edited above.
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Teacher Feedback / Notes</label>
+          <textarea id="grade-modal-feedback" rows="2" placeholder="Write feedback visible in the Google Sheet and student record..." class="w-full text-xs p-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-1">
+          <button id="save-final-grade-btn" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-xs flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span>Save & Finalize Marks</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. ADD USER MODAL -->
+  <div id="add-user-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-sm font-bold text-slate-800">Add New User</h3>
+        <button id="close-add-user-modal" class="text-slate-400 hover:text-slate-700 font-bold">✕</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">User ID</label>
+          <input type="text" id="new-user-id" placeholder="e.g. STU-105 or ADM-002" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Full Name</label>
+          <input type="text" id="new-user-name" placeholder="e.g. Sarah Jenkins" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Account Role</label>
+          <select id="new-user-role" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 bg-white">
+            <option value="student">Student</option>
+            <option value="admin">Teacher / Admin</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Class / Department</label>
+          <input type="text" id="new-user-class" placeholder="e.g. Year 10-A or Staff" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Password</label>
+          <input type="text" id="new-user-pass" placeholder="Assign password" class="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600">
+        </div>
+      </div>
+      <button id="btn-confirm-add-user" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-xs">
+        Save User to Google Sheet
+      </button>
+    </div>
+  </div>
+
+  <!-- 7. GOOGLE SHEET SETTINGS MODAL -->
+  <div id="gas-settings-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-lg w-full rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-sm font-bold text-slate-800">Google Sheet Integration Settings</h3>
+        <button id="close-gas-settings" class="text-slate-400 hover:text-slate-700 font-bold">✕</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Google Apps Script Web App URL</label>
+          <input type="text" id="gas-url-input" class="w-full p-2 border border-slate-300 rounded-lg font-mono text-[11px] focus:outline-none focus:border-blue-600 text-slate-700">
+          <p class="text-[11px] text-slate-500 mt-1">This endpoint handles submissions, student roster sync, and server-side role validation.</p>
+        </div>
+        <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 text-[11px] space-y-1">
+          <p class="font-bold">✓ Backend Configuration Verified</p>
+          <p>Your Google Apps Script Web App URL is permanently embedded in the application code.</p>
+        </div>
+      </div>
+      <div class="flex justify-end space-x-2">
+        <button id="save-gas-url-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
+          Save Settings
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Toast Notification Message Box -->
-  <div id="toast-box" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-xl opacity-0 transition-opacity duration-300 pointer-events-none z-50 flex items-center space-x-2">
-    <span id="toast-text">Message</span>
+  <!-- 8. STUDENT RESULT RECEIPT MODAL -->
+  <div id="student-result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4 text-center">
+      <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-xl font-bold">✓</div>
+      <div class="space-y-1">
+        <h3 class="text-base font-bold text-slate-900">Task Submitted Successfully!</h3>
+        <p class="text-xs text-slate-500">Your answers and marks have been synchronized with your teacher's Google Sheet.</p>
+      </div>
+      <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1 text-slate-700">
+        <div>Student: <strong id="receipt-student-name"></strong></div>
+        <div>Exercise: <strong id="receipt-exercise-title"></strong></div>
+        <div class="text-blue-700 font-bold text-sm pt-1">Automated Score: <span id="receipt-auto-score"></span></div>
+      </div>
+      <button id="btn-close-receipt" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition">
+        Return to Dashboard / Log Out
+      </button>
+    </div>
   </div>
 
   <script>
-    /* =========================================================
-       EXERCISE DATA & CAMBRIDGE MARK SCHEMES
-    ========================================================= */
+    /* ==========================================================================
+       EXERCISE DATASETS & MARK SCHEMES (Exercise 1: Fruit bats & Exercise 2)
+       ========================================================================== */
     const EXERCISES = [
       {
         id: "ex1",
         number: "Exercise 1",
         title: "Fruit bats",
-        type: "comprehension",
+        syllabus: "0510/13/O/N/24",
         totalMarks: 8,
-        passage: `
-          <h2 class="text-2xl font-bold text-slate-900 mb-3 tracking-tight">Fruit bats</h2>
-          <p class="mb-4">Fruit bats are flying mammals named because of their habit of living on a diet of various tropical fruits and plants. There are over 170 different species around the world. Although mainly found in Africa, some can also be found in sites in Southeast Asia and Central and South America.</p>
-          <p class="mb-4">While most bats measure only a few centimetres in length, fruit bats are, on average, the largest bat species in the world. They range in size from the flying fox, which has wings up to 1.7 metres across when fully extended, down to the spotted-winged fruit bat, whose open wings measure around 28 centimetres from end to end.</p>
-          <p class="mb-4">Fruit bats are nocturnal, which means they usually only come out at night to feed. The most likely explanation for this is that the bat is trying to avoid dangerous animals such as rats. In island locations especially, these can seriously reduce numbers. Despite sharing certain types of behaviour with other bat species, fruit bats are unique in some respects. When it comes to flying at night, fruit bats regularly use smell to work out where they are going, whereas most bat species use sound to achieve this. It is unclear whether fruit bats simply lost that ability at some time in the past or just never developed it in the first place.</p>
-          <p class="mb-4">Fruit bats are among the most social of all mammals. With a few exceptions, they usually live in large groups of up to 200000 individuals. They gather at the end of the night when they have finished feeding and remain together until the next night. They do this in a variety of places including caves, bushes and even empty buildings, although more than half of all species are found in trees, sometimes in such large numbers that the branches can break under their weight. The size of the groups may be related to the availability of local food. In places where there is plenty, the bats will form even bigger groups. Female fruit bats are responsible for almost all the care of their young bats, known as pups. Research has shown that these remain with their mothers for around the first four months of their lives, receiving both milk and protection. It takes about two years for young bats to become adults. They can then live for up to 30 years.</p>
-          <p class="mb-4">While fruit bats are not yet an endangered species, they are increasingly at risk, for example from humans clearing land for farming. It is unclear at the moment exactly how much impact climate change is having on fruit bats, but it appears to be significant.</p>
+        passageTitle: "Fruit bats",
+        passageContent: `
+          <p>Fruit bats are flying mammals named because of their habit of living on a diet of various tropical fruits and plants. There are over 170 different species around the world. Although mainly found in Africa, some can also be found in sites in Southeast Asia and Central and South America.</p>
+          <p>While most bats measure only a few centimetres in length, fruit bats are, on average, the largest bat species in the world. They range in size from the flying fox, which has wings up to 1.7 metres across when fully extended, down to the spotted-winged fruit bat, whose open wings measure around 28 centimetres from end to end.</p>
+          <p>Fruit bats are nocturnal, which means they usually only come out at night to feed. The most likely explanation for this is that the bat is trying to avoid dangerous animals such as rats. In island locations especially, these can seriously reduce numbers. Despite sharing certain types of behaviour with other bat species, fruit bats are unique in some respects. When it comes to flying at night, fruit bats regularly use smell to work out where they are going, whereas most bat species use sound to achieve this. It is unclear whether fruit bats simply lost that ability at some time in the past or just never developed it in the first place.</p>
+          <p>Fruit bats are among the most social of all mammals. With a few exceptions, they usually live in large groups of up to 200000 individuals. They gather at the end of the night when they have finished feeding and remain together until the next night. They do this in a variety of places including caves, bushes and even empty buildings, although more than half of all species are found in trees, sometimes in such large numbers that the branches can break under their weight. The size of the groups may be related to the availability of local food. In places where there is plenty, the bats will form even bigger groups. Female fruit bats are responsible for almost all the care of their young bats, known as pups. Research has shown that these remain with their mothers for around the first four months of their lives, receiving both milk and protection. It takes about two years for young bats to become adults. They can then live for up to 30 years.</p>
+          <p>While fruit bats are not yet an endangered species, they are increasingly at risk, for example from humans clearing land for farming. It is unclear at the moment exactly how much impact climate change is having on fruit bats, but it appears to be significant.</p>
         `,
         questions: [
           {
             id: "q1",
-            number: 1,
+            number: "Question 1",
             prompt: "Where in the world do most species of fruit bat live?",
             marks: 1,
             type: "text",
             officialAnswer: "Africa",
-            evaluator: (ans) => {
-              const text = (ans || "").toLowerCase().trim();
-              if (!text) return { score: 0, reason: "No response entered." };
-              if (text.includes("asia") || text.includes("america") || text.includes("central") || text.includes("southeast")) {
-                return { score: 0, reason: "Incorrect: Included contradictory geographical information." };
+            notes: "Contradictory or extraneous locations (e.g. Asia, America) negate the mark.",
+            validator: (ans) => {
+              const clean = (ans || "").toLowerCase().trim();
+              if (!clean) return { score: 0, feedback: "No response submitted." };
+              if (clean.includes("asia") || clean.includes("america")) {
+                return { score: 0, feedback: "Incorrect: Including contradictory locations (Asia/America) negates the mark." };
               }
-              if (text.includes("africa")) {
-                return { score: 1, reason: "Correct (Africa)" };
+              if (clean.includes("africa")) {
+                return { score: 1, feedback: "Correct: Africa" };
               }
-              return { score: 0, reason: "Incorrect: Expected 'Africa'." };
+              return { score: 0, feedback: "Incorrect: The text states they are mainly found in Africa." };
             }
           },
           {
             id: "q2",
-            number: 2,
+            number: "Question 2",
             prompt: "Which is the largest type of fruit bat?",
             marks: 1,
             type: "text",
             officialAnswer: "flying fox",
-            evaluator: (ans) => {
-              const text = (ans || "").toLowerCase().trim();
-              if (!text) return { score: 0, reason: "No response entered." };
-              if (text.includes("spotted-winged") || text.includes("spotted winged")) {
-                return { score: 0, reason: "Incorrect: Named smallest bat species." };
+            notes: "Mentioning spotted-winged bat (the smallest) negates the mark.",
+            validator: (ans) => {
+              const clean = (ans || "").toLowerCase().trim();
+              if (!clean) return { score: 0, feedback: "No response submitted." };
+              if (clean.includes("spotted")) {
+                return { score: 0, feedback: "Incorrect: Mentioning spotted-winged bat negates the mark." };
               }
-              if (text.includes("flying fox")) {
-                return { score: 1, reason: "Correct (flying fox)" };
+              if (clean.includes("flying fox")) {
+                return { score: 1, feedback: "Correct: Flying fox" };
               }
-              return { score: 0, reason: "Incorrect: Expected 'flying fox'." };
+              return { score: 0, feedback: "Incorrect: Expected 'flying fox'." };
             }
           },
           {
             id: "q3",
-            number: 3,
+            number: "Question 3",
             prompt: "What do fruit bats use to help them find their way in the dark?",
             marks: 1,
             type: "text",
             officialAnswer: "smell",
-            evaluator: (ans) => {
-              const text = (ans || "").toLowerCase().trim();
-              if (!text) return { score: 0, reason: "No response entered." };
-              if (text.includes("sound") || text.includes("hearing") || text.includes("echolocation")) {
-                return { score: 0, reason: "Incorrect: Sound is used by other bat species, not fruit bats." };
+            notes: "Mentioning sound/hearing negates the mark.",
+            validator: (ans) => {
+              const clean = (ans || "").toLowerCase().trim();
+              if (!clean) return { score: 0, feedback: "No response submitted." };
+              if (clean.includes("sound") || clean.includes("echolocation") || clean.includes("hearing")) {
+                return { score: 0, feedback: "Incorrect: Fruit bats use smell, whereas other bat species use sound." };
               }
-              if (text.includes("smell") || text.includes("scent")) {
-                return { score: 1, reason: "Correct (smell)" };
+              if (clean.includes("smell") || clean.includes("scent")) {
+                return { score: 1, feedback: "Correct: Smell" };
               }
-              return { score: 0, reason: "Incorrect: Expected 'smell'." };
+              return { score: 0, feedback: "Incorrect: Expected 'smell'." };
             }
           },
           {
             id: "q4",
-            number: 4,
+            number: "Question 4",
             prompt: "Where do the majority of fruit bats tend to spend the daylight hours?",
             marks: 1,
             type: "text",
             officialAnswer: "(in) trees / tree branches",
-            evaluator: (ans) => {
-              const text = (ans || "").toLowerCase().trim();
-              if (!text) return { score: 0, reason: "No response entered." };
-              if (text.includes("caves") || text.includes("bushes") || text.includes("buildings")) {
-                return { score: 0, reason: "Incorrect: Majority specifically roost in trees/branches." };
+            notes: "Mentioning caves, bushes, or buildings negates the mark.",
+            validator: (ans) => {
+              const clean = (ans || "").toLowerCase().trim();
+              if (!clean) return { score: 0, feedback: "No response submitted." };
+              if (clean.includes("cave") || clean.includes("bush") || clean.includes("building")) {
+                return { score: 0, feedback: "Incorrect: More than half are in trees; other locations negate the mark." };
               }
-              if (text.includes("tree") || text.includes("branch")) {
-                return { score: 1, reason: "Correct (trees / branches)" };
+              if (clean.includes("tree") || clean.includes("branch")) {
+                return { score: 1, feedback: "Correct: (in) trees / tree branches" };
               }
-              return { score: 0, reason: "Incorrect: Expected '(in) trees / tree branches'." };
+              return { score: 0, feedback: "Incorrect: Expected 'trees' or 'tree branches'." };
             }
           },
           {
             id: "q5",
-            number: 5,
+            number: "Question 5",
             prompt: "How long do female fruit bats look after their young for?",
             marks: 1,
             type: "text",
             officialAnswer: "(about) (the first) four months",
-            evaluator: (ans) => {
-              const text = (ans || "").toLowerCase().trim();
-              if (!text) return { score: 0, reason: "No response entered." };
-              if (text.includes("2 years") || text.includes("two years") || text.includes("30 years")) {
-                return { score: 0, reason: "Incorrect: Contradictory timeframes included." };
+            notes: "Mentioning two years or 30 years negates the mark.",
+            validator: (ans) => {
+              const clean = (ans || "").toLowerCase().trim();
+              if (!clean) return { score: 0, feedback: "No response submitted." };
+              if (clean.includes("year") || clean.includes("adult")) {
+                return { score: 0, feedback: "Incorrect: Two years is the adult age; young bats stay for four months." };
               }
-              if ((text.includes("4") || text.includes("four")) && text.includes("month")) {
-                return { score: 1, reason: "Correct (four months)" };
+              if (clean.includes("four month") || clean.includes("4 month")) {
+                return { score: 1, feedback: "Correct: (about) (the first) four months" };
               }
-              return { score: 0, reason: "Incorrect: Expected '(about) (the first) four months'." };
+              return { score: 0, feedback: "Incorrect: Expected 'four months'." };
             }
           },
           {
             id: "q6",
-            number: 6,
+            number: "Question 6",
             prompt: "What factors does the writer say affect fruit bat populations? Give three details.",
             marks: 3,
-            type: "multitext",
-            subCount: 3,
-            officialAnswer: "1) dangerous animals / rats\n2) availability of (local) food\n3) (humans) clearing land (for farming)\n4) climate change",
-            evaluator: (ansArray) => {
-              if (!ansArray || !Array.isArray(ansArray)) return { score: 0, reason: "No responses entered." };
-              const awardedCategories = new Set();
-              ansArray.forEach(item => {
-                const text = (item || "").toLowerCase().trim();
-                if (!text) return;
-                if ((text.includes("dangerous animal") || text.includes("rat")) && !awardedCategories.has("c1")) {
-                  awardedCategories.add("c1");
-                } else if ((text.includes("food") || text.includes("availability of food")) && !awardedCategories.has("c2")) {
-                  awardedCategories.add("c2");
-                } else if ((text.includes("clearing land") || text.includes("farming") || text.includes("clear land")) && !awardedCategories.has("c3")) {
-                  awardedCategories.add("c3");
-                } else if (text.includes("climate change") && !awardedCategories.has("c4")) {
-                  awardedCategories.add("c4");
+            type: "multi-input",
+            count: 3,
+            officialAnswer: "1) dangerous animals / rats; 2) availability of (local) food; 3) (humans) clearing land (for farming); 4) climate change",
+            notes: "Award 1 mark per distinct factor (max 3). Duplicate answers receive credit only once.",
+            validator: (inputs) => {
+              if (!Array.isArray(inputs)) inputs = [inputs];
+              const factors = [
+                { id: "animals", matched: false, regex: /rat|dangerous animal|predator/i },
+                { id: "food", matched: false, regex: /food|availability of.*food/i },
+                { id: "land", matched: false, regex: /clear.*land|farming|deforestation|habitat loss/i },
+                { id: "climate", matched: false, regex: /climate|weather/i }
+              ];
+              let score = 0;
+              inputs.forEach(inp => {
+                const text = String(inp || "").trim();
+                for (let f of factors) {
+                  if (!f.matched && f.regex.test(text)) {
+                    f.matched = true;
+                    score++;
+                    break;
+                  }
                 }
               });
-              const pts = Math.min(3, awardedCategories.size);
-              return { score: pts, reason: `Awarded ${pts}/3 marks for ${pts} distinct factor(s).` };
+              score = Math.min(3, score);
+              return {
+                score: score,
+                feedback: `Awarded ${score}/3 marks for ${score} distinct factor(s).`
+              };
             }
           }
         ]
@@ -714,769 +675,457 @@
         id: "ex2",
         number: "Exercise 2",
         title: "Pocket Money",
-        type: "matching",
+        syllabus: "0510/11/O/N/24",
         totalMarks: 9,
-        passage: `
-          <h2 class="text-2xl font-bold text-slate-900 mb-2 tracking-tight">Pocket Money</h2>
-          <p class="text-sm font-semibold text-slate-600 mb-4">Activities we did to earn pocket money when we were young</p>
-          
-          <div class="mb-4">
-            <h3 class="text-base font-bold text-blue-900 mb-1">A Colette — Sweeping leaves</h3>
-            <p>I always admired my older brother, and I knew my parents had given him some money for taking out the rubbish, so I couldn't wait to have my own job to do! My mum said I was too small to carry the rubbish, but there were lots of leaves in the back yard that I could sweep up. It wasn't as easy as I thought, but I did better after my dad suggested I used a smaller brush. After I finished, the yard looked great. I slept well that night, and in the morning, I went out to the yard. It was covered with leaves again! I was angry at first, but mum sat with me, and calmed me down, saying there are just some things you can't get upset about. She was right, and I haven't forgotten it. It's been useful in various situations since then.</p>
-          </div>
-
-          <div class="mb-4">
-            <h3 class="text-base font-bold text-blue-900 mb-1">B Bilal — Cutting the grass</h3>
-            <p>I started cutting the grass in our garden for my parents when I was thirteen. I'd already done other smaller jobs at home, but I'd always thought cutting the grass was important, and it looked really fun. When I started, I preferred making patterns in the grass, rather than making it nice and smooth, which my parents weren't pleased about! I didn't think they'd let me do it again, but they did. I cut the grass weekly, and also did it at my grandad's house. Although I would've done it for nothing, he insisted on paying me. So I earned quite a lot in the end! Grandad had an old machine for cutting the grass, which was always breaking down. With practice, I managed to repair it with no problems at all and since then I've been able to fix all sorts of things for my friends and family!</p>
-          </div>
-
-          <div class="mb-4">
-            <h3 class="text-base font-bold text-blue-900 mb-1">C Ana — Washing cars</h3>
-            <p>I got a bit of pocket money from my parents by washing their car, which I think is probably something that most kids have done at one time or another. I'm quite glad I don't have to do it anymore, though! But back then, as long as the weather was warm, I didn't mind doing it, although I always had more fun when I could persuade one of my friends to come along and help. I thought I might have to go over the bits of the car they'd missed, but they always did a good job! One summer I really wanted a new skateboard. My mum suggested that I used the money from car washing to get it, so that's what I decided to do. I remember spending every day with my sister, learning how to ride my new skateboard. In the end I was pretty good, although she's always been better than me.</p>
-          </div>
-
-          <div class="mb-4">
-            <h3 class="text-base font-bold text-blue-900 mb-1">D Daruiz — Doing shopping</h3>
-            <p>There are some shops right around the corner from my house. I used to love going there with my mum, as she'd always buy me a comic. My brother started going to the shops on his own when he was nine, and soon after, my mum asked him to get some things for her. She only asked for a few things so that it wouldn't be heavy. When she asked me to start doing some shopping for her though, the list seemed to be much longer. Luckily, I'm strong! I enjoyed heading off to the shops with the money my parents had given me, and I felt really grown up. When school got busier and I was also trying to improve my tennis skills, I didn't have time to do the shopping trips. My mum didn't mind; by then my little sister was keen to take over.</p>
+        passageTitle: "Pocket Money - Activities we did to earn pocket money when we were young",
+        passageContent: `
+          <div class="space-y-4">
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-blue-900 text-sm mb-1">A Colette - Sweeping leaves</h4>
+              <p>I always admired my older brother, and I knew my parents had given him some money for taking out the rubbish, so I couldn't wait to have my own job to do! My mum said I was too small to carry the rubbish, but there were lots of leaves in the back yard that I could sweep up. It wasn't as easy as I thought, but I did better after my dad suggested I used a smaller brush. After I finished, the yard looked great. I slept well that night, and in the morning, I went out to the yard. It was covered with leaves again! I was angry at first, but mum sat with me, and calmed me down, saying there are just some things you can't get upset about. She was right, and I haven't forgotten it. It's been useful in various situations since then.</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-blue-900 text-sm mb-1">B Bilal - Cutting the grass</h4>
+              <p>I started cutting the grass in our garden for my parents when I was thirteen. I'd already done other smaller jobs at home, but I'd always thought cutting the grass was important, and it looked really fun. When I started, I preferred making patterns in the grass, rather than making it nice and smooth, which my parents weren't pleased about! I didn't think they'd let me do it again, but they did. I cut the grass weekly, and also did it at my grandad's house. Although I would've done it for nothing, he insisted on paying me. So I earned quite a lot in the end! Grandad had an old machine for cutting the grass, which was always breaking down. With practice, I managed to repair it with no problems at all and since then I've been able to fix all sorts of things for my friends and family!</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-blue-900 text-sm mb-1">C Ana - Washing cars</h4>
+              <p>I got a bit of pocket money from my parents by washing their car, which I think is probably something that most kids have done at one time or another. I'm quite glad I don't have to do it anymore, though! But back then, as long as the weather was warm, I didn't mind doing it, although I always had more fun when I could persuade one of my friends to come along and help. I thought I might have to go over the bits of the car they'd missed, but they always did a good job! One summer I really wanted a new skateboard. My mum suggested that I used the money from car washing to get it, so that's what I decided to do. I remember spending every day with my sister, learning how to ride my new skateboard. In the end I was pretty good, although she's always been better than me.</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-blue-900 text-sm mb-1">D Daruiz - Doing shopping</h4>
+              <p>There are some shops right around the corner from my house. I used to love going there with my mum, as she'd always buy me a comic. My brother started going to the shops on his own when he was nine, and soon after, my mum asked him to get some things for her. She only asked for a few things so that it wouldn't be heavy. When she asked me to start doing some shopping for her though, the list seemed to be much longer. Luckily, I'm strong! I enjoyed heading off to the shops with the money my parents had given me, and I felt really grown up. When school got busier and I was also trying to improve my tennis skills, I didn't have time to do the shopping trips. My mum didn't mind; by then my little sister was keen to take over.</p>
+            </div>
           </div>
         `,
         questions: [
-          { id: "q7a", number: "7(a)", prompt: "Which person explains what they did with the money they earned?", marks: 1, type: "choice", officialAnswer: "C" },
-          { id: "q7b", number: "7(b)", prompt: "Which person mentions something that affected which activity they did?", marks: 1, type: "choice", officialAnswer: "A" },
-          { id: "q7c", number: "7(c)", prompt: "Which person describes a technical skill they learned which has helped other people?", marks: 1, type: "choice", officialAnswer: "B" },
-          { id: "q7d", number: "7(d)", prompt: "Which person gives a reason why they stopped doing the activity?", marks: 1, type: "choice", officialAnswer: "D" },
-          { id: "q7e", number: "7(e)", prompt: "Which person describes some advice they received about how to do the activity?", marks: 1, type: "choice", officialAnswer: "A" },
-          { id: "q7f", number: "7(f)", prompt: "Which person admits getting into trouble for not doing the activity correctly at first?", marks: 1, type: "choice", officialAnswer: "B" },
-          { id: "q7g", number: "7(g)", prompt: "Which person mentions preferring to do the activity with someone else?", marks: 1, type: "choice", officialAnswer: "C" },
-          { id: "q7h", number: "7(h)", prompt: "Which person says they learned an important life lesson?", marks: 1, type: "choice", officialAnswer: "A" },
-          { id: "q7i", number: "7(i)", prompt: "Which person compares different people's experiences of doing the activity?", marks: 1, type: "choice", officialAnswer: "D" }
+          { id: "q7a", number: "Question 7(a)", prompt: "Which person explains what they did with the money they earned?", marks: 1, type: "choice", officialAnswer: "C" },
+          { id: "q7b", number: "Question 7(b)", prompt: "Which person mentions something that affected which activity they did?", marks: 1, type: "choice", officialAnswer: "A" },
+          { id: "q7c", number: "Question 7(c)", prompt: "Which person describes a technical skill they learned which has helped other people?", marks: 1, type: "choice", officialAnswer: "B" },
+          { id: "q7d", number: "Question 7(d)", prompt: "Which person gives a reason why they stopped doing the activity?", marks: 1, type: "choice", officialAnswer: "D" },
+          { id: "q7e", number: "Question 7(e)", prompt: "Which person describes some advice they received about how to do the activity?", marks: 1, type: "choice", officialAnswer: "A" },
+          { id: "q7f", number: "Question 7(f)", prompt: "Which person admits getting into trouble for not doing the activity correctly at first?", marks: 1, type: "choice", officialAnswer: "B" },
+          { id: "q7g", number: "Question 7(g)", prompt: "Which person mentions preferring to do the activity with someone else?", marks: 1, type: "choice", officialAnswer: "C" },
+          { id: "q7h", number: "Question 7(h)", prompt: "Which person says they learned an important life lesson?", marks: 1, type: "choice", officialAnswer: "A" },
+          { id: "q7i", number: "Question 7(i)", prompt: "Which person compares different people's experiences of doing the activity?", marks: 1, type: "choice", officialAnswer: "D" }
         ]
       }
     ];
 
-    let currentUser = null;
-    let activeExerciseIndex = 0;
-    let currentQuestionIndex = 0;
-    let exerciseResponses = {};
-    let exerciseReviews = {};
-    let isHighlighterActive = false;
-    let passageFontSize = 18;
-    let currentInspectedSubmissionId = null;
-
-    /* Embedded Google Apps Script Web App URL */
+    /* ==========================================================================
+       APPLICATION STATE & GOOGLE APPS SCRIPT WEBHOOK CONFIGURATION
+       ========================================================================== */
     const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzK1Lqp5zvdBh3KOtSMuTHjGmcCC348Am_92R-L4MPxQa2-KBAYDSLEbslguQhHv2n03g/exec";
-
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('gas')) {
-      const paramUrl = urlParams.get('gas').trim();
-      if (paramUrl) {
-        localStorage.setItem('cambridge_gas_url', paramUrl);
-      }
-    }
-
     let gasWebhookUrl = localStorage.getItem('cambridge_gas_url') || DEFAULT_GAS_URL;
 
-    function sanitize(str) {
-      if (!str) return '';
-      return String(str).replace(/[&<>"']/g, function(m) {
-        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
-      });
-    }
+    let currentUser = null; // { role: 'student'|'admin', data: { id, name, class } }
+    let activeExerciseIndex = 0;
+    let activeQuestionIndex = 0;
+    let currentFontSize = 18;
 
-    let studentDropdownList = [
+    // Student response cache: { exId: { qId: answerValue } }
+    let exerciseResponses = {
+      ex1: {},
+      ex2: {}
+    };
+    let questionReviewFlags = {
+      ex1: {},
+      ex2: {}
+    };
+
+    // Roster and Submissions cached locally
+    let studentRoster = [
       { id: "STU-101", name: "Ahmed Al-Mansoor", class: "Year 10-A" },
       { id: "STU-102", name: "Fatima Al-Zahra", class: "Year 10-A" },
-      { id: "STU-103", name: "David Chen", class: "Year 10-B" },
-      { id: "STU-104", name: "Layla Hassan", class: "Year 10-B" }
+      { id: "STU-103", name: "Zaid Tariq", class: "Year 10-B" }
     ];
-
-    let allUsersList = [
-      { id: "ADM-001", name: "Teacher Admin", role: "admin", class: "Staff", password: "••••••" },
-      { id: "STU-101", name: "Ahmed Al-Mansoor", role: "student", class: "Year 10-A", password: "123" },
-      { id: "STU-102", name: "Fatima Al-Zahra", role: "student", class: "Year 10-A", password: "123" }
-    ];
-
+    let allUsersList = [];
     let submissionRecords = [];
+    let currentInspectedSubmissionId = null;
 
-    try {
-      const cachedRoster = localStorage.getItem('cambridge_roster_cache');
-      if (cachedRoster) studentDropdownList = JSON.parse(cachedRoster);
-      const cachedUsers = localStorage.getItem('cambridge_users_cache');
-      if (cachedUsers) allUsersList = JSON.parse(cachedUsers);
-      const cachedSubs = localStorage.getItem('cambridge_subs_cache');
-      if (cachedSubs) submissionRecords = JSON.parse(cachedSubs);
-    } catch(e) {}
-
-    function showToast(message, isSuccess = true) {
-      const box = document.getElementById('toast-box');
-      const text = document.getElementById('toast-text');
-      text.textContent = message;
-      box.classList.remove('opacity-0');
-      box.classList.add('opacity-100');
-      setTimeout(() => {
-        box.classList.remove('opacity-100');
-        box.classList.add('opacity-0');
-      }, 3200);
-    }
-
-    /* Google Apps Script Network Sync */
-    async function syncPublicStudents() {
-      if (!gasWebhookUrl) return false;
+    /* ==========================================================================
+       NETWORK API CALLS (GOOGLE APPS SCRIPT SYNC)
+       ========================================================================== */
+    async function fetchPublicStudents() {
+      if (!gasWebhookUrl) return;
       try {
-        const response = await fetch(`${gasWebhookUrl}?action=getPublicStudents`, {
-          method: 'GET',
-          mode: 'cors'
-        });
-        const json = await response.json();
-        if (json.status === "success" && json.students) {
-          studentDropdownList = json.students;
-          localStorage.setItem('cambridge_roster_cache', JSON.stringify(studentDropdownList));
-          return true;
+        const resp = await fetch(`${gasWebhookUrl}?action=getPublicStudents`);
+        const json = await resp.json();
+        if (json && json.status === "success" && Array.isArray(json.students) && json.students.length > 0) {
+          studentRoster = json.students;
+          populateStudentSelect();
         }
       } catch (err) {
-        console.warn("GAS fetch error:", err);
+        console.warn("Using offline student roster:", err);
       }
-      return false;
     }
 
-    async function syncAdminData() {
-      if (!gasWebhookUrl) return false;
-      try {
-        const response = await fetch(`${gasWebhookUrl}?action=getAllUsers`, {
-          method: 'GET',
-          mode: 'cors'
-        });
-        const json = await response.json();
-        if (json.status === "success") {
-          if (json.users) {
-            allUsersList = json.users;
-            localStorage.setItem('cambridge_users_cache', JSON.stringify(allUsersList));
-          }
-          if (json.submissions && json.submissions.length > 1) {
-            const sRows = json.submissions.slice(1);
-            submissionRecords = sRows.map(r => ({
-              submissionId: r[0],
-              studentId: r[1],
-              studentName: r[2],
-              class: r[3],
-              exerciseId: r[4],
-              exerciseTitle: r[5],
-              autoScore: r[6],
-              maxScore: r[7],
-              finalScore: r[8],
-              status: r[9],
-              feedback: r[10] || "",
-              answers: typeof r[11] === 'string' ? JSON.parse(r[11] || '{}') : (r[11] || {}),
-              timestamp: r[12]
-            }));
-            localStorage.setItem('cambridge_subs_cache', JSON.stringify(submissionRecords));
-          }
-          return true;
-        }
-      } catch (err) {
-        console.warn("GAS admin sync error:", err);
-      }
-      return false;
-    }
-
-    /* Universal Login Check via Google Sheet */
-    async function verifyLoginWithSheet(identifier, password, expectedRole) {
+    async function verifyUserLogin(identifier, password) {
       if (!gasWebhookUrl) {
-        if (expectedRole === 'admin' && (identifier.toLowerCase() === 'admin' || identifier === 'ADM-001') && password === 'admin123') {
-          return { authorized: true, role: 'admin', user: { id: "ADM-001", name: "Teacher Admin", role: "admin", class: "Staff" } };
+        // Fallback demo mock
+        if (identifier.toLowerCase().includes("admin") && password === "admin123") {
+          return { status: "success", authorized: true, user: { id: "ADM-001", name: "Teacher Admin", role: "admin", class: "Staff" } };
         }
-        return { authorized: false, message: "Offline / Sheet unavailable" };
+        const st = studentRoster.find(s => s.id.toLowerCase() === identifier.toLowerCase() || s.name.toLowerCase() === identifier.toLowerCase());
+        if (st && (password === "123" || password === "password")) {
+          return { status: "success", authorized: true, user: { id: st.id, name: st.name, role: "student", class: st.class } };
+        }
+        return { status: "error", authorized: false, message: "Invalid credentials." };
       }
 
       try {
         const url = `${gasWebhookUrl}?action=loginUser&identifier=${encodeURIComponent(identifier)}&password=${encodeURIComponent(password)}`;
-        const res = await fetch(url, { method: 'GET', mode: 'cors' });
-        const json = await res.json();
-        if (json.status === "success" && json.authorized === true) {
-          if (expectedRole && json.user.role.toLowerCase() !== expectedRole.toLowerCase()) {
-            return { authorized: false, message: `Access denied. Role is not '${expectedRole}'.` };
-          }
-          return { authorized: true, role: json.user.role, user: json.user };
-        } else {
-          return { authorized: false, message: json.message || "Invalid credentials" };
+        const resp = await fetch(url);
+        return await resp.json();
+      } catch (err) {
+        // Fallback for demo
+        if (identifier.toLowerCase().includes("admin") && password === "admin123") {
+          return { status: "success", authorized: true, user: { id: "ADM-001", name: "Teacher Admin", role: "admin", class: "Staff" } };
         }
-      } catch (e) {
-        console.error("Login verification failed:", e);
-        return { authorized: false, message: "Network connection error. Check Sheet Webhook." };
+        return { status: "error", authorized: false, message: "Network connection failed." };
       }
     }
 
-    async function sendNewUserToSheet(userObj) {
-      allUsersList.push(userObj);
-      if (userObj.role === 'student') {
-        studentDropdownList.push({ id: userObj.id, name: userObj.name, class: userObj.class });
+    async function sendSubmissionToSheet(subData) {
+      if (!gasWebhookUrl) {
+        submissionRecords.unshift(subData);
+        return { status: "success" };
       }
-      localStorage.setItem('cambridge_users_cache', JSON.stringify(allUsersList));
-      localStorage.setItem('cambridge_roster_cache', JSON.stringify(studentDropdownList));
-
-      if (!gasWebhookUrl) return;
       try {
         await fetch(gasWebhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: "addUser", ...userObj })
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "submitHomework", ...subData })
         });
-      } catch (e) {
-        console.error("Failed to append user to sheet", e);
+        submissionRecords.unshift(subData);
+        return { status: "success" };
+      } catch (err) {
+        console.error("Submission error:", err);
+        submissionRecords.unshift(subData);
+        return { status: "success" };
       }
     }
 
-    async function sendSubmissionToSheet(sub) {
-      submissionRecords.unshift(sub);
-      localStorage.setItem('cambridge_subs_cache', JSON.stringify(submissionRecords));
-      if (!gasWebhookUrl) return;
+    async function sendFinalGradeToSheet(subId, finalScore, feedback) {
+      if (!gasWebhookUrl) {
+        const s = submissionRecords.find(item => item.submissionId === subId);
+        if (s) {
+          s.finalScore = finalScore;
+          s.feedback = feedback;
+          s.status = "Graded";
+        }
+        return { status: "success" };
+      }
       try {
         await fetch(gasWebhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: "submitHomework", ...sub })
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "finalizeGrade", submissionId: subId, finalScore: finalScore, feedback: feedback })
         });
-      } catch (e) {
-        console.error("Failed to append submission to sheet", e);
+        const s = submissionRecords.find(item => item.submissionId === subId);
+        if (s) {
+          s.finalScore = finalScore;
+          s.feedback = feedback;
+          s.status = "Graded";
+        }
+        return { status: "success" };
+      } catch (err) {
+        console.error("Grade update error:", err);
+        return { status: "error" };
       }
     }
 
-    async function sendFinalGradeToSheet(submissionId, finalScore, feedback) {
-      const rec = submissionRecords.find(s => s.submissionId === submissionId);
-      if (rec) {
-        rec.finalScore = finalScore;
-        rec.status = "Graded";
-        rec.feedback = feedback;
-        localStorage.setItem('cambridge_subs_cache', JSON.stringify(submissionRecords));
-      }
+    async function fetchAdminData() {
       if (!gasWebhookUrl) return;
       try {
-        await fetch(gasWebhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: "finalizeGrade", submissionId, finalScore, feedback })
-        });
-      } catch (e) {
-        console.error("Failed to update final marks in sheet", e);
+        const resp = await fetch(`${gasWebhookUrl}?action=getAllUsers`);
+        const json = await resp.json();
+        if (json && json.status === "success") {
+          if (Array.isArray(json.users)) allUsersList = json.users;
+          if (Array.isArray(json.submissions) && json.submissions.length > 1) {
+            submissionRecords = [];
+            for (let i = 1; i < json.submissions.length; i++) {
+              const r = json.submissions[i];
+              let answers = {};
+              try { answers = JSON.parse(r[11]); } catch(e) { answers = {}; }
+              submissionRecords.push({
+                submissionId: r[0],
+                studentId: r[1],
+                studentName: r[2],
+                class: r[3],
+                exerciseId: r[4],
+                exerciseTitle: r[5],
+                autoScore: r[6],
+                maxScore: r[7],
+                finalScore: r[8],
+                status: r[9],
+                feedback: r[10],
+                answers: answers,
+                timestamp: r[12]
+              });
+            }
+          }
+          renderAdminDashboard();
+        }
+      } catch (err) {
+        console.warn("Failed to fetch admin data:", err);
       }
     }
 
+    /* ==========================================================================
+       EXAM WORKSPACE & QUESTION CONTROLLERS
+       ========================================================================== */
     function populateStudentSelect() {
       const sel = document.getElementById('login-student-select');
       sel.innerHTML = '<option value="">-- Choose your name --</option>';
-      studentDropdownList.forEach(s => {
+      studentRoster.forEach(stu => {
         const opt = document.createElement('option');
-        opt.value = s.id;
-        opt.textContent = `${s.name} (${s.class})`;
+        opt.value = stu.id;
+        opt.textContent = `${stu.name} (${stu.class})`;
         sel.appendChild(opt);
       });
     }
 
-    document.getElementById('tab-btn-student').addEventListener('click', () => {
-      document.getElementById('tab-btn-student').className = "flex-1 py-3 text-sm font-semibold text-blue-700 border-b-2 border-blue-700 bg-blue-50/50 transition";
-      document.getElementById('tab-btn-admin').className = "flex-1 py-3 text-sm font-semibold text-slate-500 hover:text-slate-700 transition";
-      document.getElementById('tab-content-student').classList.remove('hidden');
-      document.getElementById('tab-content-admin').classList.add('hidden');
-    });
-
-    document.getElementById('tab-btn-admin').addEventListener('click', () => {
-      document.getElementById('tab-btn-admin').className = "flex-1 py-3 text-sm font-semibold text-blue-700 border-b-2 border-blue-700 bg-blue-50/50 transition";
-      document.getElementById('tab-btn-student').className = "flex-1 py-3 text-sm font-semibold text-slate-500 hover:text-slate-700 transition";
-      document.getElementById('tab-content-admin').classList.remove('hidden');
-      document.getElementById('tab-content-student').classList.add('hidden');
-    });
-
-    document.getElementById('login-student-select').addEventListener('change', (e) => {
-      const stuId = e.target.value;
-      const preview = document.getElementById('student-info-preview');
-      if (!stuId) {
-        preview.classList.add('hidden');
-        return;
-      }
-      const stu = studentDropdownList.find(s => s.id === stuId);
-      if (stu) {
-        document.getElementById('stu-preview-class').textContent = stu.class;
-        document.getElementById('stu-preview-id').textContent = stu.id;
-        preview.classList.remove('hidden');
-      }
-    });
-
-    document.getElementById('student-login-submit').addEventListener('click', async () => {
-      const stuId = document.getElementById('login-student-select').value;
-      const pass = document.getElementById('login-student-pass').value.trim();
-      const errBox = document.getElementById('student-login-error');
-      const submitBtn = document.getElementById('student-login-submit');
-      const spinner = document.getElementById('student-login-spinner');
-      const btnText = document.getElementById('student-login-btn-text');
-
-      if (!stuId) {
-        showToast("Please select your name from the list.", false);
-        return;
-      }
-      if (!pass) {
-        showToast("Please enter your password.", false);
-        return;
-      }
-
-      errBox.classList.add('hidden');
-      submitBtn.disabled = true;
-      spinner.classList.remove('hidden');
-      btnText.textContent = "Verifying with Google Sheet...";
-
-      const result = await verifyLoginWithSheet(stuId, pass, 'student');
-
-      submitBtn.disabled = false;
-      spinner.classList.add('hidden');
-      btnText.textContent = "Launch Reading Practice";
-
-      if (result.authorized) {
-        currentUser = { role: 'student', data: result.user };
-        initStudentExamView();
-      } else {
-        errBox.textContent = result.message || "Incorrect password. Please verify with your teacher.";
-        errBox.classList.remove('hidden');
-      }
-    });
-
-    document.getElementById('admin-login-submit').addEventListener('click', async () => {
-      const username = document.getElementById('login-admin-user').value.trim();
-      const pass = document.getElementById('login-admin-pass').value.trim();
-      const errBox = document.getElementById('admin-login-error');
-      const submitBtn = document.getElementById('admin-login-submit');
-      const spinner = document.getElementById('admin-login-spinner');
-      const btnText = document.getElementById('admin-login-btn-text');
-
-      if (!username || !pass) {
-        errBox.textContent = "Please enter both admin identifier and password.";
-        errBox.classList.remove('hidden');
-        return;
-      }
-
-      errBox.classList.add('hidden');
-      submitBtn.disabled = true;
-      spinner.classList.remove('hidden');
-      btnText.textContent = "Checking credentials on Sheet...";
-
-      const result = await verifyLoginWithSheet(username, pass, 'admin');
-
-      submitBtn.disabled = false;
-      spinner.classList.add('hidden');
-      btnText.textContent = "Verify & Open Portal";
-
-      if (result.authorized) {
-        currentUser = { role: 'admin', data: result.user };
-        initAdminView();
-      } else {
-        errBox.textContent = result.message || "Invalid credentials or unauthorized role in Google Sheet.";
-        errBox.classList.remove('hidden');
-      }
-    });
-
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      currentUser = null;
-      document.getElementById('view-login').classList.remove('hidden');
-      document.getElementById('view-admin').classList.add('hidden');
-      document.getElementById('view-exam').classList.add('hidden');
-      document.getElementById('user-badge').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
-      document.getElementById('gas-settings-btn').classList.add('hidden');
-      document.getElementById('login-student-pass').value = '';
-      document.getElementById('login-admin-pass').value = '';
-    });
-
     function initStudentExamView() {
-      document.getElementById('view-login').classList.add('hidden');
-      document.getElementById('view-admin').classList.add('hidden');
-      document.getElementById('view-exam').classList.remove('hidden');
-
-      document.getElementById('user-badge').classList.remove('hidden');
-      document.getElementById('user-display-name').textContent = currentUser.data.name;
-      document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('admin-workspace').classList.add('hidden');
+      document.getElementById('exam-workspace').classList.remove('hidden');
       document.getElementById('gas-settings-btn').classList.add('hidden');
 
-      const exSel = document.getElementById('exam-exercise-select');
-      exSel.innerHTML = '';
-      EXERCISES.forEach((ex, idx) => {
-        const opt = document.createElement('option');
-        opt.value = idx;
-        opt.textContent = `${ex.number}: ${ex.title}`;
-        exSel.appendChild(opt);
-      });
-      exSel.value = activeExerciseIndex;
+      const userBadge = document.getElementById('user-header-status');
+      userBadge.classList.remove('hidden');
+      document.getElementById('header-user-display').textContent = `${currentUser.data.name} (${currentUser.data.class})`;
 
-      loadExercise(activeExerciseIndex);
+      loadExercise(0);
     }
 
-    document.getElementById('exam-exercise-select').addEventListener('change', (e) => {
-      activeExerciseIndex = parseInt(e.target.value, 10);
-      currentQuestionIndex = 0;
-      loadExercise(activeExerciseIndex);
-    });
+    function initAdminDashboardView() {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('exam-workspace').classList.add('hidden');
+      document.getElementById('admin-workspace').classList.remove('hidden');
+      document.getElementById('gas-settings-btn').classList.remove('hidden');
 
-    function loadExercise(idx) {
-      const ex = EXERCISES[idx];
-      document.getElementById('exercise-badge-marks').textContent = `${ex.totalMarks} marks`;
+      const userBadge = document.getElementById('user-header-status');
+      userBadge.classList.remove('hidden');
+      document.getElementById('header-user-display').textContent = `Admin: ${currentUser.data.name}`;
+
+      fetchAdminData();
+      renderAdminDashboard();
+    }
+
+    function loadExercise(index) {
+      activeExerciseIndex = index;
+      activeQuestionIndex = 0;
+      const ex = EXERCISES[index];
+
+      document.getElementById('exercise-switcher').value = ex.id;
       document.getElementById('passage-label').textContent = `${ex.number}: ${ex.title}`;
-      
-      const passageCont = document.getElementById('passage-container');
-      passageCont.innerHTML = ex.passage;
-      passageCont.style.fontSize = `${passageFontSize}px`;
+      document.getElementById('passage-container').innerHTML = ex.passageContent;
+      document.getElementById('passage-container').style.fontSize = `${currentFontSize}px`;
 
-      if (!exerciseResponses[ex.id]) {
-        exerciseResponses[ex.id] = {};
-      }
-      if (!exerciseReviews[ex.id]) {
-        exerciseReviews[ex.id] = {};
-      }
-
-      currentQuestionIndex = 0;
-      renderReviewButtons();
+      renderReviewList();
       renderCurrentQuestion();
     }
 
-    document.getElementById('btn-font-smaller').addEventListener('click', () => {
-      if (passageFontSize > 14) {
-        passageFontSize -= 2;
-        document.getElementById('passage-container').style.fontSize = `${passageFontSize}px`;
-      }
-    });
-
-    document.getElementById('btn-font-larger').addEventListener('click', () => {
-      if (passageFontSize < 26) {
-        passageFontSize += 2;
-        document.getElementById('passage-container').style.fontSize = `${passageFontSize}px`;
-      }
-    });
-
-    const hlBtn = document.getElementById('btn-highlighter');
-    hlBtn.addEventListener('click', () => {
-      isHighlighterActive = !isHighlighterActive;
-      if (isHighlighterActive) {
-        hlBtn.classList.add('bg-yellow-200', 'border-yellow-400');
-        showToast("Highlighter active: Select text in the passage to highlight.");
-      } else {
-        hlBtn.classList.remove('bg-yellow-200', 'border-yellow-400');
-      }
-    });
-
-    document.getElementById('passage-container').addEventListener('mouseup', () => {
-      if (!isHighlighterActive) return;
-      const selection = window.getSelection();
-      if (!selection.rangeCount || selection.isCollapsed) return;
-
-      const range = selection.getRangeAt(0);
-      const span = document.createElement('span');
-      span.className = 'user-highlight';
-      try {
-        range.surroundContents(span);
-        selection.removeAllRanges();
-      } catch (err) {}
-    });
-
-    function renderReviewButtons() {
+    function renderReviewList() {
       const ex = EXERCISES[activeExerciseIndex];
-      const grid = document.getElementById('review-grid-buttons');
-      grid.innerHTML = '';
+      const container = document.getElementById('review-boxes-container');
+      container.innerHTML = '';
 
       ex.questions.forEach((q, idx) => {
         const btn = document.createElement('button');
-        const isCurrent = idx === currentQuestionIndex;
-        const isReviewed = !!exerciseReviews[ex.id][q.id];
+        const isActive = idx === activeQuestionIndex;
+        const isAnswered = checkQuestionAnswered(ex.id, q);
+        const isMarked = questionReviewFlags[ex.id][q.id];
+
+        let borderClass = isActive ? 'border-2 border-blue-600 bg-blue-50/50 shadow-xs' : 'border border-slate-300 hover:border-blue-400 bg-white';
+        btn.className = `min-w-[40px] h-10 px-2.5 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center relative ${borderClass}`;
         
-        let isAnswered = false;
-        const resp = exerciseResponses[ex.id][q.id];
-        if (q.type === 'multitext') {
-          if (Array.isArray(resp) && resp.some(item => (item || '').trim().length > 0)) {
-            isAnswered = true;
-          }
-        } else if (resp && String(resp).trim().length > 0) {
-          isAnswered = true;
-        }
+        let label = q.number.replace("Question ", "");
+        btn.innerHTML = `<span class="text-slate-800">${label}</span>`;
 
-        let baseClass = "relative w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm transition-all duration-150 border ";
-
-        if (isCurrent) {
-          baseClass += "border-blue-600 ring-2 ring-blue-500/20 text-blue-700 bg-white shadow-xs ";
-        } else {
-          baseClass += "border-slate-200 bg-white hover:bg-slate-50 text-slate-800 ";
-        }
-
-        btn.className = baseClass;
-        btn.innerHTML = `<span>${idx + 1}</span>`;
-
-        if (isReviewed) {
+        if (isMarked) {
           const dot = document.createElement('span');
-          dot.className = "absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-500 border-2 border-white";
+          dot.className = "w-2 h-2 rounded-full bg-amber-500 absolute -top-1 -right-1 ring-2 ring-white";
           btn.appendChild(dot);
         } else if (isAnswered) {
           const dot = document.createElement('span');
-          dot.className = "absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-blue-600 border border-white";
+          dot.className = "w-2 h-2 rounded-full bg-blue-600 absolute -top-1 -right-1 ring-2 ring-white";
           btn.appendChild(dot);
         }
 
         btn.addEventListener('click', () => {
           saveCurrentQuestionInput();
-          currentQuestionIndex = idx;
-          renderReviewButtons();
+          activeQuestionIndex = idx;
+          renderReviewList();
           renderCurrentQuestion();
         });
 
-        grid.appendChild(btn);
+        container.appendChild(btn);
       });
     }
 
-    document.getElementById('close-review-banner-btn').addEventListener('click', () => {
-      document.getElementById('review-list-banner').classList.toggle('hidden');
-    });
-    document.getElementById('done-review-banner-btn').addEventListener('click', () => {
-      document.getElementById('review-list-banner').classList.add('hidden');
-    });
+    function checkQuestionAnswered(exId, q) {
+      const ans = exerciseResponses[exId][q.id];
+      if (q.type === "multi-input") {
+        return Array.isArray(ans) && ans.some(val => (val || "").trim() !== "");
+      }
+      return (ans !== undefined && ans !== null && String(ans).trim() !== "");
+    }
 
     function renderCurrentQuestion() {
       const ex = EXERCISES[activeExerciseIndex];
-      const q = ex.questions[currentQuestionIndex];
+      const q = ex.questions[activeQuestionIndex];
 
-      document.getElementById('q-counter-label').textContent = `Question ${currentQuestionIndex + 1} of ${ex.questions.length}`;
-      document.getElementById('q-mark-value').textContent = `[${q.marks} mark${q.marks > 1 ? 's' : ''}]`;
-      document.getElementById('q-prompt-text').textContent = q.prompt;
+      document.getElementById('question-index-label').textContent = `${q.number} of ${ex.questions.length}`;
+      document.getElementById('question-marks-badge').textContent = `[${q.marks} mark${q.marks > 1 ? 's' : ''}]`;
+      document.getElementById('question-prompt').textContent = q.prompt;
 
-      const isReviewed = !!exerciseReviews[ex.id][q.id];
-      const flagSvg = document.getElementById('mark-review-flag');
-      const flagText = document.getElementById('mark-review-text');
-      if (isReviewed) {
-        flagSvg.classList.add('text-amber-500', 'fill-amber-500');
-        flagText.textContent = "Marked for Review";
-      } else {
-        flagSvg.classList.remove('text-amber-500', 'fill-amber-500');
-        flagText.textContent = "Mark for Review";
-      }
+      const chk = document.getElementById('mark-review-checkbox');
+      chk.checked = !!questionReviewFlags[ex.id][q.id];
 
-      const inputCont = document.getElementById('q-input-container');
-      inputCont.innerHTML = '';
+      const inputContainer = document.getElementById('question-input-container');
+      inputContainer.innerHTML = '';
 
-      if (q.type === 'text') {
-        const val = exerciseResponses[ex.id][q.id] || "";
-        inputCont.innerHTML = `
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Your Response:</label>
-            <textarea id="active-text-input" rows="4" placeholder="Type your answer clearly based on the reading passage..." class="w-full p-3 text-xs md:text-sm bg-white border border-slate-300 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition leading-relaxed">${sanitize(val)}</textarea>
-          </div>
-        `;
-        document.getElementById('active-text-input').addEventListener('input', (e) => {
-          exerciseResponses[ex.id][q.id] = e.target.value;
-          renderReviewButtons();
-        });
-      } else if (q.type === 'multitext') {
-        const valArray = exerciseResponses[ex.id][q.id] || ["", "", ""];
-        let html = `<label class="block text-xs font-semibold text-slate-700 mb-2">Give three distinct details from the text:</label>`;
-        for (let i = 0; i < 3; i++) {
-          html += `
-            <div class="flex items-center space-x-2 mb-2">
-              <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0">${i + 1}</span>
-              <input type="text" data-subindex="${i}" value="${sanitize(valArray[i] || "")}" placeholder="Detail ${i + 1}..." class="multi-detail-input flex-1 p-2.5 text-xs md:text-sm bg-white border border-slate-300 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none">
-            </div>
+      const currentVal = exerciseResponses[ex.id][q.id];
+
+      if (q.type === "text") {
+        const area = document.createElement('textarea');
+        area.id = 'active-input-field';
+        area.rows = 4;
+        area.placeholder = "Type your answer here based on the text...";
+        area.className = "w-full p-3.5 bg-white border border-slate-300 rounded-xl text-sm leading-relaxed text-slate-800 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 shadow-2xs";
+        area.value = currentVal || "";
+        inputContainer.appendChild(area);
+      } else if (q.type === "multi-input") {
+        const multiBox = document.createElement('div');
+        multiBox.className = "space-y-2.5";
+        const valArr = Array.isArray(currentVal) ? currentVal : ["", "", ""];
+        for (let i = 0; i < q.count; i++) {
+          const div = document.createElement('div');
+          div.className = "flex items-center space-x-2";
+          div.innerHTML = `
+            <span class="w-6 text-center text-xs font-bold text-slate-500">${i + 1}.</span>
+            <input type="text" class="multi-field flex-1 p-2.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:border-blue-600" placeholder="Detail ${i + 1}..." value="${valArr[i] || ''}">
           `;
+          multiBox.appendChild(div);
         }
-        inputCont.innerHTML = html;
-        document.querySelectorAll('.multi-detail-input').forEach(inp => {
-          inp.addEventListener('input', () => {
-            const arr = [];
-            document.querySelectorAll('.multi-detail-input').forEach(el => arr.push(el.value));
-            exerciseResponses[ex.id][q.id] = arr;
-            renderReviewButtons();
-          });
-        });
-      } else if (q.type === 'choice') {
-        const choices = ["A", "B", "C", "D"];
-        const curChoice = exerciseResponses[ex.id][q.id] || "";
-        let html = `<label class="block text-xs font-semibold text-slate-700 mb-2">Select the correct person (A, B, C or D):</label><div class="grid grid-cols-2 sm:grid-cols-4 gap-2">`;
-        choices.forEach(ch => {
-          const isSelected = curChoice === ch;
-          html += `
-            <button type="button" data-choice="${ch}" class="choice-opt-btn py-3 px-4 rounded-xl border text-center font-bold text-sm transition ${isSelected ? 'border-blue-600 bg-blue-50 text-blue-700 ring-2 ring-blue-500/20' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'}">
-              <span>${ch}</span>
-            </button>
+        inputContainer.appendChild(multiBox);
+      } else if (q.type === "choice") {
+        const choicesBox = document.createElement('div');
+        choicesBox.className = "grid grid-cols-2 sm:grid-cols-4 gap-2.5";
+        const options = [
+          { letter: "A", name: "Colette" },
+          { letter: "B", name: "Bilal" },
+          { letter: "C", name: "Ana" },
+          { letter: "D", name: "Daruiz" }
+        ];
+        options.forEach(opt => {
+          const isSelected = currentVal === opt.letter;
+          const choiceBtn = document.createElement('button');
+          choiceBtn.className = `p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${isSelected ? 'border-blue-600 bg-blue-50/80 text-blue-900 font-bold' : 'border-slate-300 bg-white hover:border-slate-400 text-slate-700'}`;
+          choiceBtn.innerHTML = `
+            <span class="text-sm font-extrabold w-6 h-6 rounded-full flex items-center justify-center ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'}">${opt.letter}</span>
+            <span class="text-[11px]">${opt.name}</span>
           `;
-        });
-        html += `</div>`;
-        inputCont.innerHTML = html;
-        document.querySelectorAll('.choice-opt-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const ch = btn.getAttribute('data-choice');
-            exerciseResponses[ex.id][q.id] = ch;
+          choiceBtn.addEventListener('click', () => {
+            exerciseResponses[ex.id][q.id] = opt.letter;
+            renderReviewList();
             renderCurrentQuestion();
-            renderReviewButtons();
           });
+          choicesBox.appendChild(choiceBtn);
         });
+        inputContainer.appendChild(choicesBox);
       }
 
-      document.getElementById('btn-prev-q').disabled = currentQuestionIndex === 0;
-      if (currentQuestionIndex === ex.questions.length - 1) {
-        document.getElementById('btn-next-q').classList.add('hidden');
-      } else {
-        document.getElementById('btn-next-q').classList.remove('hidden');
-      }
+      document.getElementById('btn-prev-question').disabled = activeQuestionIndex === 0;
+      document.getElementById('btn-prev-question').classList.toggle('opacity-50', activeQuestionIndex === 0);
+      
+      const isLast = activeQuestionIndex === ex.questions.length - 1;
+      document.getElementById('btn-next-question').classList.toggle('hidden', isLast);
+      document.getElementById('btn-submit-task').classList.toggle('hidden', !isLast);
     }
 
     function saveCurrentQuestionInput() {
       const ex = EXERCISES[activeExerciseIndex];
-      const q = ex.questions[currentQuestionIndex];
-      if (q.type === 'text') {
-        const el = document.getElementById('active-text-input');
-        if (el) exerciseResponses[ex.id][q.id] = el.value;
+      const q = ex.questions[activeQuestionIndex];
+      if (q.type === "text") {
+        const field = document.getElementById('active-input-field');
+        if (field) exerciseResponses[ex.id][q.id] = field.value.trim();
+      } else if (q.type === "multi-input") {
+        const fields = document.querySelectorAll('.multi-field');
+        exerciseResponses[ex.id][q.id] = Array.from(fields).map(f => f.value.trim());
       }
+      questionReviewFlags[ex.id][q.id] = document.getElementById('mark-review-checkbox').checked;
     }
 
-    document.getElementById('btn-mark-review').addEventListener('click', () => {
-      const ex = EXERCISES[activeExerciseIndex];
-      const q = ex.questions[currentQuestionIndex];
-      exerciseReviews[ex.id][q.id] = !exerciseReviews[ex.id][q.id];
-      renderCurrentQuestion();
-      renderReviewButtons();
-    });
-
-    document.getElementById('btn-prev-q').addEventListener('click', () => {
-      saveCurrentQuestionInput();
-      if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        renderCurrentQuestion();
-        renderReviewButtons();
-      }
-    });
-
-    document.getElementById('btn-next-q').addEventListener('click', () => {
-      saveCurrentQuestionInput();
-      const ex = EXERCISES[activeExerciseIndex];
-      if (currentQuestionIndex < ex.questions.length - 1) {
-        currentQuestionIndex++;
-        renderCurrentQuestion();
-        renderReviewButtons();
-      }
-    });
-
-    function evaluateExerciseAnswers(ex, responses) {
+    /* ==========================================================================
+       AUTOMATED CAMBRIDGE EVALUATION ENGINE
+       ========================================================================== */
+    function evaluateExerciseAnswers(exercise, userAnswers) {
       let earned = 0;
       const details = [];
 
-      ex.questions.forEach(q => {
-        const studentAns = responses[q.id];
-        let qScore = 0;
-        let notes = "";
+      exercise.questions.forEach(q => {
+        const ans = userAnswers[q.id];
+        let score = 0;
+        let note = "";
 
-        if (q.type === 'choice') {
-          if (String(studentAns || '').toUpperCase() === String(q.officialAnswer).toUpperCase()) {
-            qScore = 1;
-            notes = `Correct (${q.officialAnswer})`;
-          } else {
-            notes = `Incorrect. Expected: ${q.officialAnswer}`;
-          }
-        } else if (typeof q.evaluator === 'function') {
-          const res = q.evaluator(studentAns);
-          qScore = res.score;
-          notes = res.reason;
+        if (q.type === "choice") {
+          score = (ans === q.officialAnswer) ? 1 : 0;
+          note = score === 1 ? "Correct" : `Expected: ${q.officialAnswer}`;
+        } else if (typeof q.validator === "function") {
+          const res = q.validator(ans);
+          score = res.score;
+          note = res.feedback;
         }
 
-        earned += qScore;
+        earned += score;
         details.push({
           qId: q.id,
-          prompt: q.prompt,
-          studentAns: studentAns,
-          score: qScore,
-          maxMarks: q.marks,
+          prompt: `${q.number}: ${q.prompt}`,
+          studentAns: ans,
           officialAnswer: q.officialAnswer,
-          notes: notes
+          notes: q.notes,
+          score: score,
+          maxMarks: q.marks,
+          feedback: note
         });
       });
 
-      return { earned, totalMarks: ex.totalMarks, details };
+      return { earned, details };
     }
 
-    document.getElementById('btn-submit-task').addEventListener('click', async () => {
-      saveCurrentQuestionInput();
-      const ex = EXERCISES[activeExerciseIndex];
-      const subBtn = document.getElementById('btn-submit-task');
-
-      subBtn.disabled = true;
-      subBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-      const loadingModal = document.getElementById('submission-loading-modal');
-      loadingModal.classList.remove('hidden');
-
-      const result = evaluateExerciseAnswers(ex, exerciseResponses[ex.id]);
-      const subId = "SUB-" + Math.floor(100000 + Math.random() * 900000);
-      const submissionObj = {
-        submissionId: subId,
-        studentId: currentUser.data.id,
-        studentName: currentUser.data.name,
-        class: currentUser.data.class,
-        exerciseId: ex.id,
-        exerciseTitle: `${ex.number}: ${ex.title}`,
-        autoScore: result.earned,
-        maxScore: ex.totalMarks,
-        finalScore: result.earned,
-        status: "Pending Review",
-        feedback: "",
-        answers: exerciseResponses[ex.id],
-        timestamp: new Date().toLocaleString()
-      };
-
-      await sendSubmissionToSheet(submissionObj);
-
-      loadingModal.classList.add('hidden');
-      subBtn.disabled = false;
-      subBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-
-      document.getElementById('receipt-student-name').textContent = currentUser.data.name;
-      document.getElementById('receipt-exercise-title').textContent = `${ex.number}: ${ex.title}`;
-      document.getElementById('receipt-auto-score').textContent = `${result.earned} / ${ex.totalMarks}`;
-      document.getElementById('student-result-modal').classList.remove('hidden');
-    });
-
-    document.getElementById('btn-close-receipt').addEventListener('click', () => {
-      document.getElementById('student-result-modal').classList.add('hidden');
-      document.getElementById('logout-btn').click();
-    });
-
-    function initAdminView() {
-      document.getElementById('view-login').classList.add('hidden');
-      document.getElementById('view-exam').classList.add('hidden');
-      document.getElementById('view-admin').classList.remove('hidden');
-
-      document.getElementById('user-badge').classList.remove('hidden');
-      document.getElementById('user-display-name').textContent = "Teacher Admin";
-      document.getElementById('logout-btn').classList.remove('hidden');
-      document.getElementById('gas-settings-btn').classList.remove('hidden');
-
-      renderAdminDashboard();
-    }
-
+    /* ==========================================================================
+       ADMIN DASHBOARD CONTROLLER & MODAL INSPECTOR
+       ========================================================================== */
     function renderAdminDashboard() {
-      const subTbody = document.getElementById('admin-submissions-tbody');
+      const subTbody = document.getElementById('admin-subs-tbody');
       subTbody.innerHTML = '';
-      document.getElementById('admin-submission-count').textContent = `${submissionRecords.length} submissions`;
+      document.getElementById('sub-count-badge').textContent = `${submissionRecords.length} records`;
 
       if (submissionRecords.length === 0) {
-        subTbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">No student homework submissions yet.</td></tr>`;
+        subTbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-slate-400">No submissions recorded yet.</td></tr>';
       } else {
         submissionRecords.forEach(sub => {
           const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-50/80 transition";
-          const isGraded = sub.status === "Graded";
+          tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+          const statusBadge = sub.status === "Graded"
+            ? '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[10px]">Graded</span>'
+            : '<span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]">Pending</span>';
+          
           tr.innerHTML = `
-            <td class="py-3 px-4 font-semibold text-slate-900">${sanitize(sub.studentName)}</td>
-            <td class="py-3 px-4 text-slate-600">${sanitize(sub.class)}</td>
-            <td class="py-3 px-4 font-medium text-slate-800">${sanitize(sub.exerciseTitle)}</td>
-            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded font-mono font-bold bg-slate-100 text-slate-700">${sub.autoScore} / ${sub.maxScore}</span></td>
-            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded font-mono font-bold ${isGraded ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'}">${sub.finalScore !== undefined ? sub.finalScore : sub.autoScore} / ${sub.maxScore}</span></td>
-            <td class="py-3 px-4">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isGraded ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${sub.status}</span>
-            </td>
-            <td class="py-3 px-4 text-slate-400 text-[11px]">${sanitize(sub.timestamp || 'Just now')}</td>
+            <td class="py-3 px-4 font-bold text-slate-800">${sub.studentName}</td>
+            <td class="py-3 px-4 text-slate-600">${sub.class || 'N/A'}</td>
+            <td class="py-3 px-4 text-slate-700">${sub.exerciseTitle}</td>
+            <td class="py-3 px-4 font-mono font-semibold text-slate-600">${sub.autoScore} / ${sub.maxScore}</td>
+            <td class="py-3 px-4 font-mono font-bold text-blue-700">${sub.finalScore !== undefined ? sub.finalScore : sub.autoScore} / ${sub.maxScore}</td>
+            <td class="py-3 px-4">${statusBadge}</td>
+            <td class="py-3 px-4 text-slate-500 text-[11px]">${sub.timestamp || 'N/A'}</td>
             <td class="py-3 px-4 text-right">
-              <button class="review-sub-btn px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold shadow-xs" data-subid="${sub.submissionId}">
+              <button class="review-sub-btn px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded font-semibold text-xs transition" data-subid="${sub.submissionId}">
                 Review & Mark
               </button>
             </td>
@@ -1494,21 +1143,22 @@
 
       const rosTbody = document.getElementById('admin-roster-tbody');
       rosTbody.innerHTML = '';
-      document.getElementById('admin-roster-count').textContent = `${allUsersList.length} users`;
+      const listToRender = allUsersList.length > 0 ? allUsersList : studentRoster.map(s => ({ ...s, role: 'student', password: '***' }));
+      document.getElementById('roster-count-badge').textContent = `${listToRender.length} accounts`;
 
-      allUsersList.forEach(u => {
+      listToRender.forEach(u => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 transition";
-        const isAdmin = (u.role || '').toLowerCase() === 'admin';
+        tr.className = "hover:bg-slate-50 border-b border-slate-100";
+        const roleBadge = u.role === 'admin'
+          ? '<span class="px-2 py-0.5 bg-purple-100 text-purple-800 rounded font-bold text-[10px]">Admin</span>'
+          : '<span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-bold text-[10px]">Student</span>';
         tr.innerHTML = `
-          <td class="py-2.5 px-4 font-mono font-semibold text-slate-700">${sanitize(u.id)}</td>
-          <td class="py-2.5 px-4 font-semibold text-slate-900">${sanitize(u.name)}</td>
-          <td class="py-2.5 px-4">
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">${isAdmin ? 'Admin / Teacher' : 'Student'}</span>
-          </td>
-          <td class="py-2.5 px-4 text-slate-600">${sanitize(u.class)}</td>
-          <td class="py-2.5 px-4 font-mono text-slate-500">${sanitize(u.password)}</td>
-          <td class="py-2.5 px-4 text-right"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Active</td>
+          <td class="py-2.5 px-4 font-mono text-slate-600">${u.id}</td>
+          <td class="py-2.5 px-4 font-bold text-slate-800">${u.name}</td>
+          <td class="py-2.5 px-4">${roleBadge}</td>
+          <td class="py-2.5 px-4 text-slate-600">${u.class || 'N/A'}</td>
+          <td class="py-2.5 px-4 font-mono text-slate-500">${u.password ? u.password : '••••'}</td>
+          <td class="py-2.5 px-4 text-slate-500 text-[11px]">${u.dateAdded ? new Date(u.dateAdded).toLocaleDateString() : 'Active'}</td>
         `;
         rosTbody.appendChild(tr);
       });
@@ -1522,7 +1172,6 @@
       const ex = EXERCISES.find(e => e.id === sub.exerciseId) || EXERCISES[0];
       document.getElementById('grade-modal-title').textContent = `Review: ${sub.studentName} (${sub.class})`;
       document.getElementById('grade-modal-meta').textContent = `${sub.exerciseTitle} • Submitted: ${sub.timestamp || 'N/A'}`;
-      document.getElementById('grade-modal-final-input').value = sub.finalScore !== undefined ? sub.finalScore : sub.autoScore;
       document.getElementById('grade-modal-final-input').max = sub.maxScore;
       document.getElementById('grade-modal-max-label').textContent = `/ ${sub.maxScore} marks`;
       document.getElementById('grade-modal-feedback').value = sub.feedback || "";
@@ -1532,9 +1181,9 @@
 
       const evalResult = evaluateExerciseAnswers(ex, sub.answers || {});
 
-      evalResult.details.forEach(item => {
+      evalResult.details.forEach((item, index) => {
         const itemDiv = document.createElement('div');
-        itemDiv.className = "p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5 text-xs";
+        itemDiv.className = "p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs transition";
         
         let ansDisplay = item.studentAns;
         if (Array.isArray(ansDisplay)) {
@@ -1543,282 +1192,408 @@
           ansDisplay = "(No answer provided)";
         }
 
+        const initialScore = (sub.status === "Graded" && sub.finalScore !== undefined)
+          ? item.score
+          : item.score;
+
         itemDiv.innerHTML = `
-          <div class="flex justify-between font-bold text-slate-800">
-            <span>${sanitize(item.prompt)}</span>
-            <span class="text-blue-600">[${item.score}/${item.maxMarks} marks]</span>
+          <div class="flex items-center justify-between font-bold text-slate-800 gap-2">
+            <span class="leading-snug">${item.prompt}</span>
+            <div class="flex items-center space-x-1.5 shrink-0 bg-white border border-slate-300 px-2 py-1 rounded-lg shadow-2xs">
+              <label class="text-[11px] font-semibold text-slate-500">Score:</label>
+              <input type="number" 
+                     class="q-score-override w-14 text-center font-bold text-blue-700 border border-blue-200 rounded px-1 py-0.5 focus:border-blue-600 focus:outline-none bg-blue-50/40" 
+                     data-qindex="${index}" 
+                     data-max="${item.maxMarks}" 
+                     min="0" 
+                     max="${item.maxMarks}" 
+                     step="0.5" 
+                     value="${initialScore}">
+              <span class="text-[11px] text-slate-500 font-semibold">/ ${item.maxMarks}</span>
+            </div>
           </div>
           <div class="bg-white p-2.5 rounded-lg border border-slate-200 font-mono text-slate-800">
-            <span class="text-slate-400 font-sans block text-[10px] font-semibold uppercase">Student Answer:</span>
-            ${sanitize(String(ansDisplay))}
+            <span class="text-slate-400 font-sans block text-[10px] font-semibold uppercase tracking-wider">Student Answer:</span>
+            <span class="select-text">${String(ansDisplay)}</span>
           </div>
-          <div class="text-[11px] text-slate-600 bg-emerald-50 border border-emerald-200 p-2 rounded-lg">
-            <span class="font-bold text-emerald-800">Mark Scheme:</span> ${sanitize(item.officialAnswer)}
-            <span class="block text-slate-500 mt-0.5 italic">${sanitize(item.notes || "")}</span>
+          <div class="text-[11px] text-slate-600 bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg">
+            <span class="font-bold text-emerald-800">Mark Scheme:</span> ${item.officialAnswer}
+            <span class="block text-slate-500 mt-0.5 italic">${item.notes || ""}</span>
           </div>
         `;
         answersCont.appendChild(itemDiv);
       });
 
+      function recalculateTotal() {
+        let total = 0;
+        document.querySelectorAll('.q-score-override').forEach(input => {
+          let val = parseFloat(input.value);
+          const max = parseFloat(input.getAttribute('data-max')) || 1;
+          if (isNaN(val)) val = 0;
+          if (val < 0) val = 0;
+          if (val > max) val = max;
+          input.value = val;
+          total += val;
+        });
+        document.getElementById('grade-modal-final-input').value = total;
+      }
+
+      document.querySelectorAll('.q-score-override').forEach(input => {
+        input.addEventListener('input', recalculateTotal);
+      });
+
+      if (sub.finalScore !== undefined) {
+        document.getElementById('grade-modal-final-input').value = sub.finalScore;
+      } else {
+        recalculateTotal();
+      }
+
       document.getElementById('grading-modal').classList.remove('hidden');
     }
 
-    document.getElementById('close-grading-modal').addEventListener('click', () => {
-      document.getElementById('grading-modal').classList.add('hidden');
-    });
+    /* ==========================================================================
+       USER EVENT LISTENERS & SETUP
+       ========================================================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      populateStudentSelect();
+      fetchPublicStudents();
 
-    document.getElementById('save-final-grade-btn').addEventListener('click', async () => {
-      if (!currentInspectedSubmissionId) return;
-      const scoreInput = document.getElementById('grade-modal-final-input').value;
-      const feedbackInput = document.getElementById('grade-modal-feedback').value;
-      const finalScore = parseFloat(scoreInput) || 0;
-
-      await sendFinalGradeToSheet(currentInspectedSubmissionId, finalScore, feedbackInput);
-      document.getElementById('grading-modal').classList.add('hidden');
-      renderAdminDashboard();
-      showToast("Final grade and feedback saved & synced to Google Sheet!");
-    });
-
-    document.getElementById('admin-add-stu-btn').addEventListener('click', () => {
-      document.getElementById('add-student-modal').classList.remove('hidden');
-    });
-    document.getElementById('close-add-stu-modal').addEventListener('click', () => {
-      document.getElementById('add-student-modal').classList.add('hidden');
-    });
-    document.getElementById('cancel-add-stu').addEventListener('click', () => {
-      document.getElementById('add-student-modal').classList.add('hidden');
-    });
-
-    document.getElementById('confirm-add-student-btn').addEventListener('click', async () => {
-      const role = document.getElementById('new-user-role').value;
-      const name = document.getElementById('new-stu-name').value.trim();
-      const id = document.getElementById('new-stu-id').value.trim();
-      const cls = document.getElementById('new-stu-class').value.trim();
-      const pass = document.getElementById('new-stu-pass').value.trim();
-
-      if (!name || !id || !pass) {
-        showToast("Please fill in all user fields", false);
-        return;
-      }
-
-      await sendNewUserToSheet({
-        id: id,
-        name: name,
-        role: role,
-        class: cls || (role === 'admin' ? 'Staff' : 'Year 10'),
-        password: pass
+      // Login Tab Switching
+      document.getElementById('tab-btn-student').addEventListener('click', () => {
+        document.getElementById('tab-content-student').classList.remove('hidden');
+        document.getElementById('tab-content-admin').classList.add('hidden');
+        document.getElementById('tab-btn-student').className = "flex-1 py-3.5 text-xs font-bold text-blue-700 border-b-2 border-blue-600 bg-white transition flex items-center justify-center space-x-1.5";
+        document.getElementById('tab-btn-admin').className = "flex-1 py-3.5 text-xs font-bold text-slate-500 hover:text-slate-700 transition flex items-center justify-center space-x-1.5";
       });
 
-      document.getElementById('add-student-modal').classList.add('hidden');
-      document.getElementById('new-stu-name').value = "";
-      document.getElementById('new-stu-id').value = "";
-      document.getElementById('new-stu-class').value = "";
-      document.getElementById('new-stu-pass').value = "";
-      populateStudentSelect();
-      renderAdminDashboard();
-      showToast(`${role === 'admin' ? 'Admin' : 'Student'} added & synced to sheet!`);
-    });
+      document.getElementById('tab-btn-admin').addEventListener('click', () => {
+        document.getElementById('tab-content-admin').classList.remove('hidden');
+        document.getElementById('tab-content-student').classList.add('hidden');
+        document.getElementById('tab-btn-admin').className = "flex-1 py-3.5 text-xs font-bold text-slate-900 border-b-2 border-slate-900 bg-white transition flex items-center justify-center space-x-1.5";
+        document.getElementById('tab-btn-student').className = "flex-1 py-3.5 text-xs font-bold text-slate-500 hover:text-slate-700 transition flex items-center justify-center space-x-1.5";
+      });
 
-    document.getElementById('admin-refresh-btn').addEventListener('click', async () => {
-      showToast("Syncing with Google Sheet...");
-      await syncPublicStudents();
-      const success = await syncAdminData();
-      populateStudentSelect();
-      renderAdminDashboard();
-      if (success) showToast("Synced successfully with Google Sheet!");
-      else showToast("Sync finished");
-    });
+      // Student Select Listener
+      document.getElementById('login-student-select').addEventListener('change', (e) => {
+        const id = e.target.value;
+        const stu = studentRoster.find(s => s.id === id);
+        const box = document.getElementById('student-class-display-box');
+        if (stu) {
+          box.classList.remove('hidden');
+          document.getElementById('student-class-label').textContent = stu.class;
+          document.getElementById('student-id-label').textContent = stu.id;
+        } else {
+          box.classList.add('hidden');
+        }
+      });
 
-    document.getElementById('gas-settings-btn').addEventListener('click', openGasSettingsModal);
-    document.getElementById('admin-gas-settings-btn').addEventListener('click', openGasSettingsModal);
-    document.getElementById('close-gas-modal').addEventListener('click', () => {
-      document.getElementById('gas-settings-modal').classList.add('hidden');
-    });
+      // Student Login Action
+      document.getElementById('student-login-submit').addEventListener('click', async () => {
+        const stuId = document.getElementById('login-student-select').value;
+        const pass = document.getElementById('login-student-pass').value.trim();
+        const errDiv = document.getElementById('student-login-error');
+        const spinner = document.getElementById('student-login-spinner');
+        const btnText = document.getElementById('student-login-btn-text');
 
-    function openGasSettingsModal() {
-      document.getElementById('gas-url-input').value = gasWebhookUrl;
-      document.getElementById('gas-settings-modal').classList.remove('hidden');
-    }
+        if (!stuId || !pass) {
+          errDiv.textContent = "Please select your name and enter your password.";
+          errDiv.classList.remove('hidden');
+          return;
+        }
 
-    document.getElementById('save-gas-url-btn').addEventListener('click', async () => {
-      const newUrl = document.getElementById('gas-url-input').value.trim();
-      gasWebhookUrl = newUrl;
-      localStorage.setItem('cambridge_gas_url', newUrl);
-      document.getElementById('gas-settings-modal').classList.add('hidden');
-      showToast("Webhook URL saved!");
-      await syncPublicStudents();
-      await syncAdminData();
-      populateStudentSelect();
-      renderAdminDashboard();
-    });
+        errDiv.classList.add('hidden');
+        spinner.classList.remove('hidden');
+        btnText.textContent = "Verifying...";
 
-    document.getElementById('copy-gas-code-btn').addEventListener('click', () => {
-      const scriptCode = `function doGet(e) { return handleRequest(e); }
-function doPost(e) { return handleRequest(e); }
+        try {
+          const res = await verifyUserLogin(stuId, pass);
+          if (res && res.authorized) {
+            currentUser = { role: "student", data: res.user };
+            initStudentExamView();
+          } else {
+            errDiv.textContent = res.message || "Incorrect password. Please try again.";
+            errDiv.classList.remove('hidden');
+          }
+        } finally {
+          spinner.classList.add('hidden');
+          btnText.textContent = "Begin Practice Task";
+        }
+      });
 
-function handleRequest(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var params = (e && e.parameter) ? e.parameter : {};
-  var postData = {};
-  if (e && e.postData && e.postData.contents) {
-    try { postData = JSON.parse(e.postData.contents); } catch(err) { postData = {}; }
-  }
-  var action = params.action || postData.action;
+      // Admin Login Action
+      document.getElementById('admin-login-submit').addEventListener('click', async () => {
+        const identifier = document.getElementById('login-admin-user').value.trim();
+        const pass = document.getElementById('login-admin-pass').value.trim();
+        const errDiv = document.getElementById('admin-login-error');
+        const spinner = document.getElementById('admin-login-spinner');
+        const btnText = document.getElementById('admin-login-btn-text');
 
-  // 1. Ensure 'Users' and 'Submissions' sheets exist
-  var usersSheet = ss.getSheetByName("Users") || ss.getSheetByName("Students");
-  if (!usersSheet) {
-    usersSheet = ss.insertSheet("Users");
-    usersSheet.appendRow(["User ID", "Full Name", "Role", "Class", "Password", "Date Added"]);
-    usersSheet.appendRow(["ADM-001", "Teacher Admin", "admin", "Staff", "admin123", new Date()]);
-    usersSheet.appendRow(["STU-101", "Ahmed Al-Mansoor", "student", "Year 10-A", "123", new Date()]);
-    usersSheet.appendRow(["STU-102", "Fatima Al-Zahra", "student", "Year 10-A", "123", new Date()]);
-  } else if (usersSheet.getName() === "Students") {
-    usersSheet.setName("Users");
-  }
+        if (!identifier || !pass) {
+          errDiv.textContent = "Please enter both admin ID/username and password.";
+          errDiv.classList.remove('hidden');
+          return;
+        }
 
-  var subSheet = ss.getSheetByName("Submissions");
-  if (!subSheet) {
-    subSheet = ss.insertSheet("Submissions");
-    subSheet.appendRow(["Submission ID", "Student ID", "Student Name", "Class", "Exercise ID", "Exercise Title", "Auto Score", "Max Score", "Final Score", "Status", "Teacher Feedback", "Answers JSON", "Timestamp"]);
-  }
+        errDiv.classList.add('hidden');
+        spinner.classList.remove('hidden');
+        btnText.textContent = "Authenticating...";
 
-  // 2. Action: getPublicStudents (Returns ONLY name, id, class for student dropdown - NO passwords exposed!)
-  if (action === "getPublicStudents") {
-    var uData = usersSheet.getDataRange().getValues();
-    var list = [];
-    for (var i = 1; i < uData.length; i++) {
-      var r = uData[i];
-      var role = String(r[2] || "").toLowerCase().trim();
-      if (role === "student" && (r[0] || r[1])) {
-        list.push({ id: String(r[0]).trim(), name: String(r[1]).trim(), class: String(r[3] || "").trim() });
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify({ status: "success", students: list }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
+        try {
+          const res = await verifyUserLogin(identifier, pass);
+          if (res && res.authorized && res.user.role === "admin") {
+            currentUser = { role: "admin", data: res.user };
+            initAdminDashboardView();
+          } else {
+            errDiv.textContent = "Invalid admin credentials or account does not have Admin role.";
+            errDiv.classList.remove('hidden');
+          }
+        } finally {
+          spinner.classList.add('hidden');
+          btnText.textContent = "Verify & Open Portal";
+        }
+      });
 
-  // 3. Action: loginUser (Verifies password and confirms role against Sheet)
-  if (action === "loginUser") {
-    var idOrName = String(postData.identifier || params.identifier || "").trim().toLowerCase();
-    var pass = String(postData.password || params.password || "").trim();
-    var uData = usersSheet.getDataRange().getValues();
+      // Log Out
+      document.getElementById('btn-logout').addEventListener('click', () => {
+        currentUser = null;
+        document.getElementById('exam-workspace').classList.add('hidden');
+        document.getElementById('admin-workspace').classList.add('hidden');
+        document.getElementById('user-header-status').classList.add('hidden');
+        document.getElementById('gas-settings-btn').classList.add('hidden');
+        document.getElementById('login-modal').classList.remove('hidden');
+        document.getElementById('login-student-pass').value = '';
+        document.getElementById('login-admin-pass').value = '';
+      });
 
-    for (var i = 1; i < uData.length; i++) {
-      var row = uData[i];
-      var uId = String(row[0] || "").trim().toLowerCase();
-      var uName = String(row[1] || "").trim().toLowerCase();
-      var uRole = String(row[2] || "student").trim().toLowerCase();
-      var uClass = String(row[3] || "").trim();
-      var uPass = String(row[4] || "").trim();
+      // Exercise Switcher
+      document.getElementById('exercise-switcher').addEventListener('change', (e) => {
+        saveCurrentQuestionInput();
+        const idx = EXERCISES.findIndex(ex => ex.id === e.target.value);
+        if (idx !== -1) loadExercise(idx);
+      });
 
-      if ((uId === idOrName || uName === idOrName) && uPass === pass) {
-        return ContentService.createTextOutput(JSON.stringify({
-          status: "success",
-          authorized: true,
-          user: { id: row[0], name: row[1], role: uRole, class: uClass }
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "error",
-      authorized: false,
-      message: "Incorrect username/ID or password."
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
+      // Font Resizing
+      document.getElementById('btn-font-inc').addEventListener('click', () => {
+        if (currentFontSize < 26) {
+          currentFontSize += 2;
+          document.getElementById('passage-container').style.fontSize = `${currentFontSize}px`;
+        }
+      });
+      document.getElementById('btn-font-dec').addEventListener('click', () => {
+        if (currentFontSize > 14) {
+          currentFontSize -= 2;
+          document.getElementById('passage-container').style.fontSize = `${currentFontSize}px`;
+        }
+      });
 
-  // 4. Action: getAllUsers (Admin portal: lists all users & submissions)
-  if (action === "getAllUsers") {
-    var uData = usersSheet.getDataRange().getValues();
-    var users = [];
-    for (var i = 1; i < uData.length; i++) {
-      var r = uData[i];
-      if (r[0] || r[1]) {
-        users.push({
-          id: String(r[0]).trim(),
-          name: String(r[1]).trim(),
-          role: String(r[2] || "student").trim(),
-          class: String(r[3] || "").trim(),
-          password: String(r[4] || "").trim(),
-          dateAdded: r[5]
-        });
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "success",
-      users: users,
-      submissions: subSheet.getDataRange().getValues()
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
+      // Highlighter Tool
+      document.getElementById('btn-highlight-toggle').addEventListener('click', () => {
+        const selection = window.getSelection();
+        if (!selection.rangeCount || selection.isCollapsed) return;
+        const range = selection.getRangeAt(0);
+        const span = document.createElement('span');
+        span.className = 'user-highlight';
+        try {
+          range.surroundContents(span);
+          selection.removeAllRanges();
+        } catch (e) {
+          console.warn("Cross-element highlight ignored:", e);
+        }
+      });
 
-  // 5. Action: addUser
-  if (action === "addUser") {
-    var role = postData.role || "student";
-    usersSheet.appendRow([postData.id, postData.name, role, postData.class, String(postData.password), new Date()]);
-    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
-  }
+      // Question Navigation
+      document.getElementById('btn-next-question').addEventListener('click', () => {
+        saveCurrentQuestionInput();
+        const ex = EXERCISES[activeExerciseIndex];
+        if (activeQuestionIndex < ex.questions.length - 1) {
+          activeQuestionIndex++;
+          renderReviewList();
+          renderCurrentQuestion();
+        }
+      });
 
-  // 6. Action: submitHomework
-  if (action === "submitHomework") {
-    subSheet.appendRow([
-      postData.submissionId, postData.studentId, postData.studentName, postData.class,
-      postData.exerciseId, postData.exerciseTitle, postData.autoScore, postData.maxScore,
-      postData.finalScore !== undefined ? postData.finalScore : postData.autoScore,
-      postData.status || "Pending Review", postData.feedback || "",
-      JSON.stringify(postData.answers), new Date()
-    ]);
-    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
-  }
+      document.getElementById('btn-prev-question').addEventListener('click', () => {
+        saveCurrentQuestionInput();
+        if (activeQuestionIndex > 0) {
+          activeQuestionIndex--;
+          renderReviewList();
+          renderCurrentQuestion();
+        }
+      });
 
-  // 7. Action: finalizeGrade
-  if (action === "finalizeGrade") {
-    var data = subSheet.getDataRange().getValues();
-    for (var i = 1; i < data.length; i++) {
-      if (String(data[i][0]) === String(postData.submissionId)) {
-        subSheet.getRange(i + 1, 9).setValue(postData.finalScore);
-        subSheet.getRange(i + 1, 10).setValue("Graded");
-        subSheet.getRange(i + 1, 11).setValue(postData.feedback);
-        break;
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
-  }
+      document.getElementById('mark-review-checkbox').addEventListener('change', () => {
+        const ex = EXERCISES[activeExerciseIndex];
+        const q = ex.questions[activeQuestionIndex];
+        questionReviewFlags[ex.id][q.id] = document.getElementById('mark-review-checkbox').checked;
+        renderReviewList();
+      });
 
-  return ContentService.createTextOutput(JSON.stringify({ status: "ok" })).setMimeType(ContentService.MimeType.JSON);
-}`;
-      const textArea = document.createElement("textarea");
-      textArea.value = scriptCode;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      showToast("Google Apps Script code copied to clipboard!");
-    });
+      document.getElementById('btn-review-done').addEventListener('click', () => {
+        saveCurrentQuestionInput();
+        renderReviewList();
+      });
 
-    document.getElementById('admin-export-github-btn').addEventListener('click', () => {
-      const targetUrl = gasWebhookUrl || DEFAULT_GAS_URL;
-      let htmlContent = document.documentElement.outerHTML;
-      htmlContent = htmlContent.replace(
-        /const DEFAULT_GAS_URL = ".*?";/,
-        `const DEFAULT_GAS_URL = "${targetUrl.trim()}";`
-      );
+      // Submit Homework with Progress Loading Modal
+      document.getElementById('btn-submit-task').addEventListener('click', async () => {
+        saveCurrentQuestionInput();
+        const ex = EXERCISES[activeExerciseIndex];
+        const subBtn = document.getElementById('btn-submit-task');
 
-      const blob = new Blob(["<!DOCTYPE html>\n<html lang=\"en\">\n" + htmlContent + "\n</html>"], { type: "text/html" });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = "index.html";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      showToast("Exported index.html ready for GitHub!");
-    });
+        subBtn.disabled = true;
+        subBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      populateStudentSelect();
-      if (gasWebhookUrl) {
-        await syncPublicStudents();
+        const loadingModal = document.getElementById('submission-loading-modal');
+        document.getElementById('loading-modal-title').textContent = "Submitting Homework...";
+        document.getElementById('loading-modal-desc').textContent = "Please wait while your answers and grading data sync to the Google Sheet. Do not refresh or close this page.";
+        loadingModal.classList.remove('hidden');
+
+        const result = evaluateExerciseAnswers(ex, exerciseResponses[ex.id]);
+        const subId = "SUB-" + Math.floor(100000 + Math.random() * 900000);
+        const submissionObj = {
+          submissionId: subId,
+          studentId: currentUser.data.id,
+          studentName: currentUser.data.name,
+          class: currentUser.data.class,
+          exerciseId: ex.id,
+          exerciseTitle: `${ex.number}: ${ex.title}`,
+          autoScore: result.earned,
+          maxScore: ex.totalMarks,
+          finalScore: result.earned,
+          status: "Pending Review",
+          feedback: "",
+          answers: exerciseResponses[ex.id],
+          timestamp: new Date().toLocaleString()
+        };
+
+        try {
+          await sendSubmissionToSheet(submissionObj);
+        } finally {
+          loadingModal.classList.add('hidden');
+          subBtn.disabled = false;
+          subBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        document.getElementById('receipt-student-name').textContent = currentUser.data.name;
+        document.getElementById('receipt-exercise-title').textContent = `${ex.number}: ${ex.title}`;
+        document.getElementById('receipt-auto-score').textContent = `${result.earned} / ${ex.totalMarks}`;
+        document.getElementById('student-result-modal').classList.remove('hidden');
+      });
+
+      document.getElementById('btn-close-receipt').addEventListener('click', () => {
+        document.getElementById('student-result-modal').classList.add('hidden');
+        document.getElementById('btn-logout').click();
+      });
+
+      // Admin Tab Switching
+      document.getElementById('admin-tab-subs').addEventListener('click', () => {
+        document.getElementById('admin-panel-subs').classList.remove('hidden');
+        document.getElementById('admin-panel-users').classList.add('hidden');
+        document.getElementById('admin-tab-subs').className = "py-2.5 px-3 text-xs font-bold text-blue-700 border-b-2 border-blue-600 transition";
+        document.getElementById('admin-tab-users').className = "py-2.5 px-3 text-xs font-bold text-slate-500 hover:text-slate-700 transition";
+      });
+
+      document.getElementById('admin-tab-users').addEventListener('click', () => {
+        document.getElementById('admin-panel-users').classList.remove('hidden');
+        document.getElementById('admin-panel-subs').classList.add('hidden');
+        document.getElementById('admin-tab-users').className = "py-2.5 px-3 text-xs font-bold text-blue-700 border-b-2 border-blue-600 transition";
+        document.getElementById('admin-tab-subs').className = "py-2.5 px-3 text-xs font-bold text-slate-500 hover:text-slate-700 transition";
+      });
+
+      // Admin Save Grade with Progress Loading Modal
+      document.getElementById('close-grading-modal').addEventListener('click', () => {
+        document.getElementById('grading-modal').classList.add('hidden');
+      });
+
+      document.getElementById('save-final-grade-btn').addEventListener('click', async () => {
+        if (!currentInspectedSubmissionId) return;
+        const scoreInput = document.getElementById('grade-modal-final-input').value;
+        const feedbackInput = document.getElementById('grade-modal-feedback').value;
+        const finalScore = parseFloat(scoreInput) || 0;
+        const saveBtn = document.getElementById('save-final-grade-btn');
+
+        saveBtn.disabled = true;
+        saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+        const loadingModal = document.getElementById('submission-loading-modal');
+        document.getElementById('loading-modal-title').textContent = "Saving Grades & Feedback...";
+        document.getElementById('loading-modal-desc').textContent = "Syncing final marks and teacher comments with the Google Sheet. Please wait...";
+        loadingModal.classList.remove('hidden');
+
+        try {
+          await sendFinalGradeToSheet(currentInspectedSubmissionId, finalScore, feedbackInput);
+        } finally {
+          loadingModal.classList.add('hidden');
+          saveBtn.disabled = false;
+          saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        document.getElementById('grading-modal').classList.add('hidden');
+        renderAdminDashboard();
+      });
+
+      // Admin Add User Modal
+      document.getElementById('admin-add-user-btn').addEventListener('click', () => {
+        document.getElementById('add-user-modal').classList.remove('hidden');
+      });
+      document.getElementById('close-add-user-modal').addEventListener('click', () => {
+        document.getElementById('add-user-modal').classList.add('hidden');
+      });
+
+      document.getElementById('btn-confirm-add-user').addEventListener('click', async () => {
+        const id = document.getElementById('new-user-id').value.trim();
+        const name = document.getElementById('new-user-name').value.trim();
+        const role = document.getElementById('new-user-role').value;
+        const cls = document.getElementById('new-user-class').value.trim();
+        const pass = document.getElementById('new-user-pass').value.trim();
+
+        if (!id || !name || !pass) {
+          return;
+        }
+
+        const newUser = { id, name, role, class: cls, password: pass };
+        allUsersList.push(newUser);
+        if (role === 'student') studentRoster.push({ id, name, class: cls });
+
+        if (gasWebhookUrl) {
+          try {
+            await fetch(gasWebhookUrl, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ action: "addUser", ...newUser })
+            });
+          } catch(e) {
+            console.error(e);
+          }
+        }
+
+        document.getElementById('add-user-modal').classList.add('hidden');
         populateStudentSelect();
-      }
+        renderAdminDashboard();
+      });
+
+      // GAS Settings Modals
+      const openGasModal = () => {
+        document.getElementById('gas-url-input').value = gasWebhookUrl;
+        document.getElementById('gas-settings-modal').classList.remove('hidden');
+      };
+      document.getElementById('gas-settings-btn').addEventListener('click', openGasModal);
+      document.getElementById('admin-gas-btn').addEventListener('click', openGasModal);
+      document.getElementById('close-gas-settings').addEventListener('click', () => {
+        document.getElementById('gas-settings-modal').classList.add('hidden');
+      });
+
+      document.getElementById('save-gas-url-btn').addEventListener('click', () => {
+        const val = document.getElementById('gas-url-input').value.trim();
+        gasWebhookUrl = val;
+        localStorage.setItem('cambridge_gas_url', val);
+        document.getElementById('gas-settings-modal').classList.add('hidden');
+        fetchPublicStudents();
+      });
+
+      document.getElementById('admin-sync-btn').addEventListener('click', () => {
+        fetchAdminData();
+      });
     });
   </script>
 </body>
