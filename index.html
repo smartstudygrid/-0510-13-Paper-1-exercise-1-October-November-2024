@@ -269,7 +269,7 @@
             <line x1="12" y1="8" x2="12.01" y2="8" stroke-width="2"></line>
           </svg>
           <div class="leading-relaxed">
-            <strong class="font-semibold">Cambridge Marking Directive:</strong> Be concise. Answers should be extracted directly from the passage text. Bracketed words in the mark scheme are optional and not mandatory for credit.
+            <strong class="font-semibold">Cambridge Marking Directive:</strong> Be concise. Answers should be extracted directly from the passage text. Any bracketed words are optional, but crucially, <strong>inclusion of incorrect, distractor, or contradictory information negates the mark</strong>.
           </div>
         </div>
       </div>
@@ -491,128 +491,208 @@
       let totalEarned = 0;
       const breakdown = [];
 
-      // Q1: Africa
-      const q1Input = sanitizeString(studentResponses[1]);
-      const q1Passed = q1Input.includes("africa");
+      // Q1: Africa (Strict: reject if mentioning distractors/contradictions like "asia", "america", etc.)
+      const q1Raw = studentResponses[1] || "";
+      const q1Clean = sanitizeString(q1Raw);
+      let q1Passed = false;
+      let q1Note = "";
+      const q1Distractors = ["asia", "america", "south america", "central america", "southeast asia", "europe", "australia"];
+      const q1FoundDistractor = q1Distractors.find(d => q1Clean.includes(d));
+
+      if (q1FoundDistractor) {
+        q1Passed = false;
+        q1Note = `Mark negated: Irrelevant / contradictory information included ("${q1FoundDistractor}"). The passage states only "some" are in Asia/America, while most live in Africa.`;
+      } else if (q1Clean.includes("africa")) {
+        q1Passed = true;
+      } else {
+        q1Note = "Incorrect or missing location.";
+      }
       const q1Score = q1Passed ? 1 : 0;
       totalEarned += q1Score;
       breakdown.push({
         id: 1,
         question: EXAM_QUESTIONS[0].prompt,
-        userAnswer: studentResponses[1] || "(blank)",
+        userAnswer: q1Raw || "(blank)",
         correctAnswer: "Africa",
         score: q1Score,
         maxScore: 1,
         isCorrect: q1Passed,
+        note: q1Note,
         explanation: EXAM_QUESTIONS[0].explanation
       });
 
-      // Q2: flying fox
-      const q2Input = sanitizeString(studentResponses[2]);
-      const q2Passed = q2Input.includes("flying fox") || q2Input.includes("flyingfox");
+      // Q2: flying fox (Strict: reject if mentioning distractors like "spotted-winged" or "spotted")
+      const q2Raw = studentResponses[2] || "";
+      const q2Clean = sanitizeString(q2Raw);
+      let q2Passed = false;
+      let q2Note = "";
+      const q2Distractors = ["spotted", "spotted wing", "spotted-winged", "smallest"];
+      const q2FoundDistractor = q2Distractors.find(d => q2Clean.includes(d));
+
+      if (q2FoundDistractor) {
+        q2Passed = false;
+        q2Note = `Mark negated: Contradictory bat mentioned ("${q2FoundDistractor}"). Spotted-winged is the smallest bat, not the largest.`;
+      } else if (q2Clean.includes("flying fox") || q2Clean.includes("flyingfox")) {
+        q2Passed = true;
+      } else {
+        q2Note = "Incorrect bat species provided.";
+      }
       const q2Score = q2Passed ? 1 : 0;
       totalEarned += q2Score;
       breakdown.push({
         id: 2,
         question: EXAM_QUESTIONS[1].prompt,
-        userAnswer: studentResponses[2] || "(blank)",
+        userAnswer: q2Raw || "(blank)",
         correctAnswer: "flying fox",
         score: q2Score,
         maxScore: 1,
         isCorrect: q2Passed,
+        note: q2Note,
         explanation: EXAM_QUESTIONS[1].explanation
       });
 
-      // Q3: smell
-      const q3Input = sanitizeString(studentResponses[3]);
-      const q3Passed = q3Input.includes("smell") || q3Input.includes("smelling") || q3Input.includes("scent") || q3Input.includes("sense of smell");
+      // Q3: smell (Strict: reject if mentioning distractors like "sound", "hearing", "echolocation", "sight")
+      const q3Raw = studentResponses[3] || "";
+      const q3Clean = sanitizeString(q3Raw);
+      let q3Passed = false;
+      let q3Note = "";
+      const q3Distractors = ["sound", "hearing", "echo", "echolocation", "ear", "ears", "sight", "vision", "eye", "eyes"];
+      const q3FoundDistractor = q3Distractors.find(d => q3Clean.includes(d));
+
+      if (q3FoundDistractor) {
+        q3Passed = false;
+        q3Note = `Mark negated: Contradictory information ("${q3FoundDistractor}"). Sound is what other bats use, whereas fruit bats specifically use smell.`;
+      } else if (q3Clean.includes("smell") || q3Clean.includes("smelling") || q3Clean.includes("scent")) {
+        q3Passed = true;
+      } else {
+        q3Note = "Incorrect sense named.";
+      }
       const q3Score = q3Passed ? 1 : 0;
       totalEarned += q3Score;
       breakdown.push({
         id: 3,
         question: EXAM_QUESTIONS[2].prompt,
-        userAnswer: studentResponses[3] || "(blank)",
+        userAnswer: q3Raw || "(blank)",
         correctAnswer: "smell",
         score: q3Score,
         maxScore: 1,
         isCorrect: q3Passed,
+        note: q3Note,
         explanation: EXAM_QUESTIONS[2].explanation
       });
 
-      // Q4: (in) trees / tree branches
-      const q4Input = sanitizeString(studentResponses[4]);
-      const q4Passed = q4Input.includes("tree") || q4Input.includes("trees") || q4Input.includes("branch") || q4Input.includes("branches");
+      // Q4: (in) trees / tree branches (Strict: reject if mentioning contradictory places like "caves", "bushes", "buildings")
+      const q4Raw = studentResponses[4] || "";
+      const q4Clean = sanitizeString(q4Raw);
+      let q4Passed = false;
+      let q4Note = "";
+      const q4Distractors = ["cave", "caves", "bush", "bushes", "building", "buildings", "empty buildings", "empty building"];
+      const q4FoundDistractor = q4Distractors.find(d => q4Clean.includes(d));
+
+      if (q4FoundDistractor) {
+        q4Passed = false;
+        q4Note = `Mark negated: Contradictory location included ("${q4FoundDistractor}"). The question asks where the majority (more than half) spend daylight.`;
+      } else if (q4Clean.includes("tree") || q4Clean.includes("trees") || q4Clean.includes("branch") || q4Clean.includes("branches")) {
+        q4Passed = true;
+      } else {
+        q4Note = "Incorrect habitat named.";
+      }
       const q4Score = q4Passed ? 1 : 0;
       totalEarned += q4Score;
       breakdown.push({
         id: 4,
         question: EXAM_QUESTIONS[3].prompt,
-        userAnswer: studentResponses[4] || "(blank)",
+        userAnswer: q4Raw || "(blank)",
         correctAnswer: "(in) trees / tree branches",
         score: q4Score,
         maxScore: 1,
         isCorrect: q4Passed,
+        note: q4Note,
         explanation: EXAM_QUESTIONS[3].explanation
       });
 
-      // Q5: (about) (the first) four months / 4 months
-      const q5Input = sanitizeString(studentResponses[5]);
-      const q5Passed = (q5Input.includes("four month") || q5Input.includes("4 month"));
+      // Q5: four months (Strict: reject if confusing pup care with adult age "2 years" or lifespan "30 years")
+      const q5Raw = studentResponses[5] || "";
+      const q5Clean = sanitizeString(q5Raw);
+      let q5Passed = false;
+      let q5Note = "";
+      const q5Distractors = ["two year", "2 year", "two years", "2 years", "30 year", "thirty year", "30 years", "thirty years", "day", "days", "week", "weeks"];
+      const q5FoundDistractor = q5Distractors.find(d => q5Clean.includes(d));
+
+      if (q5FoundDistractor) {
+        q5Passed = false;
+        q5Note = `Mark negated: Contradictory time duration ("${q5FoundDistractor}"). Confuses pup nursing period with adulthood (2 years) or lifespan (30 years).`;
+      } else if (q5Clean.includes("four month") || q5Clean.includes("4 month")) {
+        q5Passed = true;
+      } else {
+        q5Note = "Incorrect duration for maternal pup care.";
+      }
       const q5Score = q5Passed ? 1 : 0;
       totalEarned += q5Score;
       breakdown.push({
         id: 5,
         question: EXAM_QUESTIONS[4].prompt,
-        userAnswer: studentResponses[5] || "(blank)",
+        userAnswer: q5Raw || "(blank)",
         correctAnswer: "(about) (the first) four months",
         score: q5Score,
         maxScore: 1,
         isCorrect: q5Passed,
+        note: q5Note,
         explanation: EXAM_QUESTIONS[4].explanation
       });
 
-      // Q6: 3 details out of 4 accepted factors
-      // 1) dangerous animals / rats
-      // 2) availability of (local) food
-      // 3) (humans) clearing land (for farming)
-      // 4) climate change
+      // Q6: 3 details out of 4 accepted factors with duplicate protection and irrelevant rejection
       const q6Inputs = (studentResponses[6] || ["", "", ""]).map(s => sanitizeString(s));
       const matchedCategories = new Set();
       const detailResults = [];
 
       q6Inputs.forEach((detail, idx) => {
         let matchedCategory = null;
+        let rejectReason = "";
 
         if (detail.length > 1) {
-          // Check Category 1: dangerous animals / rats
-          if ((detail.includes("dangerous animal") || detail.includes("dangerous animals") || detail.includes("rat") || detail.includes("rats") || detail.includes("predator")) && !matchedCategories.has("category_1")) {
+          // Factor 1: dangerous animals / rats
+          if (detail.includes("rat") || detail.includes("dangerous animal") || detail.includes("predator")) {
             matchedCategory = "category_1";
           }
-          // Check Category 2: availability of (local) food
-          else if ((detail.includes("food") || detail.includes("fruit") || detail.includes("availability of")) && !matchedCategories.has("category_2")) {
+          // Factor 2: availability of (local) food
+          else if (detail.includes("availability of") || detail.includes("local food") || (detail.includes("food") && !detail.includes("clearing") && !detail.includes("farm"))) {
             matchedCategory = "category_2";
           }
-          // Check Category 3: humans clearing land / farming / deforestation
-          else if ((detail.includes("clearing land") || detail.includes("clear land") || detail.includes("farming") || detail.includes("clearing") || detail.includes("deforestation")) && !matchedCategories.has("category_3")) {
+          // Factor 3: (humans) clearing land (for farming)
+          else if (detail.includes("clearing land") || detail.includes("clear land") || detail.includes("farming") || detail.includes("clearing") || detail.includes("deforestation")) {
             matchedCategory = "category_3";
           }
-          // Check Category 4: climate change / global warming
-          else if ((detail.includes("climate") || detail.includes("climate change") || detail.includes("global warming")) && !matchedCategories.has("category_4")) {
+          // Factor 4: climate change
+          else if (detail.includes("climate") || detail.includes("climate change") || detail.includes("global warming")) {
             matchedCategory = "category_4";
+          } else {
+            rejectReason = "Irrelevant detail not recognized in the 4 mark scheme factors.";
           }
+        } else {
+          rejectReason = "No answer provided.";
         }
 
         if (matchedCategory) {
-          matchedCategories.add(matchedCategory);
-          detailResults.push({
-            text: studentResponses[6][idx] || "(blank)",
-            credited: true,
-            rule: matchedCategory
-          });
+          if (matchedCategories.has(matchedCategory)) {
+            detailResults.push({
+              text: studentResponses[6][idx] || "(blank)",
+              credited: false,
+              reason: "Duplicate factor already awarded credit."
+            });
+          } else {
+            matchedCategories.add(matchedCategory);
+            detailResults.push({
+              text: studentResponses[6][idx] || "(blank)",
+              credited: true,
+              rule: matchedCategory
+            });
+          }
         } else {
           detailResults.push({
             text: studentResponses[6][idx] || "(blank)",
-            credited: false
+            credited: false,
+            reason: rejectReason
           });
         }
       });
@@ -749,6 +829,11 @@
           const feedbackBox = document.createElement('div');
           feedbackBox.className = `mt-4 p-4 rounded-xl border text-sm ${itemResult.score === itemResult.maxScore ? 'bg-emerald-50 border-emerald-200 text-emerald-950' : itemResult.score > 0 ? 'bg-amber-50 border-amber-200 text-amber-950' : 'bg-rose-50 border-rose-200 text-rose-950'}`;
           
+          let noteHtml = '';
+          if (itemResult.note) {
+            noteHtml = `<div class="mt-2 p-2 bg-rose-100/70 border border-rose-200 rounded text-xs text-rose-800 font-medium">${itemResult.note}</div>`;
+          }
+
           feedbackBox.innerHTML = `
             <div class="flex items-center justify-between font-bold mb-1">
               <span class="flex items-center space-x-1.5">
@@ -756,6 +841,7 @@
               </span>
               <span class="font-mono text-xs px-2 py-0.5 rounded bg-white/80 border">${itemResult.score} / ${itemResult.maxScore} marks</span>
             </div>
+            ${noteHtml}
             <p class="text-xs font-semibold text-slate-700 mt-2">Official Mark Scheme Answer:</p>
             <p class="text-xs bg-white/70 p-2 rounded mt-1 border border-slate-200/50 font-mono text-slate-800">${itemResult.correctAnswer}</p>
             <p class="text-xs text-slate-600 mt-2 italic">${itemResult.explanation}</p>
@@ -898,16 +984,17 @@
             ? "bg-amber-100 text-amber-800 border-amber-300"
             : "bg-rose-100 text-rose-800 border-rose-300";
 
-        const badgeText = item.score === item.maxScore ? "Full Credit" : item.score > 0 ? "Partial Credit" : "No Credit";
-
         let userResponseHtml = "";
         if (Array.isArray(item.userAnswer)) {
           userResponseHtml = `
             <div class="mt-1 space-y-1">
               ${item.detailsSummary.map((d, i) => `
                 <div class="text-xs p-2 rounded border flex items-center justify-between ${d.credited ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900' : 'bg-rose-50/70 border-rose-200 text-rose-900'}">
-                  <span><strong>Detail ${i+1}:</strong> ${d.text}</span>
-                  <span class="text-[11px] font-bold uppercase">${d.credited ? '+1 Mark' : '0 Mark'}</span>
+                  <div>
+                    <span><strong>Detail ${i+1}:</strong> ${d.text}</span>
+                    ${d.reason ? `<div class="text-[10px] text-rose-600 mt-0.5 italic">${d.reason}</div>` : ''}
+                  </div>
+                  <span class="text-[11px] font-bold uppercase shrink-0 ml-2">${d.credited ? '+1 Mark' : '0 Mark'}</span>
                 </div>
               `).join('')}
             </div>
@@ -917,6 +1004,7 @@
             <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-800 font-medium">
               ${item.userAnswer}
             </div>
+            ${item.note ? `<div class="mt-1.5 p-2 bg-rose-50 border border-rose-200 rounded text-xs text-rose-800 font-medium">${item.note}</div>` : ''}
           `;
         }
 
