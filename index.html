@@ -4,19 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cambridge IGCSE™ Reading Practice Portal</title>
-  <!-- Fonts: Instrument Serif (display/reading), Inter (UI), JetBrains Mono (ids/code) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Tailwind CSS CDN -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
+    if (window.pdfjsLib) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
             sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
             serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+            merriweather: ['Merriweather', 'serif'],
+            opensans: ['"Open Sans"', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
           },
           colors: {
@@ -39,32 +43,19 @@
     };
   </script>
   <style>
-    /* Custom scrollbars and transitions */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f4eedd;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #c9972b;
-      border-radius: 4px;
-      opacity: 0.6;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #a97a21;
-    }
-    .user-highlight {
-      background-color: #f2dd9c;
-      border-radius: 2px;
-      padding: 1px 2px;
-    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f4eedd; }
+    ::-webkit-scrollbar-thumb { background: #c9972b; border-radius: 4px; opacity: 0.6; }
+    ::-webkit-scrollbar-thumb:hover { background: #a97a21; }
+    .user-highlight { background-color: #f2dd9c; border-radius: 2px; padding: 1px 2px; }
+    .font-instrument { font-family: 'Instrument Serif', Georgia, serif; }
+    .font-merriweather { font-family: 'Merriweather', serif; }
+    .font-opensans { font-family: 'Open Sans', sans-serif; }
+    .font-jetbrains { font-family: 'JetBrains Mono', monospace; }
   </style>
 </head>
 <body class="bg-cream-100 text-navy-800 font-sans antialiased h-screen flex flex-col overflow-hidden">
 
-  <!-- Top Navigation Header -->
   <header class="bg-white border-b border-navy-200 px-4 py-2.5 flex items-center justify-between shadow-xs shrink-0 z-20">
     <div class="flex items-center space-x-3">
       <div class="w-8 h-8 rounded-lg bg-navy-800 text-gold-300 flex items-center justify-center font-bold text-sm tracking-wider shadow-sm ring-1 ring-gold-500/40">
@@ -78,15 +69,14 @@
 
     <!-- Active User Status & Header Actions -->
     <div class="flex items-center space-x-2.5">
-      <!-- Creator Credit Badge -->
-      <div class="flex items-center space-x-1.5 px-3 py-1 bg-gradient-to-r from-navy-50 to-gold-50 border border-navy-200 rounded-full text-xs font-semibold text-navy-700 shadow-xs">
+      <div class="hidden sm:flex items-center space-x-1.5 px-3 py-1 bg-gradient-to-r from-navy-50 to-gold-50 border border-navy-200 rounded-full text-xs font-semibold text-navy-700 shadow-xs">
         <svg class="w-3.5 h-3.5 text-navy-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
         </svg>
         <span>Created by: <span class="text-navy-800 font-bold tracking-tight">Amanullah Khan</span></span>
       </div>
 
-      <!-- Student Only My Grades Button -->
+      <!-- Student My Grades -->
       <button id="student-grades-btn" class="hidden px-2.5 py-1.5 bg-navy-50 hover:bg-navy-100 text-navy-700 text-xs font-semibold rounded-md border border-navy-200 transition flex items-center space-x-1.5 shadow-2xs" title="View Submitted Tasks & Feedback">
         <svg class="w-3.5 h-3.5 text-navy-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
@@ -95,15 +85,15 @@
         <span id="student-grades-count-badge" class="hidden px-1.5 py-0.2 bg-navy-600 text-white rounded-full text-[10px] font-bold">0</span>
       </button>
 
-      <!-- Admin Only Sheet Settings Button -->
+      <!-- Admin Only Sheet Setup -->
       <button id="gas-settings-btn" class="hidden px-2.5 py-1.5 bg-navy-100 hover:bg-navy-200 text-navy-700 text-xs font-medium rounded-md border border-navy-300 transition flex items-center space-x-1.5" title="Google Sheet Webhook Settings">
         <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
         </svg>
-        <span>Sheet Sync</span>
+        <span>Sheet Setup & Code.gs</span>
       </button>
 
-      <!-- Active User Badge & Logout Button -->
+      <!-- User Status Badge -->
       <div id="user-header-status" class="hidden flex items-center space-x-2 bg-navy-100 border border-navy-200 rounded-lg px-2.5 py-1 text-xs">
         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
         <span id="header-user-display" class="font-medium text-navy-700">Student</span>
@@ -112,10 +102,8 @@
     </div>
   </header>
 
-  <!-- 1. LOGIN GATEWAY MODAL -->
   <div id="login-modal" class="fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
     <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-navy-200 overflow-hidden flex flex-col">
-      <!-- Modal Tabs -->
       <div class="flex border-b border-navy-200 bg-navy-50">
         <button id="tab-btn-student" class="flex-1 py-3.5 text-xs font-bold text-navy-700 border-b-2 border-gold-500 bg-white transition flex items-center justify-center space-x-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
@@ -127,13 +115,12 @@
         </button>
       </div>
 
-      <!-- Student Sign In Form -->
+      <!-- Student Login Form -->
       <div id="tab-content-student" class="p-6 space-y-4">
         <div class="text-center space-y-1">
           <h2 class="text-lg font-bold text-navy-900">Student Sign In</h2>
-          <p class="text-xs text-navy-500">Select your name from the class roster and enter your password.</p>
+          <p class="text-xs text-navy-500">Choose your name and enter your assigned password.</p>
         </div>
-
         <div class="space-y-3">
           <div>
             <label class="block text-xs font-semibold text-navy-700 mb-1">Select Your Name</label>
@@ -141,21 +128,17 @@
               <option value="">-- Choose your name --</option>
             </select>
           </div>
-
           <div id="student-class-display-box" class="hidden p-2.5 bg-navy-50/70 border border-navy-100 rounded-lg text-xs flex justify-between items-center text-navy-900">
             <span class="font-medium">Class: <strong id="student-class-label"></strong></span>
             <span class="text-navy-500 text-[11px]">ID: <span id="student-id-label" class="font-mono"></span></span>
           </div>
-
           <div>
             <label class="block text-xs font-semibold text-navy-700 mb-1">Password</label>
             <input type="password" id="login-student-pass" placeholder="Enter assigned password" class="w-full text-xs py-2.5 px-3 bg-navy-50 border border-navy-300 rounded-lg focus:bg-white focus:border-navy-600 focus:outline-none">
           </div>
-
           <div id="student-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
             Incorrect password or student ID not found.
           </div>
-
           <button id="student-login-submit" class="w-full py-2.5 bg-navy-600 hover:bg-navy-700 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center space-x-2">
             <span id="student-login-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             <span id="student-login-btn-text">Begin Practice Task</span>
@@ -163,28 +146,24 @@
         </div>
       </div>
 
-      <!-- Admin Sign In Form -->
+      <!-- Admin Login Form -->
       <div id="tab-content-admin" class="hidden p-6 space-y-4">
         <div class="text-center space-y-1">
           <h2 class="text-lg font-bold text-navy-900">Teacher / Admin Sign In</h2>
-          <p class="text-xs text-navy-500">Access verified via your account and role in the Google Sheet.</p>
+          <p class="text-xs text-navy-500">Access verified via your account in the Google Sheet.</p>
         </div>
-
         <div class="space-y-3">
           <div>
             <label class="block text-xs font-semibold text-navy-700 mb-1">Admin Username or User ID</label>
             <input type="text" id="login-admin-user" placeholder="e.g. ADM-001 or Teacher Admin" class="w-full text-xs py-2 px-3 bg-navy-50 border border-navy-300 rounded-lg focus:bg-white focus:border-navy-600 focus:outline-none">
           </div>
-
           <div>
             <label class="block text-xs font-semibold text-navy-700 mb-1">Admin Password</label>
-            <input type="password" id="login-admin-pass" placeholder="Enter password" class="w-full text-xs py-2 px-3 bg-navy-50 border border-navy-300 rounded-lg focus:bg-white focus:border-navy-600 focus:outline-none">
+            <input type="password" id="login-admin-pass" placeholder="Enter password (default: admin123)" class="w-full text-xs py-2 px-3 bg-navy-50 border border-navy-300 rounded-lg focus:bg-white focus:border-navy-600 focus:outline-none">
           </div>
-
           <div id="admin-login-error" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
             Invalid credentials or unauthorized role.
           </div>
-
           <button id="admin-login-submit" class="w-full py-2.5 bg-navy-900 hover:bg-navy-800 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center space-x-2">
             <span id="admin-login-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             <span id="admin-login-btn-text">Verify & Open Portal</span>
@@ -198,25 +177,42 @@
     </div>
   </div>
 
-  <!-- 2. STUDENT EXAM WORKSPACE (DUAL-PANE) -->
   <main id="exam-workspace" class="hidden flex-1 flex flex-col overflow-hidden">
-    <!-- Sub-header Bar: Exercise selector & Tools -->
-    <div class="bg-white border-b border-navy-200 px-6 py-2 flex items-center justify-between shrink-0 text-xs">
+    <!-- Preview Mode Teacher Alert Banner -->
+    <div id="preview-mode-banner" class="hidden bg-emerald-600 text-white px-4 py-2 flex items-center justify-between text-xs font-semibold shadow-xs shrink-0 z-30">
+      <div class="flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+        <span>Student View Preview Mode: <span id="preview-task-name" class="font-bold underline"></span></span>
+        <span class="text-emerald-100 text-[11px] font-normal hidden sm:inline">(Submitting here tests auto-scoring without saving homework records)</span>
+      </div>
+      <button id="btn-exit-preview" class="px-3 py-1 bg-white text-emerald-800 rounded-md font-bold text-xs hover:bg-emerald-50 transition shadow-xs flex items-center space-x-1">
+        <span>✕ Exit Preview & Return to Admin</span>
+      </button>
+    </div>
+
+    <!-- Sub-header: Task Switcher, Exam Fonts, Size & Highlight -->
+    <div class="bg-white border-b border-navy-200 px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-2 shrink-0 text-xs">
       <div class="flex items-center space-x-3">
         <label class="font-semibold text-navy-600">Active Task:</label>
-        <select id="exercise-switcher" class="bg-navy-50 border border-navy-300 rounded px-2.5 py-1 text-xs font-medium text-navy-800 focus:outline-none focus:border-navy-500">
-          <option value="ex1">Exercise 1: Fruit bats (Reading Comprehension)</option>
-          <option value="ex2">Exercise 2: Pocket Money (Multiple Matching)</option>
+        <select id="exercise-switcher" class="bg-navy-50 border border-navy-300 rounded px-2.5 py-1 text-xs font-medium text-navy-800 focus:outline-none focus:border-navy-500 max-w-[320px] sm:max-w-md truncate">
         </select>
       </div>
 
-      <!-- Passage Tools -->
       <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-1.5 bg-navy-50 border border-navy-200 px-2 py-1 rounded">
+          <label class="text-[11px] font-semibold text-navy-600">Exam Font:</label>
+          <select id="exam-font-select" class="bg-white border border-navy-300 rounded px-1.5 py-0.5 text-xs text-navy-800 focus:outline-none focus:border-navy-500">
+            <option value="font-instrument">1. Instrument Serif (Official Cambridge)</option>
+            <option value="font-merriweather">2. Merriweather (Book Serif)</option>
+            <option value="font-opensans">3. Open Sans (Modern Clean)</option>
+            <option value="font-jetbrains">4. JetBrains Mono (Technical)</option>
+          </select>
+        </div>
         <button id="btn-font-dec" class="px-2 py-1 bg-navy-100 hover:bg-navy-200 rounded border border-navy-300 font-bold text-navy-700" title="Decrease Font">A-</button>
         <button id="btn-font-inc" class="px-2 py-1 bg-navy-100 hover:bg-navy-200 rounded border border-navy-300 font-bold text-navy-700" title="Increase Font">A+</button>
         <button id="btn-highlight-toggle" class="px-2.5 py-1 bg-gold-50 hover:bg-gold-100 border border-gold-200 text-gold-900 rounded font-medium transition flex items-center space-x-1">
           <span class="w-2.5 h-2.5 rounded-full bg-gold-400"></span>
-          <span>Highlight Text</span>
+          <span>Highlight</span>
         </button>
       </div>
     </div>
@@ -229,17 +225,13 @@
           <span class="text-xs font-bold uppercase tracking-wider text-navy-600" id="passage-label">Reading Text</span>
           <span class="text-[11px] text-navy-500 font-medium">Select and copy text freely to paste answers</span>
         </div>
-
-        <!-- Passage Text Content -->
-        <div id="passage-container" class="flex-1 p-6 md:p-8 overflow-y-auto font-serif text-navy-800 leading-relaxed space-y-4 text-justify select-text cursor-text" style="font-size: 18px;">
-          <!-- Injected dynamically based on active exercise -->
+        <div id="passage-container" class="flex-1 p-6 md:p-8 overflow-y-auto font-instrument text-navy-800 leading-relaxed space-y-4 text-justify select-text cursor-text" style="font-size: 18px;">
         </div>
       </div>
 
       <!-- RIGHT PANE: Question Area & Navigation -->
       <div class="w-1/2 bg-navy-50 flex flex-col overflow-hidden">
-        
-        <!-- Question Review List (Direct Navigation matching user design) -->
+        <!-- Question Review List -->
         <div class="p-4 bg-white border-b border-navy-200 shrink-0">
           <div class="bg-white border border-navy-200/90 rounded-xl p-3.5 shadow-2xs space-y-3">
             <div class="flex items-center justify-between">
@@ -247,15 +239,10 @@
                 <h3 class="text-xs font-bold text-navy-800 tracking-tight">Question Review List</h3>
                 <p class="text-[10px] text-navy-500">Jump directly to any question or mark review</p>
               </div>
-              <button id="review-list-toggle" class="text-navy-400 hover:text-navy-700 text-xs p-1" title="Toggle Compact View">✕</button>
+              <span class="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-medium">Order-Independent Auto-Check Active</span>
             </div>
-
-            <!-- Numbered Button Bar -->
             <div id="review-boxes-container" class="flex items-center gap-2 overflow-x-auto py-1">
-              <!-- Rendered dynamically -->
             </div>
-
-            <!-- Legend & Done Button -->
             <div class="flex items-center justify-between pt-1 border-t border-navy-100 text-[11px] text-navy-500">
               <div class="flex items-center space-x-3">
                 <span class="flex items-center space-x-1">
@@ -279,7 +266,6 @@
         <!-- Question Viewport -->
         <div class="flex-1 p-6 overflow-y-auto flex flex-col justify-between">
           <div class="space-y-4">
-            <!-- Question Meta Header -->
             <div class="flex items-center justify-between">
               <span id="question-index-label" class="text-xs font-bold uppercase tracking-wider text-navy-500">Question 1 of 6</span>
               <div class="flex items-center space-x-2">
@@ -291,23 +277,18 @@
               </div>
             </div>
 
-            <!-- Question Prompt Title -->
             <div id="question-prompt" class="text-base font-bold text-navy-900 leading-snug">
-              <!-- Prompt inserted dynamically -->
             </div>
 
-            <!-- Question Input Area -->
             <div id="question-input-container" class="pt-2">
-              <!-- Free response textarea or radio cards injected here -->
             </div>
           </div>
 
-          <!-- Question Footer Navigation Buttons -->
+          <!-- Footer Buttons -->
           <div class="pt-6 border-t border-navy-200 flex items-center justify-between shrink-0">
             <button id="btn-prev-question" class="px-4 py-2 bg-white border border-navy-300 rounded-lg text-xs font-semibold text-navy-700 hover:bg-navy-50 transition shadow-2xs">
               ← Previous
             </button>
-            
             <div class="flex items-center space-x-2">
               <button id="btn-next-question" class="px-5 py-2 bg-navy-600 hover:bg-navy-700 text-white rounded-lg text-xs font-bold transition shadow-xs">
                 Next →
@@ -322,16 +303,24 @@
     </div>
   </main>
 
-  <!-- 3. TEACHER / ADMIN DASHBOARD -->
   <main id="admin-workspace" class="hidden flex-1 p-6 overflow-y-auto bg-navy-50">
-    <div class="max-w-6xl mx-auto space-y-6">
-      <!-- Admin Top Bar -->
-      <div class="bg-white p-5 rounded-xl border border-navy-200 shadow-2xs flex items-center justify-between">
+    <div class="max-w-7xl mx-auto space-y-6">
+      <!-- Admin Bar -->
+      <div class="bg-white p-5 rounded-xl border border-navy-200 shadow-2xs flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 class="text-base font-bold text-navy-800">Teacher Management Console</h2>
-          <p class="text-xs text-navy-500">Manage student roster, verify logins, and review graded homework submissions.</p>
+          <p class="text-xs text-navy-500">Manage tasks repository with one-click JSON import, student roster, and submissions.</p>
         </div>
         <div class="flex items-center space-x-2">
+          <!-- Upload / Import JSON Button -->
+          <button id="admin-upload-json-btn" class="px-3 py-2 bg-navy-800 hover:bg-navy-900 text-white text-xs font-bold rounded-lg transition shadow-2xs flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-gold-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+            <span>📥 Upload / Import JSON</span>
+          </button>
+          <button id="admin-add-task-btn" class="px-3 py-2 bg-gold-50 hover:bg-gold-100 text-gold-900 border border-gold-300 text-xs font-bold rounded-lg transition shadow-2xs flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-gold-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ Manual Task Form</span>
+          </button>
           <button id="admin-sync-btn" class="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 text-xs font-semibold rounded-lg transition flex items-center space-x-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
             <span>Sync Sheet</span>
@@ -341,7 +330,7 @@
             <span>Add User</span>
           </button>
           <button id="admin-gas-btn" class="px-3 py-2 bg-navy-100 hover:bg-navy-200 text-navy-700 border border-navy-300 text-xs font-semibold rounded-lg transition">
-            Sheet Setup
+            Sheet Setup & Code.gs
           </button>
         </div>
       </div>
@@ -351,29 +340,32 @@
         <button id="admin-tab-subs" class="py-2.5 px-3 text-xs font-bold text-navy-700 border-b-2 border-gold-500 transition">
           Submissions & Grading Review
         </button>
+        <button id="admin-tab-tasks" class="py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition">
+          Exam Tasks Repository (Edit / Delete / Preview)
+        </button>
         <button id="admin-tab-users" class="py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition">
           User & Student Roster
         </button>
       </div>
 
-      <!-- Submissions Review Panel -->
+      <!-- Submissions Table -->
       <div id="admin-panel-subs" class="bg-white rounded-xl border border-navy-200 shadow-2xs overflow-hidden">
         <div class="px-5 py-3 border-b border-navy-100 flex items-center justify-between">
           <span class="text-xs font-bold text-navy-700 uppercase tracking-wider">Homework Submissions</span>
           <span id="sub-count-badge" class="text-[11px] bg-navy-100 text-navy-600 px-2 py-0.5 rounded-full font-semibold">0 records</span>
         </div>
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
+          <table class="w-full text-left text-xs min-w-[700px]">
             <thead class="bg-navy-50 border-b border-navy-200 text-navy-600 font-semibold">
               <tr>
-                <th class="py-3 px-4">Student Name</th>
-                <th class="py-3 px-4">Class</th>
-                <th class="py-3 px-4">Exercise</th>
-                <th class="py-3 px-4">Auto Score</th>
-                <th class="py-3 px-4">Final Score</th>
-                <th class="py-3 px-4">Status</th>
-                <th class="py-3 px-4">Date</th>
-                <th class="py-3 px-4 text-right">Action</th>
+                <th class="py-3 px-4 whitespace-nowrap">Student Name</th>
+                <th class="py-3 px-4 whitespace-nowrap">Class</th>
+                <th class="py-3 px-4 whitespace-nowrap">Exercise / Task</th>
+                <th class="py-3 px-4 whitespace-nowrap">Auto Score</th>
+                <th class="py-3 px-4 whitespace-nowrap">Final Score</th>
+                <th class="py-3 px-4 whitespace-nowrap">Status</th>
+                <th class="py-3 px-4 whitespace-nowrap">Date</th>
+                <th class="py-3 px-4 whitespace-nowrap text-right">Action</th>
               </tr>
             </thead>
             <tbody id="admin-subs-tbody" class="divide-y divide-navy-100">
@@ -385,26 +377,63 @@
         </div>
       </div>
 
-      <!-- User Roster Panel -->
+      <div id="admin-panel-tasks" class="hidden bg-white rounded-xl border border-navy-200 shadow-2xs overflow-hidden">
+        <div class="px-5 py-3 border-b border-navy-100 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <span class="text-xs font-bold text-navy-700 uppercase tracking-wider">Configured Reading Tasks</span>
+            <p class="text-[11px] text-navy-500">Auto-numbered Task 1, Task 2, etc. Import JSON, preview student view, or edit.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button id="btn-upload-json-tab" class="px-3 py-1.5 bg-navy-800 hover:bg-navy-900 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1.5 shadow-2xs">
+              <svg class="w-3.5 h-3.5 text-gold-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+              <span>📥 Upload / Import JSON</span>
+            </button>
+            <button id="btn-export-json-tab" class="px-3 py-1.5 bg-navy-100 hover:bg-navy-200 text-navy-700 border border-navy-300 rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow-2xs" title="Export all tasks as backup JSON">
+              <span>📤 Export Tasks</span>
+            </button>
+            <button id="btn-add-task-from-tab" class="px-3 py-1.5 bg-gold-50 hover:bg-gold-100 text-gold-900 border border-gold-300 rounded-lg text-xs font-bold transition shadow-2xs">
+              + New Task Form
+            </button>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs min-w-[980px]">
+            <thead class="bg-navy-50 border-b border-navy-200 text-navy-600 font-semibold">
+              <tr>
+                <th class="py-3 px-4 whitespace-nowrap">Task Label</th>
+                <th class="py-3 px-4 whitespace-nowrap">Title</th>
+                <th class="py-3 px-4 whitespace-nowrap">Syllabus Ref</th>
+                <th class="py-3 px-4 whitespace-nowrap">Type</th>
+                <th class="py-3 px-4 whitespace-nowrap text-center">Questions</th>
+                <th class="py-3 px-4 whitespace-nowrap text-center">Total Marks</th>
+                <th class="py-3 px-4 whitespace-nowrap text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-tasks-tbody" class="divide-y divide-navy-100">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- User Roster Table -->
       <div id="admin-panel-users" class="hidden bg-white rounded-xl border border-navy-200 shadow-2xs overflow-hidden">
         <div class="px-5 py-3 border-b border-navy-100 flex items-center justify-between">
           <span class="text-xs font-bold text-navy-700 uppercase tracking-wider">Registered Accounts</span>
           <span id="roster-count-badge" class="text-[11px] bg-navy-100 text-navy-600 px-2 py-0.5 rounded-full font-semibold">0 users</span>
         </div>
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
+          <table class="w-full text-left text-xs min-w-[700px]">
             <thead class="bg-navy-50 border-b border-navy-200 text-navy-600 font-semibold">
               <tr>
-                <th class="py-3 px-4">User ID</th>
-                <th class="py-3 px-4">Full Name</th>
-                <th class="py-3 px-4">Role</th>
-                <th class="py-3 px-4">Class</th>
-                <th class="py-3 px-4">Password</th>
-                <th class="py-3 px-4">Date Added</th>
+                <th class="py-3 px-4 whitespace-nowrap">User ID</th>
+                <th class="py-3 px-4 whitespace-nowrap">Full Name</th>
+                <th class="py-3 px-4 whitespace-nowrap">Role</th>
+                <th class="py-3 px-4 whitespace-nowrap">Class</th>
+                <th class="py-3 px-4 whitespace-nowrap">Password</th>
+                <th class="py-3 px-4 whitespace-nowrap">Date Added</th>
               </tr>
             </thead>
             <tbody id="admin-roster-tbody" class="divide-y divide-navy-100">
-              <!-- User rows injected dynamically -->
             </tbody>
           </table>
         </div>
@@ -412,26 +441,192 @@
     </div>
   </main>
 
-  <!-- 4. SUBMISSION & SAVING PROGRESS LOADING MODAL -->
-  <div id="submission-loading-modal" class="hidden fixed inset-0 bg-navy-900/75 backdrop-blur-xs flex items-center justify-center p-4 z-[100]">
-    <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-navy-200 p-6 text-center space-y-4">
-      <div class="w-14 h-14 mx-auto border-4 border-navy-200 border-t-navy-600 rounded-full animate-spin"></div>
-      <div class="space-y-1">
-        <h3 class="text-base font-bold text-navy-900" id="loading-modal-title">Submitting Homework...</h3>
-        <p class="text-xs text-navy-600 leading-relaxed" id="loading-modal-desc">
-          Please wait while your answers and grading data sync to the Google Sheet. Do not refresh or close this page.
-        </p>
+  <div id="quick-json-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-2xl w-full max-h-[90vh] rounded-2xl shadow-2xl border border-navy-200 flex flex-col overflow-hidden">
+      <div class="px-6 py-4 border-b border-navy-200 bg-navy-50 flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="text-sm font-bold text-navy-800">Upload or Import Reading Task JSON</h3>
+          <p class="text-xs text-navy-500">Upload a <code class="bg-navy-100 px-1 rounded font-mono">.json</code> file or paste task JSON provided in chat.</p>
+        </div>
+        <button id="close-quick-json" class="text-navy-400 hover:text-navy-700 font-bold p-1">✕</button>
       </div>
-      <div class="w-full bg-navy-100 rounded-full h-1.5 overflow-hidden">
-        <div class="bg-navy-600 h-1.5 rounded-full animate-pulse w-3/4"></div>
+
+      <div class="p-6 overflow-y-auto space-y-4 flex-1 text-xs">
+        <div>
+          <label class="block font-semibold text-navy-700 mb-1.5">Option 1: Upload .json File</label>
+          <input type="file" id="json-file-input" accept=".json,application/json" class="w-full p-2 border border-navy-300 rounded-lg text-xs bg-navy-50/50">
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="font-semibold text-navy-700">Option 2: Or Paste Task JSON Content Directly</label>
+            <button id="btn-load-sample-json" type="button" class="text-[11px] text-navy-600 hover:text-navy-900 font-bold underline">Load Sample Structure</button>
+          </div>
+          <textarea id="quick-json-textarea" rows="11" placeholder='{\n  "title": "My Reading Practice",\n  "exerciseType": "Exercise 1",\n  "syllabus": "0510/11/O/N/24",\n  "passageContent": "<p>Passage text...</p>",\n  "questions": [...]\n}' class="w-full p-3 font-mono text-[11px] border border-navy-300 rounded-lg focus:outline-none focus:border-navy-600 text-navy-800 bg-navy-50/30 leading-relaxed"></textarea>
+        </div>
+
+        <div id="quick-json-status" class="hidden text-xs p-2.5 rounded-lg"></div>
+      </div>
+
+      <div class="px-6 py-3 border-t border-navy-200 bg-navy-50 flex items-center justify-between shrink-0">
+        <span class="text-[11px] text-navy-500">Tasks are automatically numbered and saved to your Google Sheet.</span>
+        <div class="flex space-x-2">
+          <button id="btn-cancel-quick-json" class="px-4 py-2 bg-navy-100 hover:bg-navy-200 text-navy-700 font-bold rounded-lg">Cancel</button>
+          <button id="btn-confirm-quick-json" class="px-5 py-2 bg-navy-800 hover:bg-navy-900 text-white font-bold rounded-lg shadow-xs flex items-center space-x-1.5">
+            <span>Import & Add Task</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- 5. TEACHER REVIEW & MARKING MODAL (With Per-Question Scoring) -->
+  <div id="task-editor-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-4xl w-full max-h-[92vh] rounded-2xl shadow-2xl border border-navy-200 flex flex-col overflow-hidden">
+      <div class="px-6 py-4 border-b border-navy-200 bg-navy-50 flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="text-sm font-bold text-navy-800" id="task-editor-modal-title">Add / Edit Reading Task</h3>
+          <p class="text-xs text-navy-500">Select exercise template or edit passage and questions manually.</p>
+        </div>
+        <button id="close-task-editor" class="text-navy-400 hover:text-navy-700 font-bold p-1">✕</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 flex-1 text-xs">
+        <!-- Exercise Template Selection -->
+        <div class="p-4 bg-gold-50/70 border border-gold-200 rounded-xl space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-navy-900 text-xs flex items-center space-x-1.5">
+              <span class="w-2 h-2 rounded-full bg-gold-500"></span>
+              <span>1. Choose Cambridge Exercise Format Template:</span>
+            </label>
+            <span class="text-[11px] text-gold-900 font-mono font-bold" id="auto-task-preview-label">Next: Task 5: Exercise 1</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <button type="button" class="btn-template-select p-2.5 rounded-lg border text-left transition border-gold-500 bg-gold-50/90 ring-1 ring-gold-400" data-type="ex1">
+              <div class="font-bold text-navy-900 text-[11px]">Exercise 1</div>
+              <div class="text-[10px] text-navy-500">Short answers + Note detail factor (8 marks)</div>
+            </button>
+            <button type="button" class="btn-template-select p-2.5 rounded-lg border text-left transition border-navy-300 bg-white hover:border-navy-600" data-type="ex2">
+              <div class="font-bold text-navy-900 text-[11px]">Exercise 2</div>
+              <div class="text-[10px] text-navy-500">Multiple Matching A/B/C/D (9 marks)</div>
+            </button>
+            <button type="button" class="btn-template-select p-2.5 rounded-lg border text-left transition border-navy-300 bg-white hover:border-navy-600" data-type="ex3">
+              <div class="font-bold text-navy-900 text-[11px]">Exercise 3</div>
+              <div class="text-[10px] text-navy-500">Note-Taking (3 & 4 boxes, 7 marks)</div>
+            </button>
+            <button type="button" class="btn-template-select p-2.5 rounded-lg border text-left transition border-navy-300 bg-white hover:border-navy-600" data-type="ex4">
+              <div class="font-bold text-navy-900 text-[11px]">Exercise 4</div>
+              <div class="text-[10px] text-navy-500">6 Multiple Choice Questions A/B/C (6 marks)</div>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-semibold text-navy-700 mb-1">Task Auto-Label</label>
+            <input type="text" id="task-edit-id" placeholder="e.g. Task 5: Exercise 1" class="w-full p-2 border border-navy-300 rounded font-semibold text-navy-800">
+          </div>
+          <div>
+            <label class="block font-semibold text-navy-700 mb-1">Exercise Title</label>
+            <input type="text" id="task-edit-title" placeholder="e.g. Fruit bats" class="w-full p-2 border border-navy-300 rounded text-navy-800">
+          </div>
+          <div>
+            <label class="block font-semibold text-navy-700 mb-1">Syllabus Reference</label>
+            <input type="text" id="task-edit-syllabus" placeholder="e.g. 0510/13/O/N/24" class="w-full p-2 border border-navy-300 rounded font-mono text-navy-800">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-navy-700 mb-1">Reading Passage (Clean HTML paragraphs)</label>
+          <textarea id="task-edit-passage" rows="6" placeholder="<p>Paragraph 1...</p>\n<p>Paragraph 2...</p>" class="w-full p-3 border border-navy-300 rounded font-serif text-sm"></textarea>
+        </div>
+
+        <!-- Questions Dynamic Builder -->
+        <div class="space-y-3 pt-2 border-t border-navy-200">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-navy-800 text-sm">Questions & Mark Schemes</span>
+            <button id="btn-add-question-row" type="button" class="px-2.5 py-1 bg-navy-100 hover:bg-navy-200 text-navy-800 rounded font-bold">
+              + Add Question
+            </button>
+          </div>
+          <div id="task-questions-list" class="space-y-3">
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-navy-200 bg-navy-50 flex items-center justify-between shrink-0">
+        <span class="text-xs text-navy-500 font-semibold" id="task-editor-calc-total">Total Questions: 0 • Total Marks: 0</span>
+        <div class="flex space-x-2">
+          <button id="btn-cancel-task-edit" class="px-4 py-2 bg-navy-100 hover:bg-navy-200 text-navy-700 font-bold rounded">Cancel</button>
+          <button id="btn-save-task" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded shadow-xs">Save Task to System & Sheet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="gas-settings-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-2xl w-full max-h-[90vh] rounded-2xl shadow-2xl border border-navy-200 flex flex-col overflow-hidden">
+      <div class="px-6 py-4 border-b border-navy-200 bg-navy-50 flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="text-sm font-bold text-navy-800">Google Sheet Setup & Code.gs Backend</h3>
+          <p class="text-xs text-navy-500">Cross-device permanent sync via Apps Script Web App</p>
+        </div>
+        <button id="close-gas-settings" class="text-navy-400 hover:text-navy-700 font-bold p-1">✕</button>
+      </div>
+
+      <div class="flex border-b border-navy-200 bg-navy-50 shrink-0">
+        <button id="tab-btn-gas-url" class="flex-1 py-2.5 text-xs font-bold text-navy-800 border-b-2 border-gold-500 bg-white">
+          Web App URL & Sync
+        </button>
+        <button id="tab-btn-gas-code" class="flex-1 py-2.5 text-xs font-bold text-navy-500 hover:text-navy-800 bg-navy-50">
+          View Code.gs Script
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 flex-1 text-xs">
+        <div id="gas-tab-content-url" class="space-y-3">
+          <div>
+            <label class="block font-semibold text-navy-700 mb-1">Google Apps Script Web App URL</label>
+            <input type="text" id="gas-url-input" class="w-full p-2.5 border border-navy-300 rounded font-mono text-[11px] focus:outline-none focus:border-navy-600 text-navy-800">
+            <p class="text-[11px] text-navy-500 mt-1">
+              When saved, this URL is saved locally and synced to the Sheet's <code class="bg-navy-100 px-1 rounded">Settings</code> tab so all connected PCs sync seamlessly.
+            </p>
+          </div>
+          <div>
+            <label class="block font-semibold text-navy-700 mb-1">Google Sheet Gemini API Key (Optional)</label>
+            <input type="password" id="gas-gemini-key-input" placeholder="AIzaSy... (Stored in Sheet Settings tab)" class="w-full p-2.5 border border-navy-300 rounded font-mono text-[11px] focus:outline-none focus:border-navy-600 text-navy-800">
+            <p class="text-[11px] text-navy-500 mt-1">
+              Stored in your Sheet's <code class="bg-navy-100 px-1 rounded">Settings</code> tab and automatically loaded on any classroom computer.
+            </p>
+          </div>
+          <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-900 space-y-1">
+            <p class="font-bold">Permanent Cross-Device Share Link:</p>
+            <p class="text-[11px] text-emerald-800">Use this pre-configured URL on any other classroom computer:</p>
+            <input type="text" id="gas-share-link" readonly class="w-full p-1.5 bg-white border border-emerald-300 rounded font-mono text-[10px] text-emerald-950 select-all">
+          </div>
+        </div>
+
+        <div id="gas-tab-content-code" class="hidden space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-navy-800">Google Apps Script (<code class="text-navy-600">Code.gs</code>)</span>
+            <button id="btn-copy-codegs" class="px-2.5 py-1 bg-navy-600 hover:bg-navy-700 text-white rounded text-xs font-semibold flex items-center space-x-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              <span>Copy Code</span>
+            </button>
+          </div>
+          <pre id="codegs-source-display" class="p-3 bg-navy-900 text-gold-200 font-mono text-[10px] rounded-lg overflow-x-auto max-h-72 select-all leading-relaxed whitespace-pre"></pre>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 border-t border-navy-200 bg-navy-50 flex justify-end space-x-2 shrink-0">
+        <button id="save-gas-url-btn" class="px-5 py-2 bg-navy-600 hover:bg-navy-700 text-white font-bold rounded text-xs">
+          Save Settings & Sync
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="grading-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
     <div class="bg-white max-w-3xl w-full max-h-[90vh] rounded-2xl shadow-2xl border border-navy-200 flex flex-col overflow-hidden">
-      <!-- Modal Header -->
       <div class="px-6 py-4 border-b border-navy-200 bg-navy-50 flex items-center justify-between shrink-0">
         <div>
           <h3 class="text-sm font-bold text-navy-800" id="grade-modal-title">Review Submission</h3>
@@ -439,13 +634,7 @@
         </div>
         <button id="close-grading-modal" class="text-navy-400 hover:text-navy-700 font-bold p-1">✕</button>
       </div>
-
-      <!-- Modal Body (Questions & Student Answers) -->
-      <div class="p-6 overflow-y-auto space-y-4 flex-1" id="grade-modal-answers">
-        <!-- Question review cards injected here with per-question score inputs -->
-      </div>
-
-      <!-- Modal Footer (Total Marks & Feedback) -->
+      <div class="p-6 overflow-y-auto space-y-4 flex-1" id="grade-modal-answers"></div>
       <div class="px-6 py-4 border-t border-navy-200 bg-navy-50 shrink-0 space-y-3">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
@@ -453,16 +642,12 @@
             <input type="number" id="grade-modal-final-input" class="w-16 px-2 py-1 bg-white border border-navy-300 rounded font-bold text-navy-700 text-center text-xs focus:outline-none focus:border-navy-500" min="0" step="0.5">
             <span class="text-xs text-navy-500 font-medium" id="grade-modal-max-label">/ 8 marks</span>
           </div>
-          <div class="text-[11px] text-navy-500 italic">
-            Score recalculates automatically when question points are edited above.
-          </div>
+          <div class="text-[11px] text-navy-500 italic">Score recalculates automatically when points are edited above.</div>
         </div>
-
         <div>
           <label class="block text-xs font-semibold text-navy-700 mb-1">Teacher Feedback / Notes</label>
           <textarea id="grade-modal-feedback" rows="2" placeholder="Write feedback visible in the Google Sheet and student record..." class="w-full text-xs p-2.5 bg-white border border-navy-300 rounded-lg focus:outline-none focus:border-navy-500"></textarea>
         </div>
-
         <div class="flex items-center justify-end space-x-2 pt-1">
           <button id="save-final-grade-btn" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-xs flex items-center space-x-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -473,7 +658,58 @@
     </div>
   </div>
 
-  <!-- 6. ADD USER MODAL -->
+  <div id="confirm-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-[110]">
+    <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-navy-200 p-6 space-y-4">
+      <h3 class="text-sm font-bold text-navy-900" id="confirm-modal-title">Confirm Action</h3>
+      <p class="text-xs text-navy-600" id="confirm-modal-message">Are you sure?</p>
+      <div class="flex justify-end space-x-2 pt-2">
+        <button id="confirm-modal-cancel" class="px-3 py-1.5 bg-navy-100 hover:bg-navy-200 text-navy-700 rounded text-xs font-bold">Cancel</button>
+        <button id="confirm-modal-ok" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-xs font-bold">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="submission-loading-modal" class="hidden fixed inset-0 bg-navy-900/75 backdrop-blur-xs flex items-center justify-center p-4 z-[100]">
+    <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-navy-200 p-6 text-center space-y-4">
+      <div class="w-14 h-14 mx-auto border-4 border-navy-200 border-t-navy-600 rounded-full animate-spin"></div>
+      <div class="space-y-1">
+        <h3 class="text-base font-bold text-navy-900" id="loading-modal-title">Submitting Homework...</h3>
+        <p class="text-xs text-navy-600 leading-relaxed" id="loading-modal-desc">Please wait while answers sync with the Google Sheet.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="student-result-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-navy-200 p-6 space-y-4 text-center">
+      <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-xl font-bold">✓</div>
+      <h3 class="text-base font-bold text-navy-900">Task Submitted Successfully!</h3>
+      <div class="p-4 bg-navy-50 rounded-xl border border-navy-200 text-xs space-y-1 text-navy-700">
+        <div>Student: <strong id="receipt-student-name"></strong></div>
+        <div>Exercise: <strong id="receipt-exercise-title"></strong></div>
+        <div class="text-navy-700 font-bold text-sm pt-1">Automated Score: <span id="receipt-auto-score"></span></div>
+      </div>
+      <button id="btn-close-receipt" class="w-full py-2.5 bg-navy-900 hover:bg-navy-800 text-white rounded-lg text-xs font-bold transition">
+        Return to Workspace
+      </button>
+    </div>
+  </div>
+
+  <div id="student-grades-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-2xl w-full max-h-[85vh] rounded-2xl shadow-2xl border border-navy-200 flex flex-col overflow-hidden">
+      <div class="px-6 py-4 border-b border-navy-200 bg-navy-50 flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="text-sm font-bold text-navy-800">My Submissions & Graded Tasks</h3>
+          <p class="text-xs text-navy-500" id="student-grades-meta">Student Details</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="refresh-student-grades-btn" class="px-2.5 py-1 bg-white hover:bg-navy-100 text-navy-700 border border-navy-300 rounded text-xs font-semibold">Refresh</button>
+          <button id="close-student-grades-modal" class="text-navy-400 hover:text-navy-700 font-bold p-1">✕</button>
+        </div>
+      </div>
+      <div class="p-6 overflow-y-auto space-y-4 flex-1" id="student-grades-list"></div>
+    </div>
+  </div>
+
   <div id="add-user-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
     <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl border border-navy-200 p-6 space-y-4">
       <div class="flex items-center justify-between border-b border-navy-100 pb-3">
@@ -483,26 +719,26 @@
       <div class="space-y-3 text-xs">
         <div>
           <label class="block font-semibold text-navy-700 mb-1">User ID</label>
-          <input type="text" id="new-user-id" placeholder="e.g. STU-105 or ADM-002" class="w-full p-2 border border-navy-300 rounded-lg focus:outline-none focus:border-navy-600">
+          <input type="text" id="new-user-id" placeholder="e.g. STU-105 or ADM-002" class="w-full p-2 border border-navy-300 rounded-lg">
         </div>
         <div>
           <label class="block font-semibold text-navy-700 mb-1">Full Name</label>
-          <input type="text" id="new-user-name" placeholder="e.g. Sarah Jenkins" class="w-full p-2 border border-navy-300 rounded-lg focus:outline-none focus:border-navy-600">
+          <input type="text" id="new-user-name" placeholder="e.g. Sarah Jenkins" class="w-full p-2 border border-navy-300 rounded-lg">
         </div>
         <div>
           <label class="block font-semibold text-navy-700 mb-1">Account Role</label>
-          <select id="new-user-role" class="w-full p-2 border border-navy-300 rounded-lg focus:outline-none focus:border-navy-600 bg-white">
+          <select id="new-user-role" class="w-full p-2 border border-navy-300 rounded-lg bg-white">
             <option value="student">Student</option>
             <option value="admin">Teacher / Admin</option>
           </select>
         </div>
         <div>
           <label class="block font-semibold text-navy-700 mb-1">Class / Department</label>
-          <input type="text" id="new-user-class" placeholder="e.g. Year 10-A or Staff" class="w-full p-2 border border-navy-300 rounded-lg focus:outline-none focus:border-navy-600">
+          <input type="text" id="new-user-class" placeholder="e.g. Year 10-A or Staff" class="w-full p-2 border border-navy-300 rounded-lg">
         </div>
         <div>
           <label class="block font-semibold text-navy-700 mb-1">Password</label>
-          <input type="text" id="new-user-pass" placeholder="Assign password" class="w-full p-2 border border-navy-300 rounded-lg focus:outline-none focus:border-navy-600">
+          <input type="text" id="new-user-pass" placeholder="Assign password" class="w-full p-2 border border-navy-300 rounded-lg">
         </div>
       </div>
       <button id="btn-confirm-add-user" class="w-full py-2.5 bg-navy-600 hover:bg-navy-700 text-white rounded-lg text-xs font-bold transition shadow-xs">
@@ -511,84 +747,29 @@
     </div>
   </div>
 
-  <!-- 7. GOOGLE SHEET SETTINGS MODAL -->
-  <div id="gas-settings-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-lg w-full rounded-2xl shadow-2xl border border-navy-200 p-6 space-y-4">
-      <div class="flex items-center justify-between border-b border-navy-100 pb-3">
-        <h3 class="text-sm font-bold text-navy-800">Google Sheet Integration Settings</h3>
-        <button id="close-gas-settings" class="text-navy-400 hover:text-navy-700 font-bold">✕</button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block font-semibold text-navy-700 mb-1">Google Apps Script Web App URL</label>
-          <input type="text" id="gas-url-input" class="w-full p-2 border border-navy-300 rounded-lg font-mono text-[11px] focus:outline-none focus:border-navy-600 text-navy-700">
-          <p class="text-[11px] text-navy-500 mt-1">This endpoint handles submissions, student roster sync, and server-side role validation.</p>
-        </div>
-        <div class="p-3 bg-navy-50 border border-navy-200 rounded-lg text-navy-900 text-[11px] space-y-1">
-          <p class="font-bold">✓ Backend Configuration Verified</p>
-          <p>Your Google Apps Script Web App URL is permanently embedded in the application code.</p>
-        </div>
-      </div>
-      <div class="flex justify-end space-x-2">
-        <button id="save-gas-url-btn" class="px-4 py-2 bg-navy-600 hover:bg-navy-700 text-white rounded-lg text-xs font-bold transition">
-          Save Settings
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 8. STUDENT RESULT RECEIPT MODAL -->
-  <div id="student-result-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-navy-200 p-6 space-y-4 text-center">
-      <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-xl font-bold">✓</div>
-      <div class="space-y-1">
-        <h3 class="text-base font-bold text-navy-900">Task Submitted Successfully!</h3>
-        <p class="text-xs text-navy-500">Your answers and marks have been synchronized with your teacher's Google Sheet.</p>
-      </div>
-      <div class="p-4 bg-navy-50 rounded-xl border border-navy-200 text-xs space-y-1 text-navy-700">
-        <div>Student: <strong id="receipt-student-name"></strong></div>
-        <div>Exercise: <strong id="receipt-exercise-title"></strong></div>
-        <div class="text-navy-700 font-bold text-sm pt-1">Automated Score: <span id="receipt-auto-score"></span></div>
-      </div>
-      <button id="btn-close-receipt" class="w-full py-2.5 bg-navy-900 hover:bg-navy-800 text-white rounded-lg text-xs font-bold transition">
-        Return to Dashboard / Log Out
-      </button>
-    </div>
-  </div>
-
-  <!-- 9. STUDENT GRADES & FEEDBACK MODAL -->
-  <div id="student-grades-modal" class="hidden fixed inset-0 bg-navy-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-2xl w-full max-h-[85vh] rounded-2xl shadow-2xl border border-navy-200 flex flex-col overflow-hidden">
-      <!-- Modal Header -->
-      <div class="px-6 py-4 border-b border-navy-200 bg-navy-50 flex items-center justify-between shrink-0">
-        <div>
-          <h3 class="text-sm font-bold text-navy-800">My Submissions & Graded Tasks</h3>
-          <p class="text-xs text-navy-500" id="student-grades-meta">Student Details</p>
-        </div>
-        <div class="flex items-center space-x-2">
-          <button id="refresh-student-grades-btn" class="px-2.5 py-1 bg-white hover:bg-navy-100 text-navy-700 border border-navy-300 rounded text-xs font-semibold transition flex items-center space-x-1">
-            <svg class="w-3 h-3 text-navy-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            <span>Refresh</span>
-          </button>
-          <button id="close-student-grades-modal" class="text-navy-400 hover:text-navy-700 font-bold p-1">✕</button>
-        </div>
-      </div>
-      <!-- Modal Content List -->
-      <div class="p-6 overflow-y-auto space-y-4 flex-1" id="student-grades-list">
-        <!-- Submissions cards injected dynamically -->
-      </div>
-    </div>
-  </div>
-
   <script>
-    /* ==========================================================================
-       EXERCISE DATASETS & MARK SCHEMES (Exercise 1: Fruit bats & Exercise 2)
-       ========================================================================== */
-    const EXERCISES = [
+    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzK1Lqp5zvdBh3KOtSMuTHjGmcCC348Am_92R-L4MPxQa2-KBAYDSLEbslguQhHv2n03g/exec";
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramGasUrl = urlParams.get('webAppUrl');
+    let gasWebhookUrl = paramGasUrl || localStorage.getItem('cambridge_gas_url') || DEFAULT_GAS_URL;
+    if (paramGasUrl) localStorage.setItem('cambridge_gas_url', paramGasUrl);
+
+    let currentUser = null;
+    let activeExerciseIndex = 0;
+    let activeQuestionIndex = 0;
+    let currentFontSize = 18;
+    let activeExamFont = localStorage.getItem('cambridge_exam_font') || 'font-instrument';
+    let currentEditorTemplate = "ex1";
+    let isPreviewMode = false;
+    let sheetGeminiApiKey = "";
+
+    let DEFAULT_EXERCISES = [
       {
-        id: "ex1",
-        number: "Exercise 1",
-        title: "Fruit bats",
+        id: "task1",
+        taskNumber: 1,
+        exerciseType: "Exercise 1",
+        number: "Task 1: Exercise 1",
+        title: "Fruit bats (Comprehension & Short Notes)",
         syllabus: "0510/13/O/N/24",
         totalMarks: 8,
         passageTitle: "Fruit bats",
@@ -601,149 +782,45 @@
         `,
         questions: [
           {
-            id: "q1",
-            number: "Question 1",
-            prompt: "Where in the world do most species of fruit bat live?",
-            marks: 1,
-            type: "text",
-            officialAnswer: "Africa",
-            notes: "Contradictory or extraneous locations (e.g. Asia, America) negate the mark.",
-            validator: (ans) => {
-              const clean = (ans || "").toLowerCase().trim();
-              if (!clean) return { score: 0, feedback: "No response submitted." };
-              if (clean.includes("asia") || clean.includes("america")) {
-                return { score: 0, feedback: "Incorrect: Including contradictory locations (Asia/America) negates the mark." };
-              }
-              if (clean.includes("africa")) {
-                return { score: 1, feedback: "Correct: Africa" };
-              }
-              return { score: 0, feedback: "Incorrect: The text states they are mainly found in Africa." };
-            }
+            id: "q1", number: "Question 1", prompt: "Where in the world do most species of fruit bat live?", marks: 1, type: "text",
+            officialAnswer: "Africa", notes: "Asia/America negates mark.",
+            negates: ["asia", "america"]
           },
           {
-            id: "q2",
-            number: "Question 2",
-            prompt: "Which is the largest type of fruit bat?",
-            marks: 1,
-            type: "text",
-            officialAnswer: "flying fox",
-            notes: "Mentioning spotted-winged bat (the smallest) negates the mark.",
-            validator: (ans) => {
-              const clean = (ans || "").toLowerCase().trim();
-              if (!clean) return { score: 0, feedback: "No response submitted." };
-              if (clean.includes("spotted")) {
-                return { score: 0, feedback: "Incorrect: Mentioning spotted-winged bat negates the mark." };
-              }
-              if (clean.includes("flying fox")) {
-                return { score: 1, feedback: "Correct: Flying fox" };
-              }
-              return { score: 0, feedback: "Incorrect: Expected 'flying fox'." };
-            }
+            id: "q2", number: "Question 2", prompt: "Which is the largest type of fruit bat?", marks: 1, type: "text",
+            officialAnswer: "flying fox", notes: "spotted-winged bat negates.",
+            negates: ["spotted"]
           },
           {
-            id: "q3",
-            number: "Question 3",
-            prompt: "What do fruit bats use to help them find their way in the dark?",
-            marks: 1,
-            type: "text",
-            officialAnswer: "smell",
-            notes: "Mentioning sound/hearing negates the mark.",
-            validator: (ans) => {
-              const clean = (ans || "").toLowerCase().trim();
-              if (!clean) return { score: 0, feedback: "No response submitted." };
-              if (clean.includes("sound") || clean.includes("echolocation") || clean.includes("hearing")) {
-                return { score: 0, feedback: "Incorrect: Fruit bats use smell, whereas other bat species use sound." };
-              }
-              if (clean.includes("smell") || clean.includes("scent")) {
-                return { score: 1, feedback: "Correct: Smell" };
-              }
-              return { score: 0, feedback: "Incorrect: Expected 'smell'." };
-            }
+            id: "q3", number: "Question 3", prompt: "What do fruit bats use to help them find their way in the dark?", marks: 1, type: "text",
+            officialAnswer: "smell / scent", notes: "sound/hearing negates.",
+            negates: ["sound", "hearing", "echolocation"]
           },
           {
-            id: "q4",
-            number: "Question 4",
-            prompt: "Where do the majority of fruit bats tend to spend the daylight hours?",
-            marks: 1,
-            type: "text",
-            officialAnswer: "(in) trees / tree branches",
-            notes: "Mentioning caves, bushes, or buildings negates the mark.",
-            validator: (ans) => {
-              const clean = (ans || "").toLowerCase().trim();
-              if (!clean) return { score: 0, feedback: "No response submitted." };
-              if (clean.includes("cave") || clean.includes("bush") || clean.includes("building")) {
-                return { score: 0, feedback: "Incorrect: More than half are in trees; other locations negate the mark." };
-              }
-              if (clean.includes("tree") || clean.includes("branch")) {
-                return { score: 1, feedback: "Correct: (in) trees / tree branches" };
-              }
-              return { score: 0, feedback: "Incorrect: Expected 'trees' or 'tree branches'." };
-            }
+            id: "q4", number: "Question 4", prompt: "Where do the majority of fruit bats tend to spend the daylight hours?", marks: 1, type: "text",
+            officialAnswer: "(in) trees / tree branches", notes: "caves/bushes/buildings negate.",
+            negates: ["cave", "bush", "building"]
           },
           {
-            id: "q5",
-            number: "Question 5",
-            prompt: "How long do female fruit bats look after their young for?",
-            marks: 1,
-            type: "text",
-            officialAnswer: "(about) (the first) four months",
-            notes: "Mentioning two years or 30 years negates the mark.",
-            validator: (ans) => {
-              const clean = (ans || "").toLowerCase().trim();
-              if (!clean) return { score: 0, feedback: "No response submitted." };
-              if (clean.includes("year") || clean.includes("adult")) {
-                return { score: 0, feedback: "Incorrect: Two years is the adult age; young bats stay for four months." };
-              }
-              if (clean.includes("four month") || clean.includes("4 month")) {
-                return { score: 1, feedback: "Correct: (about) (the first) four months" };
-              }
-              return { score: 0, feedback: "Incorrect: Expected 'four months'." };
-            }
+            id: "q5", number: "Question 5", prompt: "How long do female fruit bats look after their young for?", marks: 1, type: "text",
+            officialAnswer: "(about) (the first) four months", notes: "2 years or 30 years negates."
           },
           {
-            id: "q6",
-            number: "Question 6",
-            prompt: "What factors does the writer say affect fruit bat populations? Give three details.",
-            marks: 3,
-            type: "multi-input",
-            count: 3,
+            id: "q6", number: "Question 6", prompt: "What factors does the writer say affect fruit bat populations? Give three details.", marks: 3, type: "multi-input", count: 3,
             officialAnswer: "1) dangerous animals / rats; 2) availability of (local) food; 3) (humans) clearing land (for farming); 4) climate change",
-            notes: "Award 1 mark per distinct factor (max 3). Duplicate answers receive credit only once.",
-            validator: (inputs) => {
-              if (!Array.isArray(inputs)) inputs = [inputs];
-              const factors = [
-                { id: "animals", matched: false, regex: /rat|dangerous animal|predator/i },
-                { id: "food", matched: false, regex: /food|availability of.*food/i },
-                { id: "land", matched: false, regex: /clear.*land|farming|deforestation|habitat loss/i },
-                { id: "climate", matched: false, regex: /climate|weather/i }
-              ];
-              let score = 0;
-              inputs.forEach(inp => {
-                const text = String(inp || "").trim();
-                for (let f of factors) {
-                  if (!f.matched && f.regex.test(text)) {
-                    f.matched = true;
-                    score++;
-                    break;
-                  }
-                }
-              });
-              score = Math.min(3, score);
-              return {
-                score: score,
-                feedback: `Awarded ${score}/3 marks for ${score} distinct factor(s).`
-              };
-            }
+            notes: "Order does not matter. Award 1 mark per distinct point (max 3)."
           }
         ]
       },
       {
-        id: "ex2",
-        number: "Exercise 2",
-        title: "Pocket Money",
+        id: "task2",
+        taskNumber: 2,
+        exerciseType: "Exercise 2",
+        number: "Task 2: Exercise 2",
+        title: "Pocket Money (Multiple Matching A-D)",
         syllabus: "0510/11/O/N/24",
         totalMarks: 9,
-        passageTitle: "Pocket Money - Activities we did to earn pocket money when we were young",
+        passageTitle: "Pocket Money",
         passageContent: `
           <div class="space-y-4">
             <div class="p-4 bg-navy-50 rounded-xl border border-navy-200">
@@ -775,31 +852,147 @@
           { id: "q7h", number: "Question 7(h)", prompt: "Which person says they learned an important life lesson?", marks: 1, type: "choice", officialAnswer: "A" },
           { id: "q7i", number: "Question 7(i)", prompt: "Which person compares different people's experiences of doing the activity?", marks: 1, type: "choice", officialAnswer: "D" }
         ]
+      },
+      {
+        id: "task3",
+        taskNumber: 3,
+        exerciseType: "Exercise 3",
+        number: "Task 3: Exercise 3",
+        title: "Virtual museum tours! (Note-taking)",
+        syllabus: "0510/11/O/N/24",
+        totalMarks: 7,
+        passageTitle: "Virtual museum tours!",
+        passageContent: `
+          <p class="font-bold text-navy-900 mb-2">'Visiting' a museum online – Melissa Jackson learns more about the planning behind an online tour</p>
+          <p>For some people, a visit to a large city isn't complete without a trip to an important museum. And now, with the advances in technology that we see happening around us, many of these institutions are providing online tours to show off their precious items. For people who log on to explore what's on offer, the fact that there's no need to wait in a queue to see a famous painting or important object is a real plus! Often, when you are inside a museum, it's almost guaranteed that when you get to the room where a well-known painting or item is located, it's so crowded that you feel that everyone is in the same room as you. However, if you're exploring the museum via the internet, no-one blocks your view.</p>
+          <p>Creating a successful online tour isn't always easy, as I discovered when I spoke to Alex Bartoni, an experienced designer of virtual tours. He explained that above all it's vital to think carefully about the target audience. Is the museum hoping to attract academic people researching detailed information, or is it aiming for a younger audience needing to complete a homework project? Nowadays, many museums offer different online tours which are suitable for a range of interests. One tour might focus purely on clothing from South America from hundreds of years ago, another on modern-day glassware and yet another on the development of Japanese anime – it depends on the museum.</p>
+          <p>Whatever the reason behind people's decision to take a virtual tour, it is essential to ensure that all the information is accurate, Alex pointed out. If it is not, it could have a very negative effect on the museum's reputation and on the user experience. He continued, 'Even simple things such as viewing a sculpture online can be improved by making sure you take photographs of an item from all sides.'</p>
+          <p>I asked Alex what is important in terms of how information is presented on a virtual tour, and I discovered that it's important to avoid having too many details on the screen. This is because many people can become discouraged when faced with too much written information at once, and won't continue with the tour. Some people prefer listening to information rather than reading it, so taking the time to add audio descriptions of objects is worthwhile and will be very helpful, explained Alex.</p>
+          <p>Having been on several virtual tours of museums myself, and while researching this article, I've realised that another really popular feature is that you are able to access links to extra information about objects you're interested in.</p>
+          <p>If you've never thought about trying a virtual museum tour before, maybe now's the time!</p>
+        `,
+        questions: [
+          {
+            id: "q8",
+            number: "Question 8",
+            prompt: "Reasons why people go on a virtual tour of a museum:",
+            marks: 3,
+            type: "multi-input",
+            count: 3,
+            officialAnswer: "1) no queue / no (need to) wait; 2) no-one blocks view; 3) not crowded; 4) suitable for range of interests / tours for range of interests; 5) (access) links to extra information",
+            notes: "Make short notes under each heading. Give 3 distinct points (1 mark each). Order does not matter."
+          },
+          {
+            id: "q9",
+            number: "Question 9",
+            prompt: "Advice given by a designer of virtual tours:",
+            marks: 4,
+            type: "multi-input",
+            count: 4,
+            officialAnswer: "1) think about audience / target audience; 2) (ensure all) information accurate; 3) (take) photographs of item from all sides; 4) avoid (having too) many details on screen / not (too) many details at once; 5) (add) audio descriptions",
+            notes: "Make short notes under each heading. Give 4 distinct points (1 mark each). Order does not matter."
+          }
+        ]
+      },
+      {
+        id: "task4",
+        taskNumber: 4,
+        exerciseType: "Exercise 4",
+        number: "Task 4: Exercise 4",
+        title: "Gemma Noble: UK snowboarder (Multiple Choice)",
+        syllabus: "0510/11/O/N/24",
+        totalMarks: 6,
+        passageTitle: "Gemma Noble: UK snowboarder",
+        passageContent: `
+          <p>20-year-old Gemma Noble is one of the UK's snowboarding stars. Born in the north of England, she started snowboarding at a centre near her home - one of only a handful in the UK. Now, as this part of the world is not known for having huge amounts of snow, the snowboarding centre relies on using artificial surfaces for teaching snowboarding. While of course you might imagine that learning to snowboard in the snow high in the French mountains, for example, might be preferable, Gemma says that the surface at the centre meant she could practise in conditions which didn't change according to the weather. And that, combined with the fact that all the instructors were so willing to help her achieve her best, went a long way to helping her learn quickly.</p>
+          <p>Gemma describes how she had always been known as a sporty child, and in fact, she was already very good at gymnastics even before she tried snowboarding. She had taken part in a few competitions for younger age groups, and discovered that she responded well to the pressure of having to compete. It's also true that one skill a gymnast needs to have is a really good idea of where you are in the air, when you are jumping and turning. This is essential in snowboarding as well, and so already having that ability proved to be a real plus when Gemma started learning on the slopes at the snowboarding centre.</p>
+          <p>When she and her instructors felt she was ready, Gemma began entering snowboarding competitions. She worked hard on getting better until eventually she came first in an event for under-eighteens in 2020. For this, she won a huge silver cup, which she is incredibly proud of! Now, you'll probably think that it's on display in her home, right? Well actually, she explains, 'It's still hidden carefully away in the presentation box it came in, as I can't help imagining how I'd feel if anything happened to it.' But naturally, she's always more than happy to show it off to anyone who is eager to see it!</p>
+          <p>There's a risk involved in doing any kind of sport, especially the more extreme sports, and snowboarding is no exception. In 2021, Gemma unfortunately had an accident in which she damaged her ankle. Although the injury wasn't too bad and there were no concerns from her medical team about her getting over it, the timing couldn't have been worse. She'd been planning to compete as part of a team in an international event, but instead she ended up supporting her teammates via videocalls and messages not the same experience at all! But Gemma isn't one to feel sorry for herself, so she focused on improving her fitness, under the strict supervision of her doctors.</p>
+          <p>Now Gemma is very happy to be back on the snow where she feels most comfortable, travelling all over the world in order to take part in events. She's becoming very well known in the sport partly due to the fact that she's entering competitions again after her injury. This is a new development, and something that she's enjoying much more than she ever expected to! After all, being asked to appear on TV and give interviews might sound pretty scary, especially for someone as young as Gemma. But she's finding it all really exciting, and is delighted with the attention!</p>
+        `,
+        questions: [
+          {
+            id: "mcq10", number: "Question 10", prompt: "What does Gemma say about the place where she learned to snowboard?", marks: 1, type: "multiple-choice",
+            options: [
+              { letter: "A", text: "The staff at the centre were very encouraging." },
+              { letter: "B", text: "The centre was part of a large chain covering the country." },
+              { letter: "C", text: "Having real snow at the centre would be an advantage." }
+            ],
+            officialAnswer: "A", notes: "Instructors willing to help her achieve her best."
+          },
+          {
+            id: "mcq11", number: "Question 11", prompt: "In paragraph 2, gymnastics is mentioned in order to", marks: 1, type: "multiple-choice",
+            options: [
+              { letter: "A", text: "suggest that it is a suitable sport for younger people." },
+              { letter: "B", text: "explain why Gemma decided to change sports." },
+              { letter: "C", text: "show how one sport supports another." }
+            ],
+            officialAnswer: "C", notes: "Aerial awareness from gymnastics supported snowboarding."
+          },
+          {
+            id: "mcq12", number: "Question 12", prompt: "How did Gemma feel about the trophy she won in 2020?", marks: 1, type: "multiple-choice",
+            options: [
+              { letter: "A", text: "surprised by how large it was" },
+              { letter: "B", text: "worried about causing damage to it" },
+              { letter: "C", text: "disappointed because not many people would see it" }
+            ],
+            officialAnswer: "B", notes: "Hidden carefully away fearing anything happening to it."
+          },
+          {
+            id: "mcq13", number: "Question 13", prompt: "What do we learn about the period when Gemma was injured?", marks: 1, type: "multiple-choice",
+            options: [
+              { letter: "A", text: "The recovery process was more complex than she first thought." },
+              { letter: "B", text: "It gave her the chance to go and watch her friends compete." },
+              { letter: "C", text: "She made good use of the unexpected free time." }
+            ],
+            officialAnswer: "C", notes: "Focused on improving her fitness."
+          },
+          {
+            id: "mcq14", number: "Question 14", prompt: "What does 'This' refer to in paragraph 5?", marks: 1, type: "multiple-choice",
+            options: [
+              { letter: "A", text: "travelling all over the world" },
+              { letter: "B", text: "becoming very well known" },
+              { letter: "C", text: "entering more competitions" }
+            ],
+            officialAnswer: "B", notes: "Becoming well known and giving TV interviews."
+          },
+          {
+            id: "mcq15", number: "Question 15", prompt: "What is the purpose of this article?", marks: 1, type: "multiple-choice",
+            options: [
+              { letter: "A", text: "to describe the career and achievements of a young sportsperson" },
+              { letter: "B", text: "to warn other sportspeople of the work involved in becoming successful" },
+              { letter: "C", text: "to persuade people who are interested in sports to follow their dreams" }
+            ],
+            officialAnswer: "A", notes: "Overall biography of Gemma's journey and achievements."
+          }
+        ]
       }
     ];
 
-    /* ==========================================================================
-       APPLICATION STATE & GOOGLE APPS SCRIPT WEBHOOK CONFIGURATION
-       ========================================================================== */
-    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzK1Lqp5zvdBh3KOtSMuTHjGmcCC348Am_92R-L4MPxQa2-KBAYDSLEbslguQhHv2n03g/exec";
-    let gasWebhookUrl = localStorage.getItem('cambridge_gas_url') || DEFAULT_GAS_URL;
+    let EXERCISES = [...DEFAULT_EXERCISES];
 
-    let currentUser = null; // { role: 'student'|'admin', data: { id, name, class } }
-    let activeExerciseIndex = 0;
-    let activeQuestionIndex = 0;
-    let currentFontSize = 18;
+    try {
+      const storedTasks = localStorage.getItem('cambridge_custom_tasks');
+      if (storedTasks) {
+        const parsed = JSON.parse(storedTasks);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          EXERCISES = parsed;
+        }
+      }
+    } catch(e) { console.warn("Could not load custom tasks:", e); }
 
-    // Student response cache: { exId: { qId: answerValue } }
-    let exerciseResponses = {
-      ex1: {},
-      ex2: {}
-    };
-    let questionReviewFlags = {
-      ex1: {},
-      ex2: {}
-    };
+    let exerciseResponses = {};
+    let questionReviewFlags = {};
+    function resetResponses() {
+      exerciseResponses = {};
+      questionReviewFlags = {};
+      EXERCISES.forEach(ex => {
+        exerciseResponses[ex.id] = {};
+        questionReviewFlags[ex.id] = {};
+      });
+    }
+    resetResponses();
 
-    // Roster and Submissions cached locally
     let studentRoster = [
       { id: "STU-101", name: "Ahmed Al-Mansoor", class: "Year 10-A" },
       { id: "STU-102", name: "Fatima Al-Zahra", class: "Year 10-A" },
@@ -809,9 +1002,418 @@
     let submissionRecords = [];
     let currentInspectedSubmissionId = null;
 
-    /* ==========================================================================
-       NETWORK API CALLS (GOOGLE APPS SCRIPT SYNC)
-       ========================================================================== */
+    const CODE_GS_SCRIPT = `/**
+ * Google Apps Script for Cambridge IGCSE Reading Portal
+ * Handles Roster, Submissions, Final Grading, Tasks, and Permanent Settings
+ */
+
+function doGet(e) {
+  e = e || { parameter: {} };
+  var action = (e.parameter && e.parameter.action) || "";
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  if (action === "getSettings") {
+    var sheet = getOrCreateSheet(ss, "Settings", ["Key", "Value"]);
+    var data = sheet.getDataRange().getValues();
+    var webAppUrl = "";
+    var geminiApiKey = "";
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][0] === "webAppUrl") webAppUrl = data[i][1];
+      if (data[i][0] === "geminiApiKey") geminiApiKey = data[i][1];
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", webAppUrl: webAppUrl, geminiApiKey: geminiApiKey }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === "getPublicStudents") {
+    var sheet = getOrCreateSheet(ss, "Users", ["ID", "Name", "Role", "Class", "Password", "DateAdded"]);
+    var rows = sheet.getDataRange().getValues();
+    var students = [];
+    for (var i = 1; i < rows.length; i++) {
+      if (String(rows[i][2]).toLowerCase() === "student") {
+        students.push({ id: rows[i][0], name: rows[i][1], class: rows[i][3] });
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", students: students }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === "loginUser") {
+    var identifier = String(e.parameter.identifier || "").trim().toLowerCase();
+    var password = String(e.parameter.password || "").trim();
+    var sheet = getOrCreateSheet(ss, "Users", ["ID", "Name", "Role", "Class", "Password", "DateAdded"]);
+    var rows = sheet.getDataRange().getValues();
+    for (var i = 1; i < rows.length; i++) {
+      var uid = String(rows[i][0]).trim().toLowerCase();
+      var uname = String(rows[i][1]).trim().toLowerCase();
+      var urole = String(rows[i][2]).trim().toLowerCase();
+      var uclass = rows[i][3];
+      var upass = String(rows[i][4]).trim();
+      if ((uid === identifier || uname === identifier) && upass === password) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "success", authorized: true,
+          user: { id: rows[i][0], name: rows[i][1], role: urole, class: uclass }
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", authorized: false, message: "Invalid credentials" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === "getAllUsers") {
+    var uSheet = getOrCreateSheet(ss, "Users", ["ID", "Name", "Role", "Class", "Password", "DateAdded"]);
+    var uRows = uSheet.getDataRange().getValues();
+    var users = [];
+    for (var i = 1; i < uRows.length; i++) {
+      users.push({ id: uRows[i][0], name: uRows[i][1], role: uRows[i][2], class: uRows[i][3], password: uRows[i][4], dateAdded: uRows[i][5] });
+    }
+    var sSheet = getOrCreateSheet(ss, "Submissions", ["SubID","StudentID","StudentName","Class","ExID","ExTitle","AutoScore","MaxScore","FinalScore","Status","Feedback","AnswersJSON","Timestamp"]);
+    var subs = sSheet.getDataRange().getValues();
+
+    var tSheet = getOrCreateSheet(ss, "Tasks", ["TaskID", "JSONData", "Updated"]);
+    var tRows = tSheet.getDataRange().getValues();
+    var tasks = [];
+    for (var j = 1; j < tRows.length; j++) {
+      try { tasks.push(JSON.parse(tRows[j][1])); } catch(err){}
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", users: users, submissions: subs, tasks: tasks }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  return ContentService.createTextOutput(JSON.stringify({ status: "ok", message: "Cambridge Portal Backend Ready" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var postData = {};
+  try { postData = JSON.parse(e.postData.contents); } catch(err) { postData = (e && e.parameter) || {}; }
+  var action = postData.action;
+
+  if (action === "saveSettings") {
+    var sheet = getOrCreateSheet(ss, "Settings", ["Key", "Value"]);
+    if (postData.webAppUrl !== undefined) setSettingValue(sheet, "webAppUrl", postData.webAppUrl);
+    if (postData.geminiApiKey !== undefined) setSettingValue(sheet, "geminiApiKey", postData.geminiApiKey);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === "submitHomework") {
+    var subSheet = getOrCreateSheet(ss, "Submissions", ["SubID","StudentID","StudentName","Class","ExID","ExTitle","AutoScore","MaxScore","FinalScore","Status","Feedback","AnswersJSON","Timestamp"]);
+    subSheet.appendRow([
+      postData.submissionId, postData.studentId, postData.studentName, postData.class,
+      postData.exerciseId, postData.exerciseTitle, postData.autoScore, postData.maxScore,
+      postData.finalScore, postData.status, postData.feedback, JSON.stringify(postData.answers || {}), postData.timestamp
+    ]);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === "finalizeGrade") {
+    var subSheet = getOrCreateSheet(ss, "Submissions", ["SubID","StudentID","StudentName","Class","ExID","ExTitle","AutoScore","MaxScore","FinalScore","Status","Feedback","AnswersJSON","Timestamp"]);
+    var data = subSheet.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]) === String(postData.submissionId)) {
+        subSheet.getRange(i + 1, 9).setValue(postData.finalScore);
+        subSheet.getRange(i + 1, 10).setValue("Graded");
+        subSheet.getRange(i + 1, 11).setValue(postData.feedback);
+        break;
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === "addUser") {
+    var uSheet = getOrCreateSheet(ss, "Users", ["ID", "Name", "Role", "Class", "Password", "DateAdded"]);
+    uSheet.appendRow([postData.id, postData.name, postData.role, postData.class, postData.password, new Date()]);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === "saveTask") {
+    var tSheet = getOrCreateSheet(ss, "Tasks", ["TaskID", "JSONData", "Updated"]);
+    var tRows = tSheet.getDataRange().getValues();
+    var tFound = false;
+    for (var k = 1; k < tRows.length; k++) {
+      if (String(tRows[k][0]) === String(postData.task.id)) {
+        tSheet.getRange(k + 1, 2).setValue(JSON.stringify(postData.task));
+        tSheet.getRange(k + 1, 3).setValue(new Date());
+        tFound = true; break;
+      }
+    }
+    if (!tFound) tSheet.appendRow([postData.task.id, JSON.stringify(postData.task), new Date()]);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === "deleteTask") {
+    var tSheet = getOrCreateSheet(ss, "Tasks", ["TaskID", "JSONData", "Updated"]);
+    var tRows = tSheet.getDataRange().getValues();
+    for (var m = 1; m < tRows.length; m++) {
+      if (String(tRows[m][0]) === String(postData.taskId)) {
+        tSheet.deleteRow(m + 1);
+        break;
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  return ContentService.createTextOutput(JSON.stringify({ status: "ok" })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function setSettingValue(sheet, key, value) {
+  var values = sheet.getDataRange().getValues();
+  for (var i = 1; i < values.length; i++) {
+    if (values[i][0] === key) {
+      sheet.getRange(i + 1, 2).setValue(value);
+      return;
+    }
+  }
+  sheet.appendRow([key, value]);
+}
+
+function getOrCreateSheet(ss, sheetName, headers) {
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    sheet.appendRow(headers);
+    if (sheetName === "Users") {
+      sheet.appendRow(["ADM-001", "Teacher Admin", "admin", "Staff", "admin123", new Date()]);
+      sheet.appendRow(["STU-101", "Ahmed Al-Mansoor", "student", "Year 10-A", "123", new Date()]);
+      sheet.appendRow(["STU-102", "Fatima Al-Zahra", "student", "Year 10-A", "123", new Date()]);
+      sheet.appendRow(["STU-103", "Zaid Tariq", "student", "Year 10-B", "123", new Date()]);
+    }
+  }
+  return sheet;
+}`;
+
+    function normalizeText(text) {
+      if (!text) return "";
+      return String(text)
+        .toLowerCase()
+        .replace(/['"“”‘’]/g, '')
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function levenshteinDistance(s1, s2) {
+      if (s1 === s2) return 0;
+      if (s1.length === 0) return s2.length;
+      if (s2.length === 0) return s1.length;
+      const matrix = [];
+      for (let i = 0; i <= s2.length; i++) matrix[i] = [i];
+      for (let j = 0; j <= s1.length; j++) matrix[0][j] = j;
+      for (let i = 1; i <= s2.length; i++) {
+        for (let j = 1; j <= s1.length; j++) {
+          if (s2.charAt(i - 1) === s1.charAt(j - 1)) {
+            matrix[i][j] = matrix[i - 1][j - 1];
+          } else {
+            matrix[i][j] = Math.min(
+              matrix[i - 1][j - 1] + 1,
+              Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
+            );
+          }
+        }
+      }
+      return matrix[s2.length][s1.length];
+    }
+
+    function isFuzzyWordMatch(word1, word2) {
+      if (word1 === word2) return true;
+      if (word1.length > 3 && word2.length > 3) {
+        const dist = levenshteinDistance(word1, word2);
+        if (dist <= 1) return true;
+        if (word1.length > 6 && word2.length > 6 && dist <= 2) return true;
+      }
+      return false;
+    }
+
+    function parseMarkSchemeCriteria(officialAnswerStr) {
+      if (!officialAnswerStr) return [];
+      let rawPoints = [];
+      const text = String(officialAnswerStr).trim();
+      if (/(?:^|\s)(?:[1-9]\)|\d+\.)\s+/.test(text)) {
+        rawPoints = text.split(/(?:^|\s)(?:[1-9]\)|\d+\.)\s+/).map(p => p.trim()).filter(Boolean);
+      } else if (text.includes(';')) {
+        rawPoints = text.split(';').map(p => p.trim()).filter(Boolean);
+      } else if (text.includes('\n')) {
+        rawPoints = text.split('\n').map(p => p.trim()).filter(Boolean);
+      } else {
+        rawPoints = [text];
+      }
+
+      return rawPoints.map((raw, idx) => {
+        const alternatives = raw.split('/').map(alt => {
+          const core = alt.replace(/\([^\)]*\)/g, '').trim();
+          const full = alt.replace(/[\(\)]/g, '').trim();
+          return {
+            rawAlt: alt.trim(),
+            coreNorm: normalizeText(core),
+            fullNorm: normalizeText(full),
+            tokens: normalizeText(core || full).split(' ').filter(t => t.length > 1)
+          };
+        });
+
+        return { id: idx, raw, alternatives, matched: false };
+      });
+    }
+
+    function testStudentAnswerAgainstCriteria(studentAnswer, criterion) {
+      const cleanStudent = normalizeText(studentAnswer);
+      if (!cleanStudent) return false;
+      const studentWords = cleanStudent.split(' ');
+
+      for (let alt of criterion.alternatives) {
+        if (alt.coreNorm && cleanStudent.includes(alt.coreNorm)) return true;
+        if (alt.fullNorm && cleanStudent.includes(alt.fullNorm)) return true;
+        if (alt.tokens.length > 0) {
+          let tokenMatches = 0;
+          for (let tok of alt.tokens) {
+            const hasMatch = studentWords.some(sw => isFuzzyWordMatch(sw, tok));
+            if (hasMatch) tokenMatches++;
+          }
+          if (tokenMatches >= Math.ceil(alt.tokens.length * 0.75)) return true;
+        }
+      }
+      return false;
+    }
+
+    function robustGradeSingleAnswer(userAnswer, officialAnswerStr, negates = []) {
+      const cleanUser = normalizeText(userAnswer);
+      if (!cleanUser) return { score: 0, feedback: "No response submitted." };
+
+      if (Array.isArray(negates)) {
+        for (let neg of negates) {
+          const negNorm = normalizeText(neg);
+          if (negNorm && cleanUser.includes(negNorm)) {
+            return { score: 0, feedback: `Incorrect: Contradictory detail ('${neg}') negates mark.` };
+          }
+        }
+      }
+
+      const criteria = parseMarkSchemeCriteria(officialAnswerStr);
+      for (let crit of criteria) {
+        if (testStudentAnswerAgainstCriteria(userAnswer, crit)) {
+          return { score: 1, feedback: `Correct: Matches '${crit.raw}'` };
+        }
+      }
+
+      return { score: 0, feedback: `Expected: ${officialAnswerStr}` };
+    }
+
+    function evaluateMultiAnswerOrderIndependent(userInputs, officialAnswerStr, maxMarks) {
+      let inputs = Array.isArray(userInputs) ? userInputs : [userInputs];
+      const criteria = parseMarkSchemeCriteria(officialAnswerStr);
+      let score = 0;
+      const itemBreakdown = [];
+
+      inputs.forEach((inp, idx) => {
+        const rawInp = String(inp || "").trim();
+        if (!rawInp) {
+          itemBreakdown.push({ box: idx + 1, text: "(blank)", matched: false });
+          return;
+        }
+
+        let found = false;
+        for (let crit of criteria) {
+          if (!crit.matched && testStudentAnswerAgainstCriteria(rawInp, crit)) {
+            crit.matched = true;
+            score++;
+            found = true;
+            itemBreakdown.push({ box: idx + 1, text: rawInp, matched: true, matchedLabel: crit.raw });
+            break;
+          }
+        }
+        if (!found) {
+          itemBreakdown.push({ box: idx + 1, text: rawInp, matched: false });
+        }
+      });
+
+      const finalScore = Math.min(Number(maxMarks) || inputs.length, score);
+      return {
+        score: finalScore,
+        feedback: `Awarded ${finalScore}/${maxMarks} marks (order-independent).`,
+        itemBreakdown
+      };
+    }
+
+    function evaluateExerciseAnswers(exercise, userAnswers) {
+      let earned = 0;
+      const details = [];
+
+      exercise.questions.forEach(q => {
+        const ans = userAnswers[q.id];
+        let score = 0;
+        let note = "";
+        let itemBreakdown = null;
+
+        if (q.type === "choice" || q.type === "multiple-choice") {
+          const userChoice = String(ans || "").toUpperCase().trim();
+          const targetChoice = String(q.officialAnswer || "").toUpperCase().trim();
+          score = (userChoice === targetChoice) ? (q.marks || 1) : 0;
+          note = (score > 0) ? `Correct: Option ${targetChoice}` : `Expected: Option ${targetChoice}`;
+        } else if (q.type === "multi-input" || (q.marks && q.marks > 1)) {
+          const res = evaluateMultiAnswerOrderIndependent(ans, q.officialAnswer, q.marks);
+          score = res.score;
+          note = res.feedback;
+          itemBreakdown = res.itemBreakdown;
+        } else {
+          const res = robustGradeSingleAnswer(ans, q.officialAnswer, q.negates || []);
+          score = res.score * (q.marks || 1);
+          note = res.feedback;
+        }
+
+        earned += score;
+        details.push({
+          qId: q.id,
+          prompt: `${q.number}: ${q.prompt}`,
+          studentAns: ans,
+          officialAnswer: q.officialAnswer,
+          notes: q.notes,
+          score,
+          maxMarks: q.marks,
+          feedback: note,
+          itemBreakdown
+        });
+      });
+
+      return { earned, details };
+    }
+
+    function getNextTaskNumber() {
+      return EXERCISES.length + 1;
+    }
+
+    function formatTaskLabel(taskNumber, exerciseType) {
+      return `Task ${taskNumber}: ${exerciseType}`;
+    }
+
+    function updateAutoTaskPreview() {
+      const nextNum = getNextTaskNumber();
+      let typeLabel = "Exercise 1";
+      if (currentEditorTemplate === "ex2") typeLabel = "Exercise 2";
+      if (currentEditorTemplate === "ex3") typeLabel = "Exercise 3";
+      if (currentEditorTemplate === "ex4") typeLabel = "Exercise 4";
+      const fullLabel = formatTaskLabel(nextNum, typeLabel);
+      document.getElementById('auto-task-preview-label').textContent = `Auto-Label: ${fullLabel}`;
+      return fullLabel;
+    }
+
+    async function syncSettingsFromSheet() {
+      if (!gasWebhookUrl) return;
+      try {
+        const resp = await fetch(`${gasWebhookUrl}?action=getSettings`);
+        const json = await resp.json();
+        if (json && json.status === "success") {
+          if (json.webAppUrl && json.webAppUrl.startsWith("http")) {
+            gasWebhookUrl = json.webAppUrl;
+            localStorage.setItem('cambridge_gas_url', gasWebhookUrl);
+          }
+          if (json.geminiApiKey) {
+            sheetGeminiApiKey = json.geminiApiKey;
+          }
+        }
+      } catch(e) { console.warn("Settings sync offline"); }
+    }
+
     async function fetchPublicStudents() {
       if (!gasWebhookUrl) return;
       try {
@@ -821,14 +1423,11 @@
           studentRoster = json.students;
           populateStudentSelect();
         }
-      } catch (err) {
-        console.warn("Using offline student roster:", err);
-      }
+      } catch(err) { console.warn("Using offline student roster:", err); }
     }
 
     async function verifyUserLogin(identifier, password) {
       if (!gasWebhookUrl) {
-        // Fallback demo mock
         if (identifier.toLowerCase().includes("admin") && password === "admin123") {
           return { status: "success", authorized: true, user: { id: "ADM-001", name: "Teacher Admin", role: "admin", class: "Staff" } };
         }
@@ -844,7 +1443,6 @@
         const resp = await fetch(url);
         return await resp.json();
       } catch (err) {
-        // Fallback for demo
         if (identifier.toLowerCase().includes("admin") && password === "admin123") {
           return { status: "success", authorized: true, user: { id: "ADM-001", name: "Teacher Admin", role: "admin", class: "Staff" } };
         }
@@ -853,54 +1451,30 @@
     }
 
     async function sendSubmissionToSheet(subData) {
-      if (!gasWebhookUrl) {
-        submissionRecords.unshift(subData);
-        return { status: "success" };
-      }
+      submissionRecords.unshift(subData);
+      if (!gasWebhookUrl) return { status: "success" };
       try {
         await fetch(gasWebhookUrl, {
-          method: "POST",
-          mode: "no-cors",
+          method: "POST", mode: "no-cors",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "submitHomework", ...subData })
         });
-        submissionRecords.unshift(subData);
         return { status: "success" };
-      } catch (err) {
-        console.error("Submission error:", err);
-        submissionRecords.unshift(subData);
-        return { status: "success" };
-      }
+      } catch(e) { return { status: "success" }; }
     }
 
     async function sendFinalGradeToSheet(subId, finalScore, feedback) {
-      if (!gasWebhookUrl) {
-        const s = submissionRecords.find(item => item.submissionId === subId);
-        if (s) {
-          s.finalScore = finalScore;
-          s.feedback = feedback;
-          s.status = "Graded";
-        }
-        return { status: "success" };
-      }
+      const s = submissionRecords.find(item => item.submissionId === subId);
+      if (s) { s.finalScore = finalScore; s.feedback = feedback; s.status = "Graded"; }
+      if (!gasWebhookUrl) return { status: "success" };
       try {
         await fetch(gasWebhookUrl, {
-          method: "POST",
-          mode: "no-cors",
+          method: "POST", mode: "no-cors",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "finalizeGrade", submissionId: subId, finalScore: finalScore, feedback: feedback })
         });
-        const s = submissionRecords.find(item => item.submissionId === subId);
-        if (s) {
-          s.finalScore = finalScore;
-          s.feedback = feedback;
-          s.status = "Graded";
-        }
         return { status: "success" };
-      } catch (err) {
-        console.error("Grade update error:", err);
-        return { status: "error" };
-      }
+      } catch(e) { return { status: "error" }; }
     }
 
     async function fetchAdminData() {
@@ -917,32 +1491,27 @@
               let answers = {};
               try { answers = JSON.parse(r[11]); } catch(e) { answers = {}; }
               submissionRecords.push({
-                submissionId: r[0],
-                studentId: r[1],
-                studentName: r[2],
-                class: r[3],
-                exerciseId: r[4],
-                exerciseTitle: r[5],
-                autoScore: r[6],
-                maxScore: r[7],
-                finalScore: r[8],
-                status: r[9],
-                feedback: r[10],
-                answers: answers,
-                timestamp: r[12]
+                submissionId: r[0], studentId: r[1], studentName: r[2], class: r[3],
+                exerciseId: r[4], exerciseTitle: r[5], autoScore: r[6], maxScore: r[7],
+                finalScore: r[8], status: r[9], feedback: r[10], answers: answers, timestamp: r[12]
               });
             }
           }
+          if (Array.isArray(json.tasks) && json.tasks.length > 0) {
+            const merged = [...DEFAULT_EXERCISES];
+            json.tasks.forEach(t => {
+              const idx = merged.findIndex(m => m.id === t.id);
+              if (idx !== -1) merged[idx] = t; else merged.push(t);
+            });
+            EXERCISES = merged;
+            localStorage.setItem('cambridge_custom_tasks', JSON.stringify(EXERCISES));
+            populateExerciseSwitcher();
+          }
           renderAdminDashboard();
         }
-      } catch (err) {
-        console.warn("Failed to fetch admin data:", err);
-      }
+      } catch(e) { console.warn("Failed admin fetch:", e); }
     }
 
-    /* ==========================================================================
-       EXAM WORKSPACE & QUESTION CONTROLLERS
-       ========================================================================== */
     function populateStudentSelect() {
       const sel = document.getElementById('login-student-select');
       sel.innerHTML = '<option value="">-- Choose your name --</option>';
@@ -952,6 +1521,26 @@
         opt.textContent = `${stu.name} (${stu.class})`;
         sel.appendChild(opt);
       });
+    }
+
+    function populateExerciseSwitcher() {
+      const switcher = document.getElementById('exercise-switcher');
+      switcher.innerHTML = '';
+      EXERCISES.forEach((ex, idx) => {
+        const opt = document.createElement('option');
+        opt.value = ex.id;
+        const taskPrefix = ex.number || `Task ${idx + 1}: ${ex.exerciseType || 'Exercise'}`;
+        opt.textContent = `${taskPrefix} - ${ex.title}`;
+        switcher.appendChild(opt);
+      });
+    }
+
+    function applyPassageFont(fontClass) {
+      activeExamFont = fontClass;
+      localStorage.setItem('cambridge_exam_font', fontClass);
+      const container = document.getElementById('passage-container');
+      container.classList.remove('font-instrument', 'font-merriweather', 'font-opensans', 'font-jetbrains');
+      container.classList.add(fontClass);
     }
 
     function initStudentExamView() {
@@ -965,8 +1554,7 @@
       userBadge.classList.remove('hidden');
       document.getElementById('header-user-display').textContent = `${currentUser.data.name} (${currentUser.data.class})`;
 
-      // Fetch student's prior submissions from sheet
-      fetchStudentSubmissions();
+      populateExerciseSwitcher();
       loadExercise(0);
     }
 
@@ -981,6 +1569,7 @@
       userBadge.classList.remove('hidden');
       document.getElementById('header-user-display').textContent = `Admin: ${currentUser.data.name}`;
 
+      populateExerciseSwitcher();
       fetchAdminData();
       renderAdminDashboard();
     }
@@ -994,6 +1583,7 @@
       document.getElementById('passage-label').textContent = `${ex.number}: ${ex.title}`;
       document.getElementById('passage-container').innerHTML = ex.passageContent;
       document.getElementById('passage-container').style.fontSize = `${currentFontSize}px`;
+      applyPassageFont(activeExamFont);
 
       renderReviewList();
       renderCurrentQuestion();
@@ -1008,7 +1598,7 @@
         const btn = document.createElement('button');
         const isActive = idx === activeQuestionIndex;
         const isAnswered = checkQuestionAnswered(ex.id, q);
-        const isMarked = questionReviewFlags[ex.id][q.id];
+        const isMarked = questionReviewFlags[ex.id] && questionReviewFlags[ex.id][q.id];
 
         let borderClass = isActive ? 'border-2 border-navy-600 bg-navy-50/50 shadow-xs' : 'border border-navy-300 hover:border-navy-400 bg-white';
         btn.className = `min-w-[40px] h-10 px-2.5 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center relative ${borderClass}`;
@@ -1038,6 +1628,7 @@
     }
 
     function checkQuestionAnswered(exId, q) {
+      if (!exerciseResponses[exId]) return false;
       const ans = exerciseResponses[exId][q.id];
       if (q.type === "multi-input") {
         return Array.isArray(ans) && ans.some(val => (val || "").trim() !== "");
@@ -1054,12 +1645,12 @@
       document.getElementById('question-prompt').textContent = q.prompt;
 
       const chk = document.getElementById('mark-review-checkbox');
-      chk.checked = !!questionReviewFlags[ex.id][q.id];
+      chk.checked = !!(questionReviewFlags[ex.id] && questionReviewFlags[ex.id][q.id]);
 
       const inputContainer = document.getElementById('question-input-container');
       inputContainer.innerHTML = '';
 
-      const currentVal = exerciseResponses[ex.id][q.id];
+      const currentVal = exerciseResponses[ex.id] ? exerciseResponses[ex.id][q.id] : "";
 
       if (q.type === "text") {
         const area = document.createElement('textarea');
@@ -1072,13 +1663,23 @@
       } else if (q.type === "multi-input") {
         const multiBox = document.createElement('div');
         multiBox.className = "space-y-2.5";
-        const valArr = Array.isArray(currentVal) ? currentVal : ["", "", ""];
-        for (let i = 0; i < q.count; i++) {
+        
+        const orderNotice = document.createElement('div');
+        orderNotice.className = "flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-50/80 border border-emerald-200 rounded-lg text-[11px] text-emerald-800 font-medium";
+        orderNotice.innerHTML = `
+          <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          <span><strong>Order does not matter:</strong> Write your points in any box or sequence.</span>
+        `;
+        multiBox.appendChild(orderNotice);
+
+        const valArr = Array.isArray(currentVal) ? currentVal : [];
+        const boxCount = q.count || (q.marks || 3);
+        for (let i = 0; i < boxCount; i++) {
           const div = document.createElement('div');
           div.className = "flex items-center space-x-2";
           div.innerHTML = `
             <span class="w-6 text-center text-xs font-bold text-navy-500">${i + 1}.</span>
-            <input type="text" class="multi-field flex-1 p-2.5 bg-white border border-navy-300 rounded-lg text-xs focus:outline-none focus:border-navy-600" placeholder="Detail ${i + 1}..." value="${valArr[i] || ''}">
+            <input type="text" class="multi-field flex-1 p-2.5 bg-white border border-navy-300 rounded-lg text-xs focus:outline-none focus:border-navy-600 shadow-2xs" placeholder="Detail ${i + 1}..." value="${valArr[i] || ''}">
           `;
           multiBox.appendChild(div);
         }
@@ -1101,6 +1702,7 @@
             <span class="text-[11px]">${opt.name}</span>
           `;
           choiceBtn.addEventListener('click', () => {
+            if (!exerciseResponses[ex.id]) exerciseResponses[ex.id] = {};
             exerciseResponses[ex.id][q.id] = opt.letter;
             renderReviewList();
             renderCurrentQuestion();
@@ -1108,6 +1710,33 @@
           choicesBox.appendChild(choiceBtn);
         });
         inputContainer.appendChild(choicesBox);
+      } else if (q.type === "multiple-choice") {
+        const mcqBox = document.createElement('div');
+        mcqBox.className = "space-y-2.5";
+        const options = q.options || [
+          { letter: "A", text: "Option A" },
+          { letter: "B", text: "Option B" },
+          { letter: "C", text: "Option C" }
+        ];
+
+        options.forEach(opt => {
+          const isSelected = currentVal === opt.letter;
+          const optCard = document.createElement('button');
+          optCard.type = "button";
+          optCard.className = `w-full p-3.5 rounded-xl border text-left transition flex items-start space-x-3 ${isSelected ? 'border-navy-600 bg-navy-50/90 shadow-2xs ring-1 ring-navy-400' : 'border-navy-200 bg-white hover:border-navy-400'}`;
+          optCard.innerHTML = `
+            <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ${isSelected ? 'bg-navy-600 text-white' : 'bg-navy-100 text-navy-700'}">${opt.letter}</span>
+            <span class="text-xs text-navy-800 leading-relaxed font-medium">${opt.text}</span>
+          `;
+          optCard.addEventListener('click', () => {
+            if (!exerciseResponses[ex.id]) exerciseResponses[ex.id] = {};
+            exerciseResponses[ex.id][q.id] = opt.letter;
+            renderReviewList();
+            renderCurrentQuestion();
+          });
+          mcqBox.appendChild(optCard);
+        });
+        inputContainer.appendChild(mcqBox);
       }
 
       document.getElementById('btn-prev-question').disabled = activeQuestionIndex === 0;
@@ -1121,6 +1750,9 @@
     function saveCurrentQuestionInput() {
       const ex = EXERCISES[activeExerciseIndex];
       const q = ex.questions[activeQuestionIndex];
+      if (!exerciseResponses[ex.id]) exerciseResponses[ex.id] = {};
+      if (!questionReviewFlags[ex.id]) questionReviewFlags[ex.id] = {};
+
       if (q.type === "text") {
         const field = document.getElementById('active-input-field');
         if (field) exerciseResponses[ex.id][q.id] = field.value.trim();
@@ -1131,46 +1763,6 @@
       questionReviewFlags[ex.id][q.id] = document.getElementById('mark-review-checkbox').checked;
     }
 
-    /* ==========================================================================
-       AUTOMATED CAMBRIDGE EVALUATION ENGINE
-       ========================================================================== */
-    function evaluateExerciseAnswers(exercise, userAnswers) {
-      let earned = 0;
-      const details = [];
-
-      exercise.questions.forEach(q => {
-        const ans = userAnswers[q.id];
-        let score = 0;
-        let note = "";
-
-        if (q.type === "choice") {
-          score = (ans === q.officialAnswer) ? 1 : 0;
-          note = score === 1 ? "Correct" : `Expected: ${q.officialAnswer}`;
-        } else if (typeof q.validator === "function") {
-          const res = q.validator(ans);
-          score = res.score;
-          note = res.feedback;
-        }
-
-        earned += score;
-        details.push({
-          qId: q.id,
-          prompt: `${q.number}: ${q.prompt}`,
-          studentAns: ans,
-          officialAnswer: q.officialAnswer,
-          notes: q.notes,
-          score: score,
-          maxMarks: q.marks,
-          feedback: note
-        });
-      });
-
-      return { earned, details };
-    }
-
-    /* ==========================================================================
-       ADMIN DASHBOARD CONTROLLER & MODAL INSPECTOR
-       ========================================================================== */
     function renderAdminDashboard() {
       const subTbody = document.getElementById('admin-subs-tbody');
       subTbody.innerHTML = '';
@@ -1187,14 +1779,14 @@
             : '<span class="px-2 py-0.5 bg-gold-100 text-gold-800 rounded-full font-bold text-[10px]">Pending</span>';
           
           tr.innerHTML = `
-            <td class="py-3 px-4 font-bold text-navy-800">${sub.studentName}</td>
-            <td class="py-3 px-4 text-navy-600">${sub.class || 'N/A'}</td>
-            <td class="py-3 px-4 text-navy-700">${sub.exerciseTitle}</td>
-            <td class="py-3 px-4 font-mono font-semibold text-navy-600">${sub.autoScore} / ${sub.maxScore}</td>
-            <td class="py-3 px-4 font-mono font-bold text-navy-700">${sub.finalScore !== undefined ? sub.finalScore : sub.autoScore} / ${sub.maxScore}</td>
-            <td class="py-3 px-4">${statusBadge}</td>
-            <td class="py-3 px-4 text-navy-500 text-[11px]">${sub.timestamp || 'N/A'}</td>
-            <td class="py-3 px-4 text-right">
+            <td class="py-3 px-4 whitespace-nowrap font-bold text-navy-800">${sub.studentName}</td>
+            <td class="py-3 px-4 whitespace-nowrap text-navy-600">${sub.class || 'N/A'}</td>
+            <td class="py-3 px-4 whitespace-nowrap text-navy-700">${sub.exerciseTitle}</td>
+            <td class="py-3 px-4 whitespace-nowrap font-mono font-semibold text-navy-600">${sub.autoScore} / ${sub.maxScore}</td>
+            <td class="py-3 px-4 whitespace-nowrap font-mono font-bold text-navy-700">${sub.finalScore !== undefined ? sub.finalScore : sub.autoScore} / ${sub.maxScore}</td>
+            <td class="py-3 px-4 whitespace-nowrap">${statusBadge}</td>
+            <td class="py-3 px-4 whitespace-nowrap text-navy-500 text-[11px]">${sub.timestamp || 'N/A'}</td>
+            <td class="py-3 px-4 whitespace-nowrap text-right">
               <button class="review-sub-btn px-2.5 py-1 bg-navy-50 hover:bg-navy-100 text-navy-700 border border-navy-200 rounded font-semibold text-xs transition" data-subid="${sub.submissionId}">
                 Review & Mark
               </button>
@@ -1205,10 +1797,43 @@
       }
 
       document.querySelectorAll('.review-sub-btn').forEach(b => {
-        b.addEventListener('click', () => {
-          const id = b.getAttribute('data-subid');
-          openGradingModal(id);
-        });
+        b.addEventListener('click', () => openGradingModal(b.getAttribute('data-subid')));
+      });
+
+      const tasksTbody = document.getElementById('admin-tasks-tbody');
+      tasksTbody.innerHTML = '';
+      EXERCISES.forEach((ex, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-navy-50 border-b border-navy-100";
+        const taskLabel = ex.number || `Task ${idx + 1}: ${ex.exerciseType || 'Exercise'}`;
+        tr.innerHTML = `
+          <td class="py-3 px-4 whitespace-nowrap font-mono text-navy-900 font-bold">${taskLabel}</td>
+          <td class="py-3 px-4 whitespace-nowrap font-bold text-navy-800 max-w-[280px] truncate" title="${ex.title}">${ex.title}</td>
+          <td class="py-3 px-4 whitespace-nowrap text-navy-600 font-mono text-xs">${ex.syllabus || 'N/A'}</td>
+          <td class="py-3 px-4 whitespace-nowrap text-navy-600 text-xs">${ex.exerciseType || 'Reading'}</td>
+          <td class="py-3 px-4 whitespace-nowrap text-navy-700 font-semibold text-center">${ex.questions.length} questions</td>
+          <td class="py-3 px-4 whitespace-nowrap font-mono font-bold text-navy-700 text-center">${ex.totalMarks} marks</td>
+          <td class="py-3 px-4 whitespace-nowrap text-right">
+            <div class="inline-flex items-center justify-end space-x-1.5 whitespace-nowrap">
+              <button class="btn-preview-task px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded font-semibold text-xs transition shrink-0" data-idx="${idx}" title="Preview this task in student exam view">👁 Student View</button>
+              <button class="btn-edit-task px-2.5 py-1 bg-navy-100 hover:bg-navy-200 text-navy-800 rounded font-semibold text-xs shrink-0" data-idx="${idx}">Edit</button>
+              <button class="btn-delete-task px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded font-semibold text-xs shrink-0" data-idx="${idx}">Delete</button>
+            </div>
+          </td>
+        `;
+        tasksTbody.appendChild(tr);
+      });
+
+      document.querySelectorAll('.btn-preview-task').forEach(btn => {
+        btn.addEventListener('click', () => startTaskPreview(parseInt(btn.getAttribute('data-idx'))));
+      });
+
+      document.querySelectorAll('.btn-edit-task').forEach(btn => {
+        btn.addEventListener('click', () => openTaskEditor(parseInt(btn.getAttribute('data-idx'))));
+      });
+
+      document.querySelectorAll('.btn-delete-task').forEach(btn => {
+        btn.addEventListener('click', () => confirmDeleteTask(parseInt(btn.getAttribute('data-idx'))));
       });
 
       const rosTbody = document.getElementById('admin-roster-tbody');
@@ -1232,6 +1857,249 @@
         `;
         rosTbody.appendChild(tr);
       });
+    }
+
+    function openTaskEditor(editIndex = -1) {
+      const modal = document.getElementById('task-editor-modal');
+      const questionsContainer = document.getElementById('task-questions-list');
+      questionsContainer.innerHTML = '';
+
+      if (editIndex >= 0) {
+        const ex = EXERCISES[editIndex];
+        document.getElementById('task-editor-modal-title').textContent = `Edit Task: ${ex.number || ex.title}`;
+        document.getElementById('task-edit-id').value = ex.number || `Task ${editIndex + 1}: ${ex.exerciseType || 'Exercise 1'}`;
+        document.getElementById('task-edit-title').value = ex.title;
+        document.getElementById('task-edit-syllabus').value = ex.syllabus || "";
+        document.getElementById('task-edit-passage').value = ex.passageContent;
+        modal.setAttribute('data-edit-idx', editIndex);
+
+        ex.questions.forEach(q => addQuestionRow(q));
+      } else {
+        modal.removeAttribute('data-edit-idx');
+        const nextNum = getNextTaskNumber();
+        const autoLabel = formatTaskLabel(nextNum, "Exercise 1");
+        document.getElementById('task-editor-modal-title').textContent = "Create New Reading Task";
+        document.getElementById('task-edit-id').value = autoLabel;
+        document.getElementById('task-edit-title').value = "New Reading Practice";
+        document.getElementById('task-edit-syllabus').value = "0510/Practice/2026";
+        document.getElementById('task-edit-passage').value = "";
+        applyEditorTemplate("ex1");
+      }
+
+      updateTaskEditorTotals();
+      modal.classList.remove('hidden');
+    }
+
+    function applyEditorTemplate(type) {
+      currentEditorTemplate = type;
+      document.querySelectorAll('.btn-template-select').forEach(b => {
+        const match = b.getAttribute('data-type') === type;
+        b.className = match
+          ? 'btn-template-select p-2.5 rounded-lg border text-left transition border-gold-500 bg-gold-50/90 ring-1 ring-gold-400'
+          : 'btn-template-select p-2.5 rounded-lg border text-left transition border-navy-300 bg-white hover:border-navy-600';
+      });
+
+      const modal = document.getElementById('task-editor-modal');
+      const isEditing = modal.hasAttribute('data-edit-idx');
+      if (!isEditing) {
+        let typeName = "Exercise 1";
+        if (type === "ex2") typeName = "Exercise 2";
+        if (type === "ex3") typeName = "Exercise 3";
+        if (type === "ex4") typeName = "Exercise 4";
+        document.getElementById('task-edit-id').value = formatTaskLabel(getNextTaskNumber(), typeName);
+
+        const cont = document.getElementById('task-questions-list');
+        cont.innerHTML = '';
+
+        if (type === "ex1") {
+          for (let i = 1; i <= 5; i++) {
+            addQuestionRow({ number: `Question ${i}`, prompt: `Comprehension Question ${i}:`, marks: 1, type: "text", officialAnswer: "" });
+          }
+          addQuestionRow({ number: "Question 6", prompt: "Give three details or factors from the text:", marks: 3, type: "multi-input", count: 3, officialAnswer: "1) detail A; 2) detail B; 3) detail C" });
+        } else if (type === "ex2") {
+          for (let i = 1; i <= 9; i++) {
+            addQuestionRow({ number: `Question 7(${String.fromCharCode(96 + i)})`, prompt: `Which person mentions statement (${String.fromCharCode(96 + i)})?`, marks: 1, type: "choice", officialAnswer: "A" });
+          }
+        } else if (type === "ex3") {
+          addQuestionRow({ number: "Question 8", prompt: "Reasons why people go on a virtual tour of a museum:", marks: 3, type: "multi-input", count: 3, officialAnswer: "1) point 1; 2) point 2; 3) point 3" });
+          addQuestionRow({ number: "Question 9", prompt: "Advice given by a designer of virtual tours:", marks: 4, type: "multi-input", count: 4, officialAnswer: "1) point 1; 2) point 2; 3) point 3; 4) point 4" });
+        } else if (type === "ex4") {
+          for (let i = 10; i <= 15; i++) {
+            addQuestionRow({
+              number: `Question ${i}`,
+              prompt: `Multiple choice comprehension question ${i}:`,
+              marks: 1,
+              type: "multiple-choice",
+              officialAnswer: "A",
+              options: [
+                { letter: "A", text: "Option A" },
+                { letter: "B", text: "Option B" },
+                { letter: "C", text: "Option C" }
+              ]
+            });
+          }
+        }
+      }
+      updateAutoTaskPreview();
+      updateTaskEditorTotals();
+    }
+
+    function addQuestionRow(data = {}) {
+      const cont = document.getElementById('task-questions-list');
+      const row = document.createElement('div');
+      row.className = "p-3 bg-white border border-navy-200 rounded-xl space-y-2 q-builder-row";
+      const qType = data.type || "text";
+
+      let optionsInputsHtml = '';
+      if (qType === "multiple-choice") {
+        const opts = data.options || [
+          { letter: "A", text: "" }, { letter: "B", text: "" }, { letter: "C", text: "" }
+        ];
+        optionsInputsHtml = `
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 border-t border-navy-100 mcq-options-container">
+            ${opts.map(o => `
+              <div class="flex items-center space-x-1.5">
+                <span class="w-5 font-bold text-navy-600 text-xs">${o.letter}.</span>
+                <input type="text" class="mcq-opt-text flex-1 p-1.5 border border-navy-300 rounded text-xs" data-letter="${o.letter}" placeholder="Option ${o.letter} text..." value="${o.text || ''}">
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      row.innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <input type="text" class="q-b-number w-32 p-1.5 border border-navy-300 rounded font-bold text-xs" value="${data.number || 'Question ' + (cont.children.length + 1)}">
+          <div class="flex items-center space-x-2">
+            <select class="q-b-type p-1.5 border border-navy-300 rounded text-xs bg-white">
+              <option value="text" ${qType === 'text' ? 'selected' : ''}>Text Box</option>
+              <option value="multi-input" ${qType === 'multi-input' ? 'selected' : ''}>Note-Taking (Multi-Box)</option>
+              <option value="choice" ${qType === 'choice' ? 'selected' : ''}>Matching Letter (A/B/C/D)</option>
+              <option value="multiple-choice" ${qType === 'multiple-choice' ? 'selected' : ''}>Multiple Choice (A/B/C Options)</option>
+            </select>
+            <input type="number" class="q-b-marks w-16 p-1.5 border border-navy-300 rounded text-xs text-center font-bold" min="1" max="10" value="${data.marks || 1}">
+            <span class="text-xs text-navy-500 font-semibold">marks</span>
+            <button type="button" class="btn-remove-q text-rose-600 hover:text-rose-800 font-bold p-1">✕</button>
+          </div>
+        </div>
+        <div>
+          <input type="text" class="q-b-prompt w-full p-2 border border-navy-300 rounded text-xs" placeholder="Question prompt or heading..." value="${data.prompt || ''}">
+        </div>
+        <div>
+          <input type="text" class="q-b-answer w-full p-2 border border-emerald-300 bg-emerald-50/40 rounded text-xs text-emerald-950 font-medium" placeholder="Official Mark Scheme Answer (e.g. 1) point A; 2) point B... or Correct Option letter)" value="${data.officialAnswer || ''}">
+        </div>
+        ${optionsInputsHtml}
+      `;
+
+      row.querySelector('.btn-remove-q').addEventListener('click', () => {
+        row.remove();
+        updateTaskEditorTotals();
+      });
+
+      row.querySelector('.q-b-marks').addEventListener('input', updateTaskEditorTotals);
+      row.querySelector('.q-b-type').addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (val === 'multi-input') row.querySelector('.q-b-marks').value = 3;
+        else row.querySelector('.q-b-marks').value = 1;
+        updateTaskEditorTotals();
+      });
+
+      cont.appendChild(row);
+      updateTaskEditorTotals();
+    }
+
+    function updateTaskEditorTotals() {
+      const rows = document.querySelectorAll('.q-builder-row');
+      let total = 0;
+      rows.forEach(r => {
+        const m = parseInt(r.querySelector('.q-b-marks').value) || 0;
+        total += m;
+      });
+      document.getElementById('task-editor-calc-total').textContent = `Total Questions: ${rows.length} • Total Marks: ${total}`;
+    }
+
+    function showCustomConfirm(title, message, onOk) {
+      const modal = document.getElementById('confirm-modal');
+      document.getElementById('confirm-modal-title').textContent = title;
+      document.getElementById('confirm-modal-message').textContent = message;
+      modal.classList.remove('hidden');
+
+      const okBtn = document.getElementById('confirm-modal-ok');
+      const cancelBtn = document.getElementById('confirm-modal-cancel');
+
+      if (!onOk) {
+        okBtn.textContent = "OK";
+        cancelBtn.classList.add('hidden');
+      } else {
+        okBtn.textContent = "Delete";
+        cancelBtn.classList.remove('hidden');
+      }
+
+      const cleanup = () => {
+        modal.classList.add('hidden');
+        okBtn.onclick = null;
+        cancelBtn.onclick = null;
+      };
+
+      okBtn.onclick = () => {
+        cleanup();
+        if (typeof onOk === 'function') onOk();
+      };
+      cancelBtn.onclick = cleanup;
+    }
+
+    function confirmDeleteTask(taskIndex) {
+      const ex = EXERCISES[taskIndex];
+      showCustomConfirm(
+        "Delete Exam Task",
+        `Are you sure you want to permanently delete "${ex.number}: ${ex.title}"?`,
+        async () => {
+          const deletedId = ex.id;
+          EXERCISES.splice(taskIndex, 1);
+          localStorage.setItem('cambridge_custom_tasks', JSON.stringify(EXERCISES));
+          populateExerciseSwitcher();
+          renderAdminDashboard();
+
+          if (gasWebhookUrl) {
+            try {
+              await fetch(gasWebhookUrl, {
+                method: "POST", mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "deleteTask", taskId: deletedId })
+              });
+            } catch(e) {}
+          }
+        }
+      );
+    }
+
+    function startTaskPreview(taskIndex) {
+      isPreviewMode = true;
+      const ex = EXERCISES[taskIndex];
+
+      document.getElementById('admin-workspace').classList.add('hidden');
+      document.getElementById('exam-workspace').classList.remove('hidden');
+
+      const banner = document.getElementById('preview-mode-banner');
+      if (banner) {
+        banner.classList.remove('hidden');
+        document.getElementById('preview-task-name').textContent = `Viewing ${ex.number}: ${ex.title}`;
+      }
+
+      loadExercise(taskIndex);
+    }
+
+    function exitTaskPreview() {
+      isPreviewMode = false;
+      const banner = document.getElementById('preview-mode-banner');
+      if (banner) banner.classList.add('hidden');
+      document.getElementById('exam-workspace').classList.add('hidden');
+      document.getElementById('admin-workspace').classList.remove('hidden');
+
+      document.getElementById('admin-panel-tasks').classList.remove('hidden');
+      document.getElementById('admin-panel-subs').classList.add('hidden');
+      document.getElementById('admin-panel-users').classList.add('hidden');
+      renderAdminDashboard();
     }
 
     function openGradingModal(submissionId) {
@@ -1262,10 +2130,6 @@
           ansDisplay = "(No answer provided)";
         }
 
-        const initialScore = (sub.status === "Graded" && sub.finalScore !== undefined)
-          ? item.score
-          : item.score;
-
         itemDiv.innerHTML = `
           <div class="flex items-center justify-between font-bold text-navy-800 gap-2">
             <span class="leading-snug">${item.prompt}</span>
@@ -1278,7 +2142,7 @@
                      min="0" 
                      max="${item.maxMarks}" 
                      step="0.5" 
-                     value="${initialScore}">
+                     value="${item.score}">
               <span class="text-[11px] text-navy-500 font-semibold">/ ${item.maxMarks}</span>
             </div>
           </div>
@@ -1299,8 +2163,7 @@
         document.querySelectorAll('.q-score-override').forEach(input => {
           let val = parseFloat(input.value);
           const max = parseFloat(input.getAttribute('data-max')) || 1;
-          if (isNaN(val)) val = 0;
-          if (val < 0) val = 0;
+          if (isNaN(val) || val < 0) val = 0;
           if (val > max) val = max;
           input.value = val;
           total += val;
@@ -1321,68 +2184,6 @@
       document.getElementById('grading-modal').classList.remove('hidden');
     }
 
-    /* ==========================================================================
-       STUDENT SUBMISSIONS & GRADES FUNCTIONS (GLOBAL SCOPE)
-       ========================================================================== */
-    async function fetchStudentSubmissions() {
-      if (!currentUser || currentUser.role !== 'student') return;
-      try {
-        if (gasWebhookUrl) {
-          const resp = await fetch(`${gasWebhookUrl}?action=getAllUsers`);
-          const json = await resp.json();
-          if (json && json.status === "success" && Array.isArray(json.submissions) && json.submissions.length > 1) {
-            submissionRecords = [];
-            for (let i = 1; i < json.submissions.length; i++) {
-              const r = json.submissions[i];
-              let answers = {};
-              try { answers = JSON.parse(r[11]); } catch(e) { answers = {}; }
-              submissionRecords.push({
-                submissionId: r[0],
-                studentId: String(r[1]).trim(),
-                studentName: r[2],
-                class: r[3],
-                exerciseId: r[4],
-                exerciseTitle: r[5],
-                autoScore: r[6],
-                maxScore: r[7],
-                finalScore: r[8],
-                status: r[9],
-                feedback: r[10],
-                answers: answers,
-                timestamp: r[12]
-              });
-            }
-          }
-        }
-      } catch (err) {
-        console.warn("Could not refresh student submissions from sheet:", err);
-      }
-      updateStudentSubmissionsBadge();
-    }
-
-    function updateStudentSubmissionsBadge() {
-      if (!currentUser || currentUser.role !== 'student') return;
-      const mySubs = submissionRecords.filter(s => String(s.studentId).toLowerCase() === String(currentUser.data.id).toLowerCase());
-      const badge = document.getElementById('student-grades-count-badge');
-      if (badge) {
-        if (mySubs.length > 0) {
-          badge.textContent = mySubs.length;
-          badge.classList.remove('hidden');
-        } else {
-          badge.classList.add('hidden');
-        }
-      }
-    }
-
-    function escapeHtml(str) {
-      if (str === null || str === undefined) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-
     function renderStudentGradesModal() {
       if (!currentUser || currentUser.role !== 'student') return;
       const container = document.getElementById('student-grades-list');
@@ -1396,519 +2197,788 @@
           <div class="text-center py-12 text-navy-400 space-y-2">
             <div class="text-3xl">📝</div>
             <p class="text-xs font-semibold">No homework submissions found yet.</p>
-            <p class="text-[11px] text-navy-400">Complete an exercise and click "Finish & Submit Task" to submit your work.</p>
           </div>
         `;
         return;
       }
 
-      mySubs.forEach((sub, subIdx) => {
+      mySubs.forEach(sub => {
         const card = document.createElement('div');
         card.className = "bg-white border border-navy-200 rounded-xl p-5 space-y-4 shadow-2xs";
-
         const isGraded = sub.status === "Graded";
         const statusBadge = isGraded
           ? '<span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-full font-bold text-xs">Graded by Teacher</span>'
           : '<span class="px-2.5 py-0.5 bg-gold-100 text-gold-800 border border-gold-200 rounded-full font-bold text-xs">Pending Teacher Review</span>';
 
-        const finalScoreDisplay = isGraded
-          ? `<span class="text-base font-extrabold text-navy-700 font-mono">${sub.finalScore}</span> <span class="text-navy-500 font-semibold text-xs">/ ${sub.maxScore} marks</span>`
-          : `<span class="text-navy-600 font-bold text-xs font-mono">${sub.autoScore} / ${sub.maxScore} <span class="font-normal text-[11px] text-navy-500 italic">(Auto-checked)</span></span>`;
-
-        const feedbackSection = sub.feedback ? `
-          <div class="p-3 bg-navy-50/90 border border-navy-200 rounded-xl text-xs space-y-1">
-            <div class="font-bold text-navy-900 flex items-center space-x-1.5">
-              <svg class="w-3.5 h-3.5 text-navy-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
-              <span>Teacher Feedback & Advice:</span>
-            </div>
-            <p class="text-navy-700 pl-5 leading-relaxed font-medium">${escapeHtml(sub.feedback)}</p>
-          </div>
-        ` : '';
-
-        // Match with exercise dataset to render detailed question comparison
-        const ex = EXERCISES.find(e => e.id === sub.exerciseId) || (String(sub.exerciseTitle).toLowerCase().includes("pocket") ? EXERCISES[1] : EXERCISES[0]);
-        const evalResult = evaluateExerciseAnswers(ex, sub.answers || {});
-
-        const questionsBreakdownHtml = evalResult.details.map((item, qIdx) => {
-          let ansDisplay = item.studentAns;
-          if (Array.isArray(ansDisplay)) {
-            ansDisplay = ansDisplay.map((a, i) => `
-              <div class="flex items-start space-x-1.5 py-0.5">
-                <span class="font-bold text-navy-500">${i + 1}.</span>
-                <span class="${a ? 'text-navy-800' : 'italic text-navy-400'}">${escapeHtml(a || '(blank)')}</span>
-              </div>
-            `).join('');
-          } else if (!ansDisplay && ansDisplay !== 0) {
-            ansDisplay = '<span class="italic text-navy-400 font-sans">No answer submitted</span>';
-          } else {
-            ansDisplay = `<span class="text-navy-900 font-semibold select-text">${escapeHtml(String(ansDisplay))}</span>`;
-          }
-
-          const isFullMarks = item.score >= item.maxMarks;
-          const isZero = item.score === 0;
-          const scoreBadgeClass = isFullMarks
-            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-            : (isZero ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-gold-50 text-gold-700 border-gold-200');
-
-          return `
-            <div class="bg-navy-50/70 rounded-xl border border-navy-200/90 p-3.5 space-y-2.5 text-xs">
-              <div class="flex items-start justify-between gap-3">
-                <span class="font-bold text-navy-800 leading-snug">${escapeHtml(item.prompt)}</span>
-                <span class="px-2 py-0.5 rounded-md font-mono font-bold text-[11px] border shrink-0 ${scoreBadgeClass}">
-                  ${item.score} / ${item.maxMarks} mark${item.maxMarks > 1 ? 's' : ''}
-                </span>
-              </div>
-
-              <!-- Student Response Section -->
-              <div class="p-2.5 rounded-lg border bg-white ${isFullMarks ? 'border-emerald-200 ring-1 ring-emerald-100' : 'border-navy-200'}">
-                <div class="flex items-center justify-between mb-1 text-[10px] font-bold uppercase tracking-wider ${isFullMarks ? 'text-emerald-700' : (isZero ? 'text-rose-600' : 'text-gold-600')}">
-                  <span>Your Submitted Answer:</span>
-                  <span>${isFullMarks ? '✓ Full Credit' : (isZero ? '✗ No Mark Awarded' : '⚠ Partial Credit')}</span>
-                </div>
-                <div class="font-mono text-xs text-navy-800 leading-relaxed">
-                  ${ansDisplay}
-                </div>
-              </div>
-
-              <!-- Mark Scheme & Correct Key Section -->
-              <div class="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-200 text-emerald-950 space-y-1">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 flex items-center space-x-1">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                  <span>Official Mark Scheme / Expected Answer:</span>
-                </div>
-                <div class="font-semibold text-xs text-emerald-900 select-text">
-                  ${escapeHtml(item.officialAnswer)}
-                </div>
-                ${item.notes ? `<div class="text-[11px] text-navy-600 italic leading-tight pt-0.5">${escapeHtml(item.notes)}</div>` : ''}
-                ${item.feedback && !isFullMarks ? `<div class="text-[11px] font-medium text-gold-800 bg-gold-50 p-1.5 rounded border border-gold-200 mt-1 leading-tight">${escapeHtml(item.feedback)}</div>` : ''}
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        const breakdownContainerId = `breakdown-container-${sub.submissionId}`;
-        const toggleBtnId = `btn-toggle-breakdown-${sub.submissionId}`;
-
         card.innerHTML = `
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-navy-100 pb-3 gap-2">
+          <div class="flex items-center justify-between border-b border-navy-100 pb-3">
             <div>
-              <h4 class="font-bold text-navy-900 text-sm">${escapeHtml(sub.exerciseTitle)}</h4>
-              <p class="text-[11px] text-navy-500">Submitted on: <span class="font-medium">${escapeHtml(sub.timestamp || 'Recent')}</span></p>
+              <h4 class="font-bold text-navy-900 text-sm">${sub.exerciseTitle}</h4>
+              <p class="text-[11px] text-navy-500">${sub.timestamp || 'Recent'}</p>
             </div>
-            <div class="flex items-center space-x-2">
-              ${statusBadge}
-            </div>
+            ${statusBadge}
           </div>
-
           <div class="flex items-center justify-between py-1 bg-navy-50 px-3.5 py-2.5 rounded-lg border border-navy-200/80 text-xs">
             <span class="text-navy-600 font-semibold">Awarded Score:</span>
-            <div>${finalScoreDisplay}</div>
+            <div class="font-bold font-mono text-navy-800">${sub.finalScore !== undefined ? sub.finalScore : sub.autoScore} / ${sub.maxScore}</div>
           </div>
-
-          ${feedbackSection}
-
-          <!-- Detailed Answer Inspection Toggle Button -->
-          <div class="pt-1">
-            <button id="${toggleBtnId}" class="w-full py-2 px-3 bg-navy-100 hover:bg-navy-200 text-navy-700 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 border border-navy-300 shadow-2xs">
-              <svg class="w-3.5 h-3.5 text-navy-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-              <span class="btn-text">View Detailed Answers & Mark Scheme (${evalResult.details.length} questions)</span>
-            </button>
-
-            <!-- Collapsible Question Breakdown -->
-            <div id="${breakdownContainerId}" class="hidden mt-3 space-y-3 pt-2 border-t border-navy-200/70">
-              ${questionsBreakdownHtml}
-            </div>
-          </div>
+          ${sub.feedback ? `<div class="p-3 bg-navy-50 rounded-xl border border-navy-200 text-xs"><strong class="text-navy-900">Feedback:</strong> ${sub.feedback}</div>` : ''}
         `;
-
         container.appendChild(card);
-
-        // Add toggle interaction for the question breakdown
-        const toggleBtn = document.getElementById(toggleBtnId);
-        const breakdownCont = document.getElementById(breakdownContainerId);
-        if (toggleBtn && breakdownCont) {
-          toggleBtn.addEventListener('click', () => {
-            const isHidden = breakdownCont.classList.contains('hidden');
-            if (isHidden) {
-              breakdownCont.classList.remove('hidden');
-              toggleBtn.querySelector('.btn-text').textContent = "Hide Detailed Breakdown";
-              toggleBtn.classList.add('bg-navy-50', 'border-navy-300', 'text-navy-800');
-              toggleBtn.querySelector('svg').classList.add('rotate-180');
-            } else {
-              breakdownCont.classList.add('hidden');
-              toggleBtn.querySelector('.btn-text').textContent = `View Detailed Answers & Mark Scheme (${evalResult.details.length} questions)`;
-              toggleBtn.classList.remove('bg-navy-50', 'border-navy-300', 'text-navy-800');
-              toggleBtn.querySelector('svg').classList.remove('rotate-180');
-            }
-          });
-        }
       });
     }
 
-    /* ==========================================================================
-       USER EVENT LISTENERS & SETUP
-       ========================================================================== */
     document.addEventListener('DOMContentLoaded', () => {
       populateStudentSelect();
+      populateExerciseSwitcher();
+      syncSettingsFromSheet();
       fetchPublicStudents();
 
-      // Login Tab Switching
-      document.getElementById('tab-btn-student').addEventListener('click', () => {
-        document.getElementById('tab-content-student').classList.remove('hidden');
-        document.getElementById('tab-content-admin').classList.add('hidden');
-        document.getElementById('tab-btn-student').className = "flex-1 py-3.5 text-xs font-bold text-navy-700 border-b-2 border-gold-500 bg-white transition flex items-center justify-center space-x-1.5";
-        document.getElementById('tab-btn-admin').className = "flex-1 py-3.5 text-xs font-bold text-navy-500 hover:text-navy-700 transition flex items-center justify-center space-x-1.5";
-      });
+      const fontSelect = document.getElementById('exam-font-select');
+      if (fontSelect) {
+        fontSelect.value = activeExamFont;
+        fontSelect.addEventListener('change', (e) => {
+          applyPassageFont(e.target.value);
+        });
+      }
 
-      document.getElementById('tab-btn-admin').addEventListener('click', () => {
-        document.getElementById('tab-content-admin').classList.remove('hidden');
-        document.getElementById('tab-content-student').classList.add('hidden');
-        document.getElementById('tab-btn-admin').className = "flex-1 py-3.5 text-xs font-bold text-navy-900 border-b-2 border-navy-900 bg-white transition flex items-center justify-center space-x-1.5";
-        document.getElementById('tab-btn-student').className = "flex-1 py-3.5 text-xs font-bold text-navy-500 hover:text-navy-700 transition flex items-center justify-center space-x-1.5";
-      });
+      const codegsDisplay = document.getElementById('codegs-source-display');
+      if (codegsDisplay) codegsDisplay.textContent = CODE_GS_SCRIPT;
 
-      // Student Select Listener
-      document.getElementById('login-student-select').addEventListener('change', (e) => {
-        const id = e.target.value;
-        const stu = studentRoster.find(s => s.id === id);
-        const box = document.getElementById('student-class-display-box');
-        if (stu) {
-          box.classList.remove('hidden');
-          document.getElementById('student-class-label').textContent = stu.class;
-          document.getElementById('student-id-label').textContent = stu.id;
-        } else {
-          box.classList.add('hidden');
-        }
-      });
+      const shareLinkInput = document.getElementById('gas-share-link');
+      if (shareLinkInput) {
+        shareLinkInput.value = window.location.origin + window.location.pathname + `?webAppUrl=${encodeURIComponent(gasWebhookUrl)}`;
+      }
 
-      // Student Login Action
-      document.getElementById('student-login-submit').addEventListener('click', async () => {
-        const stuId = document.getElementById('login-student-select').value;
-        const pass = document.getElementById('login-student-pass').value.trim();
-        const errDiv = document.getElementById('student-login-error');
-        const spinner = document.getElementById('student-login-spinner');
-        const btnText = document.getElementById('student-login-btn-text');
+      // Tab Switching in Login Modal
+      const tabStudent = document.getElementById('tab-btn-student');
+      const tabAdmin = document.getElementById('tab-btn-admin');
+      if (tabStudent && tabAdmin) {
+        tabStudent.addEventListener('click', () => {
+          document.getElementById('tab-content-student').classList.remove('hidden');
+          document.getElementById('tab-content-admin').classList.add('hidden');
+          tabStudent.className = "flex-1 py-3.5 text-xs font-bold text-navy-700 border-b-2 border-gold-500 bg-white transition flex items-center justify-center space-x-1.5";
+          tabAdmin.className = "flex-1 py-3.5 text-xs font-bold text-navy-500 hover:text-navy-700 transition flex items-center justify-center space-x-1.5";
+        });
 
-        if (!stuId || !pass) {
-          errDiv.textContent = "Please select your name and enter your password.";
-          errDiv.classList.remove('hidden');
-          return;
-        }
+        tabAdmin.addEventListener('click', () => {
+          document.getElementById('tab-content-admin').classList.remove('hidden');
+          document.getElementById('tab-content-student').classList.add('hidden');
+          tabAdmin.className = "flex-1 py-3.5 text-xs font-bold text-navy-900 border-b-2 border-navy-900 bg-white transition flex items-center justify-center space-x-1.5";
+          tabStudent.className = "flex-1 py-3.5 text-xs font-bold text-navy-500 hover:text-navy-700 transition flex items-center justify-center space-x-1.5";
+        });
+      }
 
-        errDiv.classList.add('hidden');
-        spinner.classList.remove('hidden');
-        btnText.textContent = "Verifying...";
-
-        try {
-          const res = await verifyUserLogin(stuId, pass);
-          if (res && res.authorized) {
-            currentUser = { role: "student", data: res.user };
-            initStudentExamView();
+      const studentSelect = document.getElementById('login-student-select');
+      if (studentSelect) {
+        studentSelect.addEventListener('change', (e) => {
+          const id = e.target.value;
+          const stu = studentRoster.find(s => s.id === id);
+          const box = document.getElementById('student-class-display-box');
+          if (stu) {
+            box.classList.remove('hidden');
+            document.getElementById('student-class-label').textContent = stu.class;
+            document.getElementById('student-id-label').textContent = stu.id;
           } else {
-            errDiv.textContent = res.message || "Incorrect password. Please try again.";
-            errDiv.classList.remove('hidden');
+            box.classList.add('hidden');
           }
-        } finally {
-          spinner.classList.add('hidden');
-          btnText.textContent = "Begin Practice Task";
-        }
-      });
+        });
+      }
 
-      // Admin Login Action
-      document.getElementById('admin-login-submit').addEventListener('click', async () => {
-        const identifier = document.getElementById('login-admin-user').value.trim();
-        const pass = document.getElementById('login-admin-pass').value.trim();
-        const errDiv = document.getElementById('admin-login-error');
-        const spinner = document.getElementById('admin-login-spinner');
-        const btnText = document.getElementById('admin-login-btn-text');
+      const studentSubmit = document.getElementById('student-login-submit');
+      if (studentSubmit) {
+        studentSubmit.addEventListener('click', async () => {
+          const stuId = document.getElementById('login-student-select').value;
+          const pass = document.getElementById('login-student-pass').value.trim();
+          const errDiv = document.getElementById('student-login-error');
+          const spinner = document.getElementById('student-login-spinner');
+          const btnText = document.getElementById('student-login-btn-text');
 
-        if (!identifier || !pass) {
-          errDiv.textContent = "Please enter both admin ID/username and password.";
-          errDiv.classList.remove('hidden');
-          return;
-        }
-
-        errDiv.classList.add('hidden');
-        spinner.classList.remove('hidden');
-        btnText.textContent = "Authenticating...";
-
-        try {
-          const res = await verifyUserLogin(identifier, pass);
-          if (res && res.authorized && res.user.role === "admin") {
-            currentUser = { role: "admin", data: res.user };
-            initAdminDashboardView();
-          } else {
-            errDiv.textContent = "Invalid admin credentials or account does not have Admin role.";
+          if (!stuId || !pass) {
+            errDiv.textContent = "Please select your name and enter your password.";
             errDiv.classList.remove('hidden');
+            return;
           }
-        } finally {
-          spinner.classList.add('hidden');
-          btnText.textContent = "Verify & Open Portal";
-        }
-      });
 
-      // Log Out
-      document.getElementById('btn-logout').addEventListener('click', () => {
-        currentUser = null;
-        document.getElementById('exam-workspace').classList.add('hidden');
-        document.getElementById('admin-workspace').classList.add('hidden');
-        document.getElementById('user-header-status').classList.add('hidden');
-        document.getElementById('gas-settings-btn').classList.add('hidden');
-        document.getElementById('student-grades-btn').classList.add('hidden');
-        document.getElementById('login-modal').classList.remove('hidden');
-        document.getElementById('login-student-pass').value = '';
-        document.getElementById('login-admin-pass').value = '';
-      });
+          errDiv.classList.add('hidden');
+          spinner.classList.remove('hidden');
+          btnText.textContent = "Verifying...";
 
-      // Exercise Switcher
-      document.getElementById('exercise-switcher').addEventListener('change', (e) => {
-        saveCurrentQuestionInput();
-        const idx = EXERCISES.findIndex(ex => ex.id === e.target.value);
-        if (idx !== -1) loadExercise(idx);
-      });
+          try {
+            const res = await verifyUserLogin(stuId, pass);
+            if (res && res.authorized) {
+              currentUser = { role: "student", data: res.user };
+              initStudentExamView();
+            } else {
+              errDiv.textContent = res.message || "Incorrect password.";
+              errDiv.classList.remove('hidden');
+            }
+          } finally {
+            spinner.classList.add('hidden');
+            btnText.textContent = "Begin Practice Task";
+          }
+        });
+      }
 
-      // Font Resizing
-      document.getElementById('btn-font-inc').addEventListener('click', () => {
-        if (currentFontSize < 26) {
-          currentFontSize += 2;
-          document.getElementById('passage-container').style.fontSize = `${currentFontSize}px`;
-        }
-      });
-      document.getElementById('btn-font-dec').addEventListener('click', () => {
-        if (currentFontSize > 14) {
-          currentFontSize -= 2;
-          document.getElementById('passage-container').style.fontSize = `${currentFontSize}px`;
-        }
-      });
+      const adminSubmit = document.getElementById('admin-login-submit');
+      if (adminSubmit) {
+        adminSubmit.addEventListener('click', async () => {
+          const identifier = document.getElementById('login-admin-user').value.trim();
+          const pass = document.getElementById('login-admin-pass').value.trim();
+          const errDiv = document.getElementById('admin-login-error');
+          const spinner = document.getElementById('admin-login-spinner');
+          const btnText = document.getElementById('admin-login-btn-text');
 
-      // Highlighter Tool
-      document.getElementById('btn-highlight-toggle').addEventListener('click', () => {
-        const selection = window.getSelection();
-        if (!selection.rangeCount || selection.isCollapsed) return;
-        const range = selection.getRangeAt(0);
-        const span = document.createElement('span');
-        span.className = 'user-highlight';
-        try {
-          range.surroundContents(span);
-          selection.removeAllRanges();
-        } catch (e) {
-          console.warn("Cross-element highlight ignored:", e);
-        }
-      });
+          if (!identifier || !pass) {
+            errDiv.textContent = "Please enter admin username and password.";
+            errDiv.classList.remove('hidden');
+            return;
+          }
+
+          errDiv.classList.add('hidden');
+          spinner.classList.remove('hidden');
+          btnText.textContent = "Authenticating...";
+
+          try {
+            const res = await verifyUserLogin(identifier, pass);
+            if (res && res.authorized && res.user.role === "admin") {
+              currentUser = { role: "admin", data: res.user };
+              initAdminDashboardView();
+            } else {
+              errDiv.textContent = "Invalid admin credentials.";
+              errDiv.classList.remove('hidden');
+            }
+          } finally {
+            spinner.classList.add('hidden');
+            btnText.textContent = "Verify & Open Portal";
+          }
+        });
+      }
+
+      const logoutBtn = document.getElementById('btn-logout');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          currentUser = null;
+          document.getElementById('exam-workspace').classList.add('hidden');
+          document.getElementById('admin-workspace').classList.add('hidden');
+          document.getElementById('user-header-status').classList.add('hidden');
+          document.getElementById('gas-settings-btn').classList.add('hidden');
+          document.getElementById('student-grades-btn').classList.add('hidden');
+          document.getElementById('login-modal').classList.remove('hidden');
+        });
+      }
+
+      const switcher = document.getElementById('exercise-switcher');
+      if (switcher) {
+        switcher.addEventListener('change', (e) => {
+          saveCurrentQuestionInput();
+          const idx = EXERCISES.findIndex(ex => ex.id === e.target.value);
+          if (idx !== -1) loadExercise(idx);
+        });
+      }
+
+      const btnFontInc = document.getElementById('btn-font-inc');
+      if (btnFontInc) {
+        btnFontInc.addEventListener('click', () => {
+          if (currentFontSize < 26) {
+            currentFontSize += 2;
+            document.getElementById('passage-container').style.fontSize = `${currentFontSize}px`;
+          }
+        });
+      }
+
+      const btnFontDec = document.getElementById('btn-font-dec');
+      if (btnFontDec) {
+        btnFontDec.addEventListener('click', () => {
+          if (currentFontSize > 14) {
+            currentFontSize -= 2;
+            document.getElementById('passage-container').style.fontSize = `${currentFontSize}px`;
+          }
+        });
+      }
+
+      const btnHighlight = document.getElementById('btn-highlight-toggle');
+      if (btnHighlight) {
+        btnHighlight.addEventListener('click', () => {
+          const selection = window.getSelection();
+          if (!selection.rangeCount || selection.isCollapsed) return;
+          const range = selection.getRangeAt(0);
+          const span = document.createElement('span');
+          span.className = 'user-highlight';
+          try {
+            range.surroundContents(span);
+            selection.removeAllRanges();
+          } catch (e) {
+            console.warn("Cross-element highlight ignored:", e);
+          }
+        });
+      }
 
       // Question Navigation
-      document.getElementById('btn-next-question').addEventListener('click', () => {
-        saveCurrentQuestionInput();
-        const ex = EXERCISES[activeExerciseIndex];
-        if (activeQuestionIndex < ex.questions.length - 1) {
-          activeQuestionIndex++;
-          renderReviewList();
-          renderCurrentQuestion();
-        }
-      });
-
-      document.getElementById('btn-prev-question').addEventListener('click', () => {
-        saveCurrentQuestionInput();
-        if (activeQuestionIndex > 0) {
-          activeQuestionIndex--;
-          renderReviewList();
-          renderCurrentQuestion();
-        }
-      });
-
-      document.getElementById('mark-review-checkbox').addEventListener('change', () => {
-        const ex = EXERCISES[activeExerciseIndex];
-        const q = ex.questions[activeQuestionIndex];
-        questionReviewFlags[ex.id][q.id] = document.getElementById('mark-review-checkbox').checked;
-        renderReviewList();
-      });
-
-      document.getElementById('btn-review-done').addEventListener('click', () => {
-        saveCurrentQuestionInput();
-        renderReviewList();
-      });
-
-      // Submit Homework with Progress Loading Modal
-      document.getElementById('btn-submit-task').addEventListener('click', async () => {
-        saveCurrentQuestionInput();
-        const ex = EXERCISES[activeExerciseIndex];
-        const subBtn = document.getElementById('btn-submit-task');
-
-        subBtn.disabled = true;
-        subBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-        const loadingModal = document.getElementById('submission-loading-modal');
-        document.getElementById('loading-modal-title').textContent = "Submitting Homework...";
-        document.getElementById('loading-modal-desc').textContent = "Please wait while your answers and grading data sync to the Google Sheet. Do not refresh or close this page.";
-        loadingModal.classList.remove('hidden');
-
-        const result = evaluateExerciseAnswers(ex, exerciseResponses[ex.id]);
-        const subId = "SUB-" + Math.floor(100000 + Math.random() * 900000);
-        const submissionObj = {
-          submissionId: subId,
-          studentId: currentUser.data.id,
-          studentName: currentUser.data.name,
-          class: currentUser.data.class,
-          exerciseId: ex.id,
-          exerciseTitle: `${ex.number}: ${ex.title}`,
-          autoScore: result.earned,
-          maxScore: ex.totalMarks,
-          finalScore: result.earned,
-          status: "Pending Review",
-          feedback: "",
-          answers: exerciseResponses[ex.id],
-          timestamp: new Date().toLocaleString()
-        };
-
-        try {
-          await sendSubmissionToSheet(submissionObj);
-        } finally {
-          loadingModal.classList.add('hidden');
-          subBtn.disabled = false;
-          subBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        }
-
-        document.getElementById('receipt-student-name').textContent = currentUser.data.name;
-        document.getElementById('receipt-exercise-title').textContent = `${ex.number}: ${ex.title}`;
-        document.getElementById('receipt-auto-score').textContent = `${result.earned} / ${ex.totalMarks}`;
-        document.getElementById('student-result-modal').classList.remove('hidden');
-      });
-
-      document.getElementById('btn-close-receipt').addEventListener('click', () => {
-        document.getElementById('student-result-modal').classList.add('hidden');
-        fetchStudentSubmissions();
-      });
-
-      // Admin Tab Switching
-      document.getElementById('admin-tab-subs').addEventListener('click', () => {
-        document.getElementById('admin-panel-subs').classList.remove('hidden');
-        document.getElementById('admin-panel-users').classList.add('hidden');
-        document.getElementById('admin-tab-subs').className = "py-2.5 px-3 text-xs font-bold text-navy-700 border-b-2 border-gold-500 transition";
-        document.getElementById('admin-tab-users').className = "py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition";
-      });
-
-      document.getElementById('admin-tab-users').addEventListener('click', () => {
-        document.getElementById('admin-panel-users').classList.remove('hidden');
-        document.getElementById('admin-panel-subs').classList.add('hidden');
-        document.getElementById('admin-tab-users').className = "py-2.5 px-3 text-xs font-bold text-navy-700 border-b-2 border-gold-500 transition";
-        document.getElementById('admin-tab-subs').className = "py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition";
-      });
-
-      // Admin Save Grade with Progress Loading Modal
-      document.getElementById('close-grading-modal').addEventListener('click', () => {
-        document.getElementById('grading-modal').classList.add('hidden');
-      });
-
-      document.getElementById('save-final-grade-btn').addEventListener('click', async () => {
-        if (!currentInspectedSubmissionId) return;
-        const scoreInput = document.getElementById('grade-modal-final-input').value;
-        const feedbackInput = document.getElementById('grade-modal-feedback').value;
-        const finalScore = parseFloat(scoreInput) || 0;
-        const saveBtn = document.getElementById('save-final-grade-btn');
-
-        saveBtn.disabled = true;
-        saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-        // IMMEDIATELY CLOSE THE GRADING MODAL so it never covers the progress indicator
-        document.getElementById('grading-modal').classList.add('hidden');
-
-        // SHOW THE PROGRESS LOADING OVERLAY (z-[100])
-        const loadingModal = document.getElementById('submission-loading-modal');
-        document.getElementById('loading-modal-title').textContent = "Saving Grades & Feedback...";
-        document.getElementById('loading-modal-desc').textContent = "Syncing final marks and teacher comments with the Google Sheet. Please wait...";
-        loadingModal.classList.remove('hidden');
-
-        try {
-          await sendFinalGradeToSheet(currentInspectedSubmissionId, finalScore, feedbackInput);
-        } finally {
-          loadingModal.classList.add('hidden');
-          saveBtn.disabled = false;
-          saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        }
-
-        renderAdminDashboard();
-      });
-
-      // Student Grades & Submissions Modal Event Bindings
-      document.getElementById('student-grades-btn').addEventListener('click', () => {
-        renderStudentGradesModal();
-        document.getElementById('student-grades-modal').classList.remove('hidden');
-      });
-
-      document.getElementById('close-student-grades-modal').addEventListener('click', () => {
-        document.getElementById('student-grades-modal').classList.add('hidden');
-      });
-
-      document.getElementById('refresh-student-grades-btn').addEventListener('click', async () => {
-        await fetchStudentSubmissions();
-        renderStudentGradesModal();
-      });
-
-      // Admin Add User Modal
-      document.getElementById('admin-add-user-btn').addEventListener('click', () => {
-        document.getElementById('add-user-modal').classList.remove('hidden');
-      });
-      document.getElementById('close-add-user-modal').addEventListener('click', () => {
-        document.getElementById('add-user-modal').classList.add('hidden');
-      });
-
-      document.getElementById('btn-confirm-add-user').addEventListener('click', async () => {
-        const id = document.getElementById('new-user-id').value.trim();
-        const name = document.getElementById('new-user-name').value.trim();
-        const role = document.getElementById('new-user-role').value;
-        const cls = document.getElementById('new-user-class').value.trim();
-        const pass = document.getElementById('new-user-pass').value.trim();
-
-        if (!id || !name || !pass) {
-          return;
-        }
-
-        const newUser = { id, name, role, class: cls, password: pass };
-        allUsersList.push(newUser);
-        if (role === 'student') studentRoster.push({ id, name, class: cls });
-
-        if (gasWebhookUrl) {
-          try {
-            await fetch(gasWebhookUrl, {
-              method: "POST",
-              mode: "no-cors",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ action: "addUser", ...newUser })
-            });
-          } catch(e) {
-            console.error(e);
+      const btnNextQ = document.getElementById('btn-next-question');
+      if (btnNextQ) {
+        btnNextQ.addEventListener('click', () => {
+          saveCurrentQuestionInput();
+          const ex = EXERCISES[activeExerciseIndex];
+          if (activeQuestionIndex < ex.questions.length - 1) {
+            activeQuestionIndex++;
+            renderReviewList();
+            renderCurrentQuestion();
           }
-        }
+        });
+      }
 
-        document.getElementById('add-user-modal').classList.add('hidden');
-        populateStudentSelect();
-        renderAdminDashboard();
+      const btnPrevQ = document.getElementById('btn-prev-question');
+      if (btnPrevQ) {
+        btnPrevQ.addEventListener('click', () => {
+          saveCurrentQuestionInput();
+          if (activeQuestionIndex > 0) {
+            activeQuestionIndex--;
+            renderReviewList();
+            renderCurrentQuestion();
+          }
+        });
+      }
+
+      const chkReview = document.getElementById('mark-review-checkbox');
+      if (chkReview) {
+        chkReview.addEventListener('change', () => {
+          const ex = EXERCISES[activeExerciseIndex];
+          const q = ex.questions[activeQuestionIndex];
+          if (!questionReviewFlags[ex.id]) questionReviewFlags[ex.id] = {};
+          questionReviewFlags[ex.id][q.id] = chkReview.checked;
+          renderReviewList();
+        });
+      }
+
+      const btnRevDone = document.getElementById('btn-review-done');
+      if (btnRevDone) {
+        btnRevDone.addEventListener('click', () => {
+          saveCurrentQuestionInput();
+          renderReviewList();
+        });
+      }
+
+      // Submit Homework
+      const btnSubmitTask = document.getElementById('btn-submit-task');
+      if (btnSubmitTask) {
+        btnSubmitTask.addEventListener('click', async () => {
+          saveCurrentQuestionInput();
+          const ex = EXERCISES[activeExerciseIndex];
+
+          if (isPreviewMode) {
+            const result = evaluateExerciseAnswers(ex, exerciseResponses[ex.id]);
+            document.getElementById('receipt-student-name').textContent = "Teacher Preview (No homework record saved)";
+            document.getElementById('receipt-exercise-title').textContent = `${ex.number}: ${ex.title}`;
+            document.getElementById('receipt-auto-score').textContent = `${result.earned} / ${ex.totalMarks}`;
+            document.getElementById('student-result-modal').classList.remove('hidden');
+            return;
+          }
+
+          btnSubmitTask.disabled = true;
+          btnSubmitTask.classList.add('opacity-50', 'cursor-not-allowed');
+
+          const loading = document.getElementById('submission-loading-modal');
+          loading.classList.remove('hidden');
+
+          const result = evaluateExerciseAnswers(ex, exerciseResponses[ex.id]);
+          const subId = "SUB-" + Math.floor(100000 + Math.random() * 900000);
+          const submissionObj = {
+            submissionId: subId,
+            studentId: currentUser.data.id,
+            studentName: currentUser.data.name,
+            class: currentUser.data.class,
+            exerciseId: ex.id,
+            exerciseTitle: `${ex.number}: ${ex.title}`,
+            autoScore: result.earned,
+            maxScore: ex.totalMarks,
+            finalScore: result.earned,
+            status: "Pending Review",
+            feedback: "",
+            answers: exerciseResponses[ex.id],
+            timestamp: new Date().toLocaleString()
+          };
+
+          try {
+            await sendSubmissionToSheet(submissionObj);
+          } finally {
+            loading.classList.add('hidden');
+            btnSubmitTask.disabled = false;
+            btnSubmitTask.classList.remove('opacity-50', 'cursor-not-allowed');
+          }
+
+          document.getElementById('receipt-student-name').textContent = currentUser.data.name;
+          document.getElementById('receipt-exercise-title').textContent = `${ex.number}: ${ex.title}`;
+          document.getElementById('receipt-auto-score').textContent = `${result.earned} / ${ex.totalMarks}`;
+          document.getElementById('student-result-modal').classList.remove('hidden');
+        });
+      }
+
+      const btnCloseReceipt = document.getElementById('btn-close-receipt');
+      if (btnCloseReceipt) {
+        btnCloseReceipt.addEventListener('click', () => {
+          document.getElementById('student-result-modal').classList.add('hidden');
+        });
+      }
+
+      const exitPreviewBtn = document.getElementById('btn-exit-preview');
+      if (exitPreviewBtn) {
+        exitPreviewBtn.addEventListener('click', exitTaskPreview);
+      }
+
+      // Admin Tabs
+      const tabSubs = document.getElementById('admin-tab-subs');
+      const tabTasks = document.getElementById('admin-tab-tasks');
+      const tabUsers = document.getElementById('admin-tab-users');
+      if (tabSubs && tabTasks && tabUsers) {
+        tabSubs.addEventListener('click', () => {
+          document.getElementById('admin-panel-subs').classList.remove('hidden');
+          document.getElementById('admin-panel-tasks').classList.add('hidden');
+          document.getElementById('admin-panel-users').classList.add('hidden');
+          tabSubs.className = "py-2.5 px-3 text-xs font-bold text-navy-700 border-b-2 border-gold-500 transition";
+          tabTasks.className = "py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition";
+          tabUsers.className = "py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition";
+        });
+        tabTasks.addEventListener('click', () => {
+          document.getElementById('admin-panel-tasks').classList.remove('hidden');
+          document.getElementById('admin-panel-subs').classList.add('hidden');
+          document.getElementById('admin-panel-users').classList.add('hidden');
+          tabTasks.className = "py-2.5 px-3 text-xs font-bold text-navy-700 border-b-2 border-gold-500 transition";
+          tabSubs.className = "py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition";
+          tabUsers.className = "py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition";
+        });
+        tabUsers.addEventListener('click', () => {
+          document.getElementById('admin-panel-users').classList.remove('hidden');
+          document.getElementById('admin-panel-subs').classList.add('hidden');
+          document.getElementById('admin-panel-tasks').classList.add('hidden');
+          tabUsers.className = "py-2.5 px-3 text-xs font-bold text-navy-700 border-b-2 border-gold-500 transition";
+          tabSubs.className = "py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition";
+          tabTasks.className = "py-2.5 px-3 text-xs font-bold text-navy-500 hover:text-navy-700 transition";
+        });
+      }
+
+      document.querySelectorAll('.btn-template-select').forEach(b => {
+        b.addEventListener('click', () => applyEditorTemplate(b.getAttribute('data-type')));
       });
 
-      // GAS Settings Modals
+      const adminAddBtn = document.getElementById('admin-add-task-btn');
+      if (adminAddBtn) adminAddBtn.addEventListener('click', () => openTaskEditor(-1));
+
+      const tabAddTaskBtn = document.getElementById('btn-add-task-from-tab');
+      if (tabAddTaskBtn) tabAddTaskBtn.addEventListener('click', () => openTaskEditor(-1));
+
+      const closeTaskEditor = document.getElementById('close-task-editor');
+      if (closeTaskEditor) closeTaskEditor.addEventListener('click', () => document.getElementById('task-editor-modal').classList.add('hidden'));
+
+      const cancelTaskEdit = document.getElementById('btn-cancel-task-edit');
+      if (cancelTaskEdit) cancelTaskEdit.addEventListener('click', () => document.getElementById('task-editor-modal').classList.add('hidden'));
+
+      const addQRowBtn = document.getElementById('btn-add-question-row');
+      if (addQRowBtn) addQRowBtn.addEventListener('click', () => addQuestionRow());
+
+      const openQuickJsonModal = () => {
+        const txt = document.getElementById('quick-json-textarea');
+        const st = document.getElementById('quick-json-status');
+        const fileInp = document.getElementById('json-file-input');
+        if (txt) txt.value = '';
+        if (st) { st.classList.add('hidden'); st.textContent = ''; }
+        if (fileInp) fileInp.value = '';
+        document.getElementById('quick-json-modal').classList.remove('hidden');
+      };
+
+      const topJsonBtn = document.getElementById('admin-upload-json-btn');
+      const tabJsonBtn = document.getElementById('btn-upload-json-tab');
+      if (topJsonBtn) topJsonBtn.addEventListener('click', openQuickJsonModal);
+      if (tabJsonBtn) tabJsonBtn.addEventListener('click', openQuickJsonModal);
+
+      const closeQuickJson = document.getElementById('close-quick-json');
+      const cancelQuickJson = document.getElementById('btn-cancel-quick-json');
+      const confirmQuickJson = document.getElementById('btn-confirm-quick-json');
+      const quickJsonModal = document.getElementById('quick-json-modal');
+
+      if (closeQuickJson) closeQuickJson.addEventListener('click', () => quickJsonModal.classList.add('hidden'));
+      if (cancelQuickJson) cancelQuickJson.addEventListener('click', () => quickJsonModal.classList.add('hidden'));
+
+      const jsonFileInput = document.getElementById('json-file-input');
+      if (jsonFileInput) {
+        jsonFileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            document.getElementById('quick-json-textarea').value = ev.target.result;
+            const st = document.getElementById('quick-json-status');
+            st.className = "text-xs p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold";
+            st.textContent = `✓ Loaded ${file.name} successfully. Click "Import & Add Task" below.`;
+            st.classList.remove('hidden');
+          };
+          reader.readAsText(file);
+        });
+      }
+
+      const sampleBtn = document.getElementById('btn-load-sample-json');
+      if (sampleBtn) {
+        sampleBtn.addEventListener('click', () => {
+          const sample = {
+            title: "Example Reading Practice",
+            exerciseType: "Exercise 1",
+            syllabus: "0510/21/M/J/25",
+            totalMarks: 8,
+            passageTitle: "Example Reading Practice",
+            passageContent: "<p>Insert reading passage text here with clean HTML paragraphs.</p>",
+            questions: [
+              {
+                id: "q1",
+                number: "Question 1",
+                prompt: "What is the primary topic discussed in the passage?",
+                marks: 1,
+                type: "text",
+                officialAnswer: "wildlife conservation",
+                notes: "Negates if opposite meaning."
+              },
+              {
+                id: "q2",
+                number: "Question 2",
+                prompt: "Give three details mentioned by the author:",
+                marks: 3,
+                type: "multi-input",
+                count: 3,
+                officialAnswer: "1) factor one; 2) factor two; 3) factor three",
+                notes: "Order does not matter. 1 mark per distinct point."
+              }
+            ]
+          };
+          document.getElementById('quick-json-textarea').value = JSON.stringify(sample, null, 2);
+        });
+      }
+
+      const exportJsonBtn = document.getElementById('btn-export-json-tab');
+      if (exportJsonBtn) {
+        exportJsonBtn.addEventListener('click', () => {
+          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(EXERCISES, null, 2));
+          const dlAnchor = document.createElement('a');
+          dlAnchor.setAttribute("href", dataStr);
+          dlAnchor.setAttribute("download", `cambridge_tasks_backup_${Date.now()}.json`);
+          document.body.appendChild(dlAnchor);
+          dlAnchor.click();
+          dlAnchor.remove();
+        });
+      }
+
+      if (confirmQuickJson) {
+        confirmQuickJson.addEventListener('click', async () => {
+          const raw = document.getElementById('quick-json-textarea').value.trim();
+          const st = document.getElementById('quick-json-status');
+          if (!raw) {
+            st.className = "text-xs p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-semibold";
+            st.textContent = "Please paste JSON content or select a .json file first.";
+            st.classList.remove('hidden');
+            return;
+          }
+
+          try {
+            const parsed = JSON.parse(raw);
+            const tasksToAdd = Array.isArray(parsed) ? parsed : [parsed];
+            let addedCount = 0;
+
+            tasksToAdd.forEach(taskObj => {
+              if (!taskObj.title || !taskObj.questions) return;
+              if (!taskObj.id) taskObj.id = `task_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+              if (!taskObj.number) {
+                const nextNum = EXERCISES.length + 1;
+                taskObj.number = `Task ${nextNum}: ${taskObj.exerciseType || 'Exercise'}`;
+              }
+              if (!taskObj.totalMarks) {
+                taskObj.totalMarks = taskObj.questions.reduce((acc, q) => acc + (Number(q.marks) || 1), 0);
+              }
+              EXERCISES.push(taskObj);
+              addedCount++;
+
+              if (gasWebhookUrl) {
+                fetch(gasWebhookUrl, {
+                  method: "POST", mode: "no-cors",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ action: "saveTask", task: taskObj })
+                }).catch(() => {});
+              }
+            });
+
+            if (addedCount === 0) {
+              st.className = "text-xs p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-semibold";
+              st.textContent = "Invalid format: Task must include at least 'title' and a 'questions' array.";
+              st.classList.remove('hidden');
+              return;
+            }
+
+            localStorage.setItem('cambridge_custom_tasks', JSON.stringify(EXERCISES));
+            populateExerciseSwitcher();
+            renderAdminDashboard();
+            quickJsonModal.classList.add('hidden');
+          } catch(err) {
+            st.className = "text-xs p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-semibold";
+            st.textContent = "JSON Syntax Error: Please check braces, quotes, and formatting.";
+            st.classList.remove('hidden');
+          }
+        });
+      }
+
+      // Save Task from manual modal
+      const btnSaveTask = document.getElementById('btn-save-task');
+      if (btnSaveTask) {
+        btnSaveTask.addEventListener('click', async () => {
+          const modal = document.getElementById('task-editor-modal');
+          const editIdx = modal.getAttribute('data-edit-idx');
+          const taskLabel = document.getElementById('task-edit-id').value.trim();
+          const title = document.getElementById('task-edit-title').value.trim();
+          const syllabus = document.getElementById('task-edit-syllabus').value.trim();
+          const passage = document.getElementById('task-edit-passage').value.trim();
+
+          if (!taskLabel || !title || !passage) {
+            showCustomConfirm("Missing Information", "Please enter Task Label, Title, and Passage text.", null);
+            return;
+          }
+
+          const rows = document.querySelectorAll('.q-builder-row');
+          const questions = [];
+          let totalMarks = 0;
+
+          rows.forEach((r, idx) => {
+            const number = r.querySelector('.q-b-number').value.trim() || `Question ${idx + 1}`;
+            const type = r.querySelector('.q-b-type').value;
+            const marks = parseInt(r.querySelector('.q-b-marks').value) || 1;
+            const prompt = r.querySelector('.q-b-prompt').value.trim();
+            const officialAnswer = r.querySelector('.q-b-answer').value.trim();
+            totalMarks += marks;
+
+            let options = undefined;
+            if (type === "multiple-choice") {
+              options = Array.from(r.querySelectorAll('.mcq-opt-text')).map(inp => ({
+                letter: inp.getAttribute('data-letter'),
+                text: inp.value.trim()
+              }));
+            }
+
+            questions.push({
+              id: `q_${Date.now()}_${idx + 1}`,
+              number,
+              type,
+              marks,
+              count: type === 'multi-input' ? marks : undefined,
+              prompt,
+              officialAnswer,
+              options,
+              notes: "Order does not matter. Award marks per distinct factor matched."
+            });
+          });
+
+          const isEditing = editIdx !== null && editIdx !== undefined && editIdx !== "";
+          const nextId = isEditing ? EXERCISES[parseInt(editIdx)].id : `task_${Date.now()}`;
+          const exType = taskLabel.split(':')[1] ? taskLabel.split(':')[1].trim() : "Reading Exercise";
+
+          const taskObj = {
+            id: nextId,
+            number: taskLabel,
+            exerciseType: exType,
+            title,
+            syllabus,
+            totalMarks,
+            passageTitle: title,
+            passageContent: passage,
+            questions
+          };
+
+          if (isEditing) {
+            EXERCISES[parseInt(editIdx)] = taskObj;
+          } else {
+            EXERCISES.push(taskObj);
+          }
+
+          localStorage.setItem('cambridge_custom_tasks', JSON.stringify(EXERCISES));
+          populateExerciseSwitcher();
+          renderAdminDashboard();
+          modal.classList.add('hidden');
+
+          if (gasWebhookUrl) {
+            try {
+              await fetch(gasWebhookUrl, {
+                method: "POST", mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "saveTask", task: taskObj })
+              });
+            } catch(e) {}
+          }
+        });
+      }
+
+      // Teacher Grading Review
+      const closeGradingModal = document.getElementById('close-grading-modal');
+      if (closeGradingModal) {
+        closeGradingModal.addEventListener('click', () => {
+          document.getElementById('grading-modal').classList.add('hidden');
+        });
+      }
+
+      const saveFinalGradeBtn = document.getElementById('save-final-grade-btn');
+      if (saveFinalGradeBtn) {
+        saveFinalGradeBtn.addEventListener('click', async () => {
+          if (!currentInspectedSubmissionId) return;
+          const score = parseFloat(document.getElementById('grade-modal-final-input').value) || 0;
+          const feedback = document.getElementById('grade-modal-feedback').value;
+          document.getElementById('grading-modal').classList.add('hidden');
+          await sendFinalGradeToSheet(currentInspectedSubmissionId, score, feedback);
+          renderAdminDashboard();
+        });
+      }
+
+      // GAS Setup Modal
       const openGasModal = () => {
         document.getElementById('gas-url-input').value = gasWebhookUrl;
+        const gasKeyEl = document.getElementById('gas-gemini-key-input');
+        if (gasKeyEl) gasKeyEl.value = sheetGeminiApiKey || '';
         document.getElementById('gas-settings-modal').classList.remove('hidden');
       };
-      document.getElementById('gas-settings-btn').addEventListener('click', openGasModal);
-      document.getElementById('admin-gas-btn').addEventListener('click', openGasModal);
-      document.getElementById('close-gas-settings').addEventListener('click', () => {
-        document.getElementById('gas-settings-modal').classList.add('hidden');
-      });
 
-      document.getElementById('save-gas-url-btn').addEventListener('click', () => {
-        const val = document.getElementById('gas-url-input').value.trim();
-        gasWebhookUrl = val;
-        localStorage.setItem('cambridge_gas_url', val);
-        document.getElementById('gas-settings-modal').classList.add('hidden');
-        fetchPublicStudents();
-      });
+      const gasBtn = document.getElementById('gas-settings-btn');
+      const adminGasBtn = document.getElementById('admin-gas-btn');
+      if (gasBtn) gasBtn.addEventListener('click', openGasModal);
+      if (adminGasBtn) adminGasBtn.addEventListener('click', openGasModal);
 
-      document.getElementById('admin-sync-btn').addEventListener('click', () => {
-        fetchAdminData();
-      });
+      const closeGasBtn = document.getElementById('close-gas-settings');
+      if (closeGasBtn) {
+        closeGasBtn.addEventListener('click', () => {
+          document.getElementById('gas-settings-modal').classList.add('hidden');
+        });
+      }
+
+      const tabGasUrl = document.getElementById('tab-btn-gas-url');
+      const tabGasCode = document.getElementById('tab-btn-gas-code');
+      if (tabGasUrl && tabGasCode) {
+        tabGasUrl.addEventListener('click', () => {
+          document.getElementById('gas-tab-content-url').classList.remove('hidden');
+          document.getElementById('gas-tab-content-code').classList.add('hidden');
+          tabGasUrl.className = "flex-1 py-2.5 text-xs font-bold text-navy-800 border-b-2 border-gold-500 bg-white";
+          tabGasCode.className = "flex-1 py-2.5 text-xs font-bold text-navy-500 hover:text-navy-800 bg-navy-50";
+        });
+        tabGasCode.addEventListener('click', () => {
+          document.getElementById('gas-tab-content-code').classList.remove('hidden');
+          document.getElementById('gas-tab-content-url').classList.add('hidden');
+          tabGasCode.className = "flex-1 py-2.5 text-xs font-bold text-navy-800 border-b-2 border-gold-500 bg-white";
+          tabGasUrl.className = "flex-1 py-2.5 text-xs font-bold text-navy-500 hover:text-navy-800 bg-navy-50";
+        });
+      }
+
+      const copyCodeBtn = document.getElementById('btn-copy-codegs');
+      if (copyCodeBtn) {
+        copyCodeBtn.addEventListener('click', () => {
+          const text = document.getElementById('codegs-source-display').textContent;
+          const temp = document.createElement('textarea');
+          temp.value = text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand('copy');
+          document.body.removeChild(temp);
+          copyCodeBtn.innerHTML = "<span>Copied!</span>";
+          setTimeout(() => {
+            copyCodeBtn.innerHTML = `<span>Copy Code</span>`;
+          }, 2000);
+        });
+      }
+
+      const saveGasUrlBtn = document.getElementById('save-gas-url-btn');
+      if (saveGasUrlBtn) {
+        saveGasUrlBtn.addEventListener('click', async () => {
+          const val = document.getElementById('gas-url-input').value.trim();
+          const gemKeyEl = document.getElementById('gas-gemini-key-input');
+          const gemKey = gemKeyEl ? gemKeyEl.value.trim() : '';
+
+          gasWebhookUrl = val;
+          localStorage.setItem('cambridge_gas_url', val);
+          sheetGeminiApiKey = gemKey;
+
+          document.getElementById('gas-share-link').value = window.location.origin + window.location.pathname + `?webAppUrl=${encodeURIComponent(gasWebhookUrl)}`;
+          document.getElementById('gas-settings-modal').classList.add('hidden');
+
+          if (gasWebhookUrl) {
+            try {
+              await fetch(gasWebhookUrl, {
+                method: "POST", mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                  action: "saveSettings", 
+                  webAppUrl: val,
+                  geminiApiKey: gemKey 
+                })
+              });
+            } catch(e) {}
+          }
+          fetchPublicStudents();
+        });
+      }
+
+      const studentGradesBtn = document.getElementById('student-grades-btn');
+      if (studentGradesBtn) {
+        studentGradesBtn.addEventListener('click', () => {
+          renderStudentGradesModal();
+          document.getElementById('student-grades-modal').classList.remove('hidden');
+        });
+      }
+
+      const closeStudentGrades = document.getElementById('close-student-grades-modal');
+      if (closeStudentGrades) {
+        closeStudentGrades.addEventListener('click', () => {
+          document.getElementById('student-grades-modal').classList.add('hidden');
+        });
+      }
+
+      const adminAddUserBtn = document.getElementById('admin-add-user-btn');
+      if (adminAddUserBtn) {
+        adminAddUserBtn.addEventListener('click', () => {
+          document.getElementById('add-user-modal').classList.remove('hidden');
+        });
+      }
+
+      const closeAddUser = document.getElementById('close-add-user-modal');
+      if (closeAddUser) {
+        closeAddUser.addEventListener('click', () => {
+          document.getElementById('add-user-modal').classList.add('hidden');
+        });
+      }
+
+      const confirmAddUser = document.getElementById('btn-confirm-add-user');
+      if (confirmAddUser) {
+        confirmAddUser.addEventListener('click', async () => {
+          const id = document.getElementById('new-user-id').value.trim();
+          const name = document.getElementById('new-user-name').value.trim();
+          const role = document.getElementById('new-user-role').value;
+          const cls = document.getElementById('new-user-class').value.trim();
+          const pass = document.getElementById('new-user-pass').value.trim();
+
+          if (!id || !name || !pass) return;
+
+          const newUser = { id, name, role, class: cls, password: pass };
+          allUsersList.push(newUser);
+          if (role === 'student') studentRoster.push({ id, name, class: cls });
+
+          if (gasWebhookUrl) {
+            try {
+              await fetch(gasWebhookUrl, {
+                method: "POST", mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "addUser", ...newUser })
+              });
+            } catch(e) {}
+          }
+
+          document.getElementById('add-user-modal').classList.add('hidden');
+          populateStudentSelect();
+          renderAdminDashboard();
+        });
+      }
+
+      const syncBtn = document.getElementById('admin-sync-btn');
+      if (syncBtn) {
+        syncBtn.addEventListener('click', () => fetchAdminData());
+      }
     });
   </script>
 </body>
