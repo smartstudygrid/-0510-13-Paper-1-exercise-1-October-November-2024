@@ -86,6 +86,14 @@
         <span id="student-grades-count-badge" class="hidden px-1.5 py-0.2 bg-navy-600 text-white rounded-full text-[10px] font-bold">0</span>
       </button>
 
+      <!-- Admin Direct Google Sheet Link in Header -->
+      <a id="header-sheet-link" href="https://docs.google.com/spreadsheets/d/1jbp7xWUvQ0BDrH5pFclQLOZ6W4ydACTz6IZ8a_-V500/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="hidden px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold rounded-md border border-emerald-300 transition items-center space-x-1.5 shadow-2xs" title="Open Connected Google Sheet in new tab">
+        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+        </svg>
+        <span>Google Sheet</span>
+      </a>
+
       <!-- Admin Only Sheet Setup -->
       <button id="gas-settings-btn" class="hidden px-2.5 py-1.5 bg-navy-100 hover:bg-navy-200 text-navy-700 text-xs font-medium rounded-md border border-navy-300 transition flex items-center space-x-1.5" title="Google Sheet Webhook Settings">
         <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -269,6 +277,35 @@
         <!-- Question Viewport -->
         <div class="flex-1 p-6 overflow-y-auto flex flex-col justify-between">
           <div class="space-y-4">
+
+            <!-- Student Completed Task Alert Banner -->
+            <div id="task-completed-banner" class="hidden p-4 rounded-xl border border-gold-300 bg-gradient-to-r from-gold-50 via-cream-50 to-emerald-50 shadow-xs transition duration-300">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start space-x-3">
+                  <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-base shrink-0 mt-0.5 shadow-2xs">
+                    ✓
+                  </div>
+                  <div class="space-y-1">
+                    <div class="flex items-center space-x-2">
+                      <h4 class="text-xs font-bold text-navy-900 uppercase tracking-wider">Task Completed</h4>
+                      <span id="completed-banner-status-badge" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-800">Submitted</span>
+                    </div>
+                    <p class="text-xs text-navy-700 leading-relaxed" id="completed-banner-message">
+                      You have already completed and submitted this task on <strong id="completed-banner-date" class="text-navy-900"></strong>. 
+                      Your recorded score is <strong id="completed-banner-score" class="font-mono text-navy-900"></strong>.
+                    </p>
+                    <p class="text-[11px] text-navy-500 leading-normal">
+                      Your submitted answers are loaded below. You can update your answers and click <strong>"Update & Resubmit Task"</strong> to save changes, or click <strong>"My Grades"</strong> to view full teacher feedback.
+                    </p>
+                  </div>
+                </div>
+                <button id="btn-banner-view-grades" type="button" class="px-3 py-1.5 bg-white hover:bg-navy-50 text-navy-800 border border-navy-300 text-xs font-bold rounded-lg transition shrink-0 shadow-2xs flex items-center space-x-1">
+                  <span>My Grades</span>
+                  <span>→</span>
+                </button>
+              </div>
+            </div>
+
             <div class="flex items-center justify-between">
               <span id="question-index-label" class="text-xs font-bold uppercase tracking-wider text-navy-500">Question 1 of 6</span>
               <div class="flex items-center space-x-2">
@@ -316,6 +353,14 @@
           <p class="text-xs text-navy-500">Manage tasks repository with one-click JSON import, student roster, and submissions.</p>
         </div>
         <div class="flex items-center space-x-2">
+          <!-- Direct Link to Google Sheet -->
+          <a href="https://docs.google.com/spreadsheets/d/1jbp7xWUvQ0BDrH5pFclQLOZ6W4ydACTz6IZ8a_-V500/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-700 text-xs font-bold rounded-lg transition shadow-2xs flex items-center space-x-1.5" title="Open Google Sheet in new tab">
+            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+            <span>Google Sheet</span>
+          </a>
+
           <!-- Copy AI Prompt & Schema button -->
           <button id="admin-header-copy-ai-btn" class="px-3 py-2 bg-gold-50 hover:bg-gold-100 text-gold-900 border border-gold-300 text-xs font-bold rounded-lg transition shadow-2xs flex items-center space-x-1.5" title="Copy standard prompt asking AI to generate a ready JSON file">
             <svg class="w-3.5 h-3.5 text-gold-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -623,6 +668,16 @@
 
       <div class="p-6 overflow-y-auto space-y-4 flex-1 text-xs">
         <div id="gas-tab-content-url" class="space-y-3">
+          <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center justify-between">
+            <div>
+              <p class="font-bold text-emerald-900">Current Connected Google Sheet:</p>
+              <p class="text-[11px] text-emerald-700">All submissions, tasks, and users store here.</p>
+            </div>
+            <a href="https://docs.google.com/spreadsheets/d/1jbp7xWUvQ0BDrH5pFclQLOZ6W4ydACTz6IZ8a_-V500/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold transition flex items-center space-x-1 shrink-0">
+              <span>Open Sheet ↗</span>
+            </a>
+          </div>
+
           <div>
             <label class="block font-semibold text-navy-700 mb-1">Google Apps Script Web App URL</label>
             <input type="text" id="gas-url-input" class="w-full p-2.5 border border-navy-300 rounded font-mono text-[11px] focus:outline-none focus:border-navy-600 text-navy-800">
@@ -690,7 +745,7 @@
         </div>
         <div class="flex items-center justify-end space-x-2 pt-1">
           <button id="save-final-grade-btn" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-xs flex items-center space-x-1.5">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <svg class="w-3.5 h-3.5 fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
             <span>Save & Finalize Marks</span>
           </button>
         </div>
@@ -794,6 +849,7 @@
 
   <script>
     const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzK1Lqp5zvdBh3KOtSMuTHjGmcCC348Am_92R-L4MPxQa2-KBAYDSLEbslguQhHv2n03g/exec";
+    const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1jbp7xWUvQ0BDrH5pFclQLOZ6W4ydACTz6IZ8a_-V500/edit?usp=sharing";
     const urlParams = new URLSearchParams(window.location.search);
     const paramGasUrl = urlParams.get('webAppUrl');
     let gasWebhookUrl = paramGasUrl || localStorage.getItem('cambridge_gas_url') || DEFAULT_GAS_URL;
@@ -808,7 +864,7 @@
     let isPreviewMode = false;
     let sheetGeminiApiKey = "";
 
-    // Standard AI Prompt & Schema Template: Explicitly requests generation of a valid JSON file
+    // Standard AI Prompt & Schema Template
     const AI_PROMPT_SCHEMA_TEMPLATE = `Please create a Cambridge IGCSE Reading task and generate it strictly as a complete, valid JSON file (.json) formatted according to this exact schema:
 
 {
@@ -1531,6 +1587,58 @@ function getOrCreateSheet(ss, sheetName, headers) {
       return fullLabel;
     }
 
+    function getStudentSubmissionForExercise(exerciseId) {
+      if (!currentUser || currentUser.role !== 'student') return null;
+      return submissionRecords.find(s => 
+        String(s.studentId).toLowerCase() === String(currentUser.data.id).toLowerCase() && 
+        String(s.exerciseId) === String(exerciseId)
+      ) || null;
+    }
+
+    function updateStudentCompletedTaskStatus(exerciseId) {
+      const banner = document.getElementById('task-completed-banner');
+      const submitBtn = document.getElementById('btn-submit-task');
+      if (!banner || !submitBtn) return;
+
+      if (!currentUser || currentUser.role !== 'student' || isPreviewMode) {
+        banner.classList.add('hidden');
+        submitBtn.textContent = "Finish & Submit Task";
+        return;
+      }
+
+      const existingSub = getStudentSubmissionForExercise(exerciseId);
+      if (existingSub) {
+        document.getElementById('completed-banner-date').textContent = existingSub.timestamp || 'Recently';
+        const displayScore = existingSub.finalScore !== undefined ? existingSub.finalScore : existingSub.autoScore;
+        document.getElementById('completed-banner-score').textContent = `${displayScore} / ${existingSub.maxScore} marks`;
+
+        const badge = document.getElementById('completed-banner-status-badge');
+        if (existingSub.status === "Graded") {
+          badge.textContent = "Graded by Teacher";
+          badge.className = "px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300";
+        } else {
+          badge.textContent = "Submitted • Pending Review";
+          badge.className = "px-2 py-0.5 text-[10px] font-bold rounded-full bg-gold-100 text-gold-800 border border-gold-300";
+        }
+
+        banner.classList.remove('hidden');
+        submitBtn.textContent = "Update & Resubmit Task";
+      } else {
+        banner.classList.add('hidden');
+        submitBtn.textContent = "Finish & Submit Task";
+      }
+    }
+
+    function updateStudentSubmissionsCountBadge() {
+      if (!currentUser || currentUser.role !== 'student') return;
+      const mySubs = submissionRecords.filter(s => String(s.studentId).toLowerCase() === String(currentUser.data.id).toLowerCase());
+      const badge = document.getElementById('student-grades-count-badge');
+      if (badge) {
+        badge.textContent = mySubs.length;
+        badge.classList.toggle('hidden', mySubs.length === 0);
+      }
+    }
+
     async function syncSettingsFromSheet() {
       if (!gasWebhookUrl) return;
       try {
@@ -1585,7 +1693,15 @@ function getOrCreateSheet(ss, sheetName, headers) {
     }
 
     async function sendSubmissionToSheet(subData) {
-      submissionRecords.unshift(subData);
+      const existingIdx = submissionRecords.findIndex(s => s.submissionId === subData.submissionId || (s.studentId === subData.studentId && s.exerciseId === subData.exerciseId));
+      if (existingIdx !== -1) {
+        submissionRecords[existingIdx] = subData;
+      } else {
+        submissionRecords.unshift(subData);
+      }
+      updateStudentSubmissionsCountBadge();
+      populateExerciseSwitcher();
+
       if (!gasWebhookUrl) return { status: "success" };
       try {
         await fetch(gasWebhookUrl, {
@@ -1625,9 +1741,19 @@ function getOrCreateSheet(ss, sheetName, headers) {
               let answers = {};
               try { answers = JSON.parse(r[11]); } catch(e) { answers = {}; }
               submissionRecords.push({
-                submissionId: r[0], studentId: r[1], studentName: r[2], class: r[3],
-                exerciseId: r[4], exerciseTitle: r[5], autoScore: r[6], maxScore: r[7],
-                finalScore: r[8], status: r[9], feedback: r[10], answers: answers, timestamp: r[12]
+                submissionId: r[0],
+                studentId: r[1],
+                studentName: r[2],
+                class: r[3],
+                exerciseId: r[4],
+                exerciseTitle: r[5],
+                autoScore: r[6],
+                maxScore: r[7],
+                finalScore: r[8],
+                status: r[9],
+                feedback: r[10],
+                answers: answers,
+                timestamp: r[12]
               });
             }
           }
@@ -1639,8 +1765,9 @@ function getOrCreateSheet(ss, sheetName, headers) {
             });
             EXERCISES = merged;
             localStorage.setItem('cambridge_custom_tasks', JSON.stringify(EXERCISES));
-            populateExerciseSwitcher();
           }
+          populateExerciseSwitcher();
+          updateStudentSubmissionsCountBadge();
           renderAdminDashboard();
         }
       } catch(e) { console.warn("Failed admin fetch:", e); }
@@ -1664,7 +1791,17 @@ function getOrCreateSheet(ss, sheetName, headers) {
         const opt = document.createElement('option');
         opt.value = ex.id;
         const taskPrefix = ex.number || `Task ${idx + 1}: ${ex.exerciseType || 'Exercise'}`;
-        opt.textContent = `${taskPrefix} - ${ex.title}`;
+        
+        let completionLabel = "";
+        if (currentUser && currentUser.role === 'student') {
+          const completedSub = getStudentSubmissionForExercise(ex.id);
+          if (completedSub) {
+            const scoreDisp = completedSub.finalScore !== undefined ? completedSub.finalScore : completedSub.autoScore;
+            completionLabel = ` ✓ (Completed - ${scoreDisp}/${completedSub.maxScore})`;
+          }
+        }
+        
+        opt.textContent = `${taskPrefix} - ${ex.title}${completionLabel}`;
         switcher.appendChild(opt);
       });
     }
@@ -1682,14 +1819,18 @@ function getOrCreateSheet(ss, sheetName, headers) {
       document.getElementById('admin-workspace').classList.add('hidden');
       document.getElementById('exam-workspace').classList.remove('hidden');
       document.getElementById('gas-settings-btn').classList.add('hidden');
+      document.getElementById('header-sheet-link').classList.add('hidden');
       document.getElementById('student-grades-btn').classList.remove('hidden');
 
       const userBadge = document.getElementById('user-header-status');
       userBadge.classList.remove('hidden');
       document.getElementById('header-user-display').textContent = `${currentUser.data.name} (${currentUser.data.class})`;
 
-      populateExerciseSwitcher();
-      loadExercise(0);
+      // Fetch user's submissions to immediately highlight completed tasks
+      fetchAdminData().then(() => {
+        populateExerciseSwitcher();
+        loadExercise(0);
+      });
     }
 
     function initAdminDashboardView() {
@@ -1697,6 +1838,8 @@ function getOrCreateSheet(ss, sheetName, headers) {
       document.getElementById('exam-workspace').classList.add('hidden');
       document.getElementById('admin-workspace').classList.remove('hidden');
       document.getElementById('gas-settings-btn').classList.remove('hidden');
+      document.getElementById('header-sheet-link').classList.remove('hidden');
+      document.getElementById('header-sheet-link').classList.add('flex');
       document.getElementById('student-grades-btn').classList.add('hidden');
 
       const userBadge = document.getElementById('user-header-status');
@@ -1719,6 +1862,16 @@ function getOrCreateSheet(ss, sheetName, headers) {
       document.getElementById('passage-container').style.fontSize = `${currentFontSize}px`;
       applyPassageFont(activeExamFont);
 
+      // Check if student has already completed this exercise
+      const completedSub = getStudentSubmissionForExercise(ex.id);
+      if (completedSub && completedSub.answers) {
+        // Pre-fill student's submitted responses if active state is empty
+        if (!exerciseResponses[ex.id] || Object.keys(exerciseResponses[ex.id]).length === 0) {
+          exerciseResponses[ex.id] = JSON.parse(JSON.stringify(completedSub.answers));
+        }
+      }
+
+      updateStudentCompletedTaskStatus(ex.id);
       renderReviewList();
       renderCurrentQuestion();
     }
@@ -2531,6 +2684,7 @@ function getOrCreateSheet(ss, sheetName, headers) {
           document.getElementById('admin-workspace').classList.add('hidden');
           document.getElementById('user-header-status').classList.add('hidden');
           document.getElementById('gas-settings-btn').classList.add('hidden');
+          document.getElementById('header-sheet-link').classList.add('hidden');
           document.getElementById('student-grades-btn').classList.add('hidden');
           document.getElementById('login-modal').classList.remove('hidden');
         });
@@ -2542,6 +2696,14 @@ function getOrCreateSheet(ss, sheetName, headers) {
           saveCurrentQuestionInput();
           const idx = EXERCISES.findIndex(ex => ex.id === e.target.value);
           if (idx !== -1) loadExercise(idx);
+        });
+      }
+
+      const bannerViewGradesBtn = document.getElementById('btn-banner-view-grades');
+      if (bannerViewGradesBtn) {
+        bannerViewGradesBtn.addEventListener('click', () => {
+          renderStudentGradesModal();
+          document.getElementById('student-grades-modal').classList.remove('hidden');
         });
       }
 
@@ -2650,7 +2812,9 @@ function getOrCreateSheet(ss, sheetName, headers) {
           loading.classList.remove('hidden');
 
           const result = evaluateExerciseAnswers(ex, exerciseResponses[ex.id]);
-          const subId = "SUB-" + Math.floor(100000 + Math.random() * 900000);
+          const existingSub = getStudentSubmissionForExercise(ex.id);
+          const subId = existingSub ? existingSub.submissionId : ("SUB-" + Math.floor(100000 + Math.random() * 900000));
+          
           const submissionObj = {
             submissionId: subId,
             studentId: currentUser.data.id,
@@ -2661,8 +2825,8 @@ function getOrCreateSheet(ss, sheetName, headers) {
             autoScore: result.earned,
             maxScore: ex.totalMarks,
             finalScore: result.earned,
-            status: "Pending Review",
-            feedback: "",
+            status: existingSub && existingSub.status === "Graded" ? "Graded" : "Pending Review",
+            feedback: existingSub ? existingSub.feedback : "",
             answers: exerciseResponses[ex.id],
             timestamp: new Date().toLocaleString()
           };
@@ -2675,6 +2839,7 @@ function getOrCreateSheet(ss, sheetName, headers) {
             btnSubmitTask.classList.remove('opacity-50', 'cursor-not-allowed');
           }
 
+          updateStudentCompletedTaskStatus(ex.id);
           document.getElementById('receipt-student-name').textContent = currentUser.data.name;
           document.getElementById('receipt-exercise-title').textContent = `${ex.number}: ${ex.title}`;
           document.getElementById('receipt-auto-score').textContent = `${result.earned} / ${ex.totalMarks}`;
